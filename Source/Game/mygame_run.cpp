@@ -27,6 +27,7 @@ void CGameStateRun::OnBeginState()
 
 void CGameStateRun::OnMove()							// 移動遊戲元素
 {
+	// phase 3 interact with chest
 	if (phase == 3
 		&& character.Left() + character.Width() / 2 >= chest_and_key.Left()
 		&& character.Left() + character.Width() / 2 <= chest_and_key.Left() + chest_and_key.Width()
@@ -35,6 +36,8 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 		chest_and_key.SelectShowBitmap(1);
 	}
 
+
+	// phase 5 interact with doors
 	if (phase == 5
 		&& character.Left() + character.Width() / 2 >= door[0].Left()
 		&& character.Left() + character.Width() / 2 <= door[0].Left() + door[0].Width()
@@ -84,12 +87,12 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 
 	bee.LoadBitmapByString({ "resources/bee_1.bmp", "resources/bee_2.bmp" });
 	bee.SetTopLeft(462, 265);
-	bee.SetAnimation(200, 0);
+	bee.SetAnimation(200, 0);	// 用於設定參數，不寫在onShow
 
 	ball.LoadBitmapByString({ "resources/ball-3.bmp", "resources/ball-2.bmp", "resources/ball-1.bmp", "resources/ball-ok.bmp" });
 	ball.SetTopLeft(150, 430);
-	ball.SetAnimation(1000, 1);
-	ball.ToggleAnimation();
+	ball.SetAnimation(1000, 1);	// 用於設定參數，不寫在onShow
+	ball.ToggleAnimation();	// 用於設定參數，不寫在onShow
 
 	for (int i = 0; i < 3; i++) {
 		door[i].LoadBitmapByString({ "resources/door_close.bmp", "resources/door_open.bmp" }, RGB(255, 255, 255));
