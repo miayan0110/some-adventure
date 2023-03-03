@@ -43,6 +43,7 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 
 void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 {
+	// map
 	background.LoadBitmapByString({
 		"resources/initialize_background.bmp"
 	}, RGB(255, 255, 255));
