@@ -95,7 +95,7 @@ namespace game_framework {
 	private:
 		int phase = 1;
 		CMovingBitmap background;
-		CMovingBitmap character;
+		CMovingBitmap character[4];
 		void ShowByPhase();
 	};
 

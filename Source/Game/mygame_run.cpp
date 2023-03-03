@@ -27,32 +27,42 @@ void CGameStateRun::OnBeginState()
 
 void CGameStateRun::OnMove()							// 移動遊戲元素
 {
-	
+	if (character.GetSelectShowBitmap() == 0 || character.GetSelectShowBitmap() == 1) {
+		character.SetTopLeft(character.Left() + 5, character.Top());
+	}
 }
 
 void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 {
 	background.LoadBitmapByString({
 		"resources/initialize_background.bmp"
-	}, RGB(0, 0, 0));
+	}, RGB(255, 255, 255));
 	background.SetTopLeft(20, 75);
 
-	character.LoadBitmapByString({
+	character[0].LoadBitmapByString({
 		"resources/pacman_towardR_1.bmp",
 		"resources/pacman_towardR_2.bmp",
+		"resources/pacman_towardL_1.bmp",
 	}, RGB(255, 255, 255));
-	character.SetTopLeft(120, 150);
-	//character.SetAnimation(500, 0);
+	character[0].SetTopLeft(120, 150);
+	character[0].SetAnimation(50, 0);
+
+	character[1].LoadBitmapByString({
+		"resources/pacman_towardL_1.bmp",
+		}, RGB(255, 255, 255));
+	character[1].SetTopLeft(120, 150);
+	character[1].SetAnimation(50, 0);
 }
 
 void CGameStateRun::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	//if (phase == 1) {
-	//	if (nChar == VK_RIGHT) {
-	//		character.ShowBitmap();
-	//	}
-	//}
+	if (phase == 1) {
+		if (nChar == 0x41) {
+			character[1].ShowBitmap(2);
+		}
+	}
 
+	/*
 	if (nChar == 0x44) {
 		character.SetTopLeft(character.Left() + 50, character.Top());	// D for going right
 	}
@@ -65,6 +75,7 @@ void CGameStateRun::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	else if (nChar == 0x53) {
 		character.SetTopLeft(character.Left(), character.Top() + 50);	// S for going down
 	}
+	*/
 }
 
 void CGameStateRun::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
@@ -100,6 +111,6 @@ void CGameStateRun::OnShow()
 void CGameStateRun::ShowByPhase() {
 	background.ShowBitmap(3);
 	if (phase == 1) {
-		character.ShowBitmap(2);
+		character[0].ShowBitmap(2);
 	}
 }
