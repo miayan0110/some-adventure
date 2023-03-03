@@ -27,8 +27,17 @@ void CGameStateRun::OnBeginState()
 
 void CGameStateRun::OnMove()							// 移動遊戲元素
 {
-	if (character.GetSelectShowBitmap() == 0 || character.GetSelectShowBitmap() == 1) {
-		character.SetTopLeft(character.Left() + 5, character.Top());
+	if (towards == 0) {
+		character[towards].SetTopLeft(character[towards].Left() + 5, character[towards].Top());
+	}
+	else if (towards == 1) {
+		character[towards].SetTopLeft(character[towards].Left() - 5, character[towards].Top());
+	}
+	else if (towards == 2) {
+		character[towards].SetTopLeft(character[towards].Left(), character[towards].Top() - 5);
+	}
+	else if (towards == 3) {
+		character[towards].SetTopLeft(character[towards].Left(), character[towards].Top() + 5);
 	}
 }
 
@@ -39,26 +48,53 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 	}, RGB(255, 255, 255));
 	background.SetTopLeft(20, 75);
 
+	// character
 	character[0].LoadBitmapByString({
-		"resources/pacman_towardR_1.bmp",
-		"resources/pacman_towardR_2.bmp",
-		"resources/pacman_towardL_1.bmp",
+		"resources/pacman/pacman_towardR_1.bmp",
+		"resources/pacman/pacman_towardR_2.bmp",
 	}, RGB(255, 255, 255));
 	character[0].SetTopLeft(120, 150);
 	character[0].SetAnimation(50, 0);
 
 	character[1].LoadBitmapByString({
-		"resources/pacman_towardL_1.bmp",
+		"resources/pacman/pacman_towardL_1.bmp",
+		"resources/pacman/pacman_towardL_2.bmp",
 		}, RGB(255, 255, 255));
-	character[1].SetTopLeft(120, 150);
 	character[1].SetAnimation(50, 0);
+
+	character[2].LoadBitmapByString({
+		"resources/pacman/pacman_towardU_1.bmp",
+		"resources/pacman/pacman_towardU_2.bmp",
+		}, RGB(255, 255, 255));
+	character[2].SetAnimation(50, 0);
+
+	character[3].LoadBitmapByString({
+		"resources/pacman/pacman_towardD_1.bmp",
+		"resources/pacman/pacman_towardD_2.bmp",
+		}, RGB(255, 255, 255));
+	character[3].SetAnimation(50, 0);
+
+	// monster
 }
 
 void CGameStateRun::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	if (phase == 1) {
-		if (nChar == 0x41) {
-			character[1].ShowBitmap(2);
+		if (nChar == 0x44) {
+			character[0].SetTopLeft(character[towards].Left(), character[towards].Top());
+			towards = 0;
+		}
+		else if (nChar == 0x41) {
+			character[1].SetTopLeft(character[towards].Left(), character[towards].Top());
+			towards = 1;
+		}
+		else if (nChar == 0x57) {
+			character[2].SetTopLeft(character[towards].Left(), character[towards].Top());
+			towards = 2;
+		}
+		else if (nChar == 0x53) {
+			character[3].SetTopLeft(character[towards].Left(), character[towards].Top());
+			towards = 3;
 		}
 	}
 
@@ -111,6 +147,17 @@ void CGameStateRun::OnShow()
 void CGameStateRun::ShowByPhase() {
 	background.ShowBitmap(3);
 	if (phase == 1) {
-		character[0].ShowBitmap(2);
+		if (towards == 0) {
+			character[towards].ShowBitmap(2);
+		}
+		else if (towards == 1) {
+			character[towards].ShowBitmap(2);
+		}
+		else if (towards == 2) {
+			character[towards].ShowBitmap(2);
+		}
+		else if (towards == 3) {
+			character[towards].ShowBitmap(2);
+		}
 	}
 }

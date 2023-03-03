@@ -53,13 +53,25 @@ void CGameStateInit::OnLButtonDown(UINT nFlags, CPoint point)
 
 void CGameStateInit::OnShow()
 {
-	background.ShowBitmap(3);
+	character.ShowBitmap(5);
+	etRed.ShowBitmap(5);
+	etPink.ShowBitmap(5);
+	etBlue.ShowBitmap(5);
+	etYellow.ShowBitmap(5);
 	InitText();
 }
 
 void CGameStateInit::InitBackground() {
-	background.LoadBitmap({ "resources/initialize_background.bmp" }, RGB(255, 255, 255));
-	background.SetTopLeft(20, 75);
+	character.LoadBitmap({ "resources/pacman/pacman_circle.bmp" }, RGB(255, 255, 255));
+	character.SetTopLeft(400, 175);
+	etRed.LoadBitmapA({ "resources/ets/redET_lookup_1.bmp" }, RGB(255, 255, 255));
+	etRed.SetTopLeft(500, 175);
+	etPink.LoadBitmapA({ "resources/ets/pinkET_lookup_1.bmp" }, RGB(255, 255, 255));
+	etPink.SetTopLeft(600, 175);
+	etBlue.LoadBitmapA({ "resources/ets/blueET_lookup_1.bmp" }, RGB(255, 255, 255));
+	etBlue.SetTopLeft(700, 175);
+	etYellow.LoadBitmapA({ "resources/ets/yellowET_lookup_1.bmp" }, RGB(255, 255, 255));
+	etYellow.SetTopLeft(800, 175);
 }
 
 void CGameStateInit::InitText() {

@@ -66,7 +66,12 @@ namespace game_framework {
 		void OnShow();									// 顯示這個狀態的遊戲畫面
 	private:
 		CMovingBitmap logo;								// csie的logo
-		CMovingBitmap background;
+		CMovingBitmap character;
+		CMovingBitmap etRed;
+		CMovingBitmap etPink;
+		CMovingBitmap etBlue;
+		CMovingBitmap etYellow;
+		CMovingBitmap point;
 		void InitBackground();
 		void InitText();
 	};
@@ -94,6 +99,8 @@ namespace game_framework {
 		void OnShow();									// 顯示這個狀態的遊戲畫面
 	private:
 		int phase = 1;
+		int towards = 0;
+		bool start = false;
 		CMovingBitmap background;
 		CMovingBitmap character[4];
 		void ShowByPhase();
