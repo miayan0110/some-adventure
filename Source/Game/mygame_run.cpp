@@ -34,15 +34,14 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 {
 	background.LoadBitmapByString({
 		"resources/initialize_background.bmp"
-	}, RGB(255, 255, 255));
-	background.SetTopLeft(0, 0);
+	}, RGB(0, 0, 0));
+	background.SetTopLeft(20, 75);
 
 	character.LoadBitmapByString({
-//		"resources/giraffe.bmp"
 		"resources/pacman_towardR_1.bmp",
-//		"resources/pacman_towardR_2.bmp",
+		"resources/pacman_towardR_2.bmp",
 	}, RGB(255, 255, 255));
-	character.SetTopLeft(150, 150);
+	character.SetTopLeft(120, 150);
 	//character.SetAnimation(500, 0);
 }
 
@@ -99,8 +98,8 @@ void CGameStateRun::OnShow()
 }
 
 void CGameStateRun::ShowByPhase() {
-	background.ShowBitmap(5);
+	background.ShowBitmap(3);
 	if (phase == 1) {
-		character.ShowBitmap(5);
+		character.ShowBitmap(2);
 	}
 }

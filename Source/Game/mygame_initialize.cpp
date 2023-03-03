@@ -53,13 +53,13 @@ void CGameStateInit::OnLButtonDown(UINT nFlags, CPoint point)
 
 void CGameStateInit::OnShow()
 {
-	background.ShowBitmap();
+	background.ShowBitmap(3);
 	InitText();
 }
 
 void CGameStateInit::InitBackground() {
-	background.LoadBitmap({ "resources/initialize_background.bmp" });
-	background.SetTopLeft(0, 0);
+	background.LoadBitmap({ "resources/initialize_background.bmp" }, RGB(0, 0, 0));
+	background.SetTopLeft(20, 75);
 }
 
 void CGameStateInit::InitText() {
