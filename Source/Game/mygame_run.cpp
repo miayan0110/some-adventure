@@ -28,26 +28,50 @@ void CGameStateRun::OnBeginState()
 void CGameStateRun::OnMove()							// 移動遊戲元素
 {
 	if (towards == 0) {
-		character[towards].SetTopLeft(character[towards].Left() + 5, character[towards].Top());
+		character[towards].SetTopLeft(character[towards].Left() + 3, character[towards].Top());
 	}
 	else if (towards == 1) {
-		character[towards].SetTopLeft(character[towards].Left() - 5, character[towards].Top());
+		character[towards].SetTopLeft(character[towards].Left() - 3, character[towards].Top());
 	}
-	else if (towards == 2) {
-		character[towards].SetTopLeft(character[towards].Left(), character[towards].Top() - 5);
+	else if (towards == 2 && character[towards].Top() > 95) {
+		character[towards].SetTopLeft(character[towards].Left(), character[towards].Top() - 3);
 	}
-	else if (towards == 3) {
-		character[towards].SetTopLeft(character[towards].Left(), character[towards].Top() + 5);
+	else if (towards == 3 && character[towards].Top() < 435) {
+		character[towards].SetTopLeft(character[towards].Left(), character[towards].Top() + 3);
 	}
+	for (int i = 0; i < cookieAmount; i++) {
+		if (character[towards].Left() + character[towards].Width() / 2 >= cookie[i].Left()
+			&& character[towards].Left() + character[towards].Width() / 2 <= cookie[i].Left() + cookie[2].Width()
+			&& character[towards].Top() + character[towards].Height() / 2 >= cookie[i].Top()
+			&& character[towards].Top() + character[towards].Height() / 2 <= cookie[i].Top() + cookie[2].Height()) {
+			cookie[i].SelectShowBitmap(1);
+		}
+	}
+	
 }
 
 void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 {
+	PIXWIDTH = 37;
+	PIXHEIGHT = 34;
+
 	// map
 	background.LoadBitmapByString({
 		"resources/initialize_background.bmp"
 	}, RGB(255, 255, 255));
 	background.SetTopLeft(20, 75);
+
+	// cookies
+	cookieAmount = 0;
+	for (int i = 0; i < MAPHEIGHT; i++) {
+		for (int j = 0; j < MAPWIDTH; j++) {
+			if (map[i][j] == 0) {
+				cookie[cookieAmount].LoadBitmapByString({ "resources/stuff/cookie.bmp", "resources/stuff/cookie_empty.bmp" }, RGB(255, 255, 255));
+				cookie[cookieAmount].SetTopLeft(20 + PIXWIDTH * j, 75 + PIXHEIGHT * i);
+				cookieAmount++;
+			}
+		}
+	}
 
 	// character
 	character[0].LoadBitmapByString({
@@ -82,37 +106,22 @@ void CGameStateRun::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	if (phase == 1) {
 		if (nChar == 0x44) {
-			character[0].SetTopLeft(character[towards].Left(), character[towards].Top());
+			character[0].SetTopLeft(character[towards].Left(), character[towards].Top());	// D for going right
 			towards = 0;
 		}
 		else if (nChar == 0x41) {
-			character[1].SetTopLeft(character[towards].Left(), character[towards].Top());
+			character[1].SetTopLeft(character[towards].Left(), character[towards].Top());	// A for going left
 			towards = 1;
 		}
 		else if (nChar == 0x57) {
-			character[2].SetTopLeft(character[towards].Left(), character[towards].Top());
+			character[2].SetTopLeft(character[towards].Left(), character[towards].Top());	// W for going up
 			towards = 2;
 		}
 		else if (nChar == 0x53) {
-			character[3].SetTopLeft(character[towards].Left(), character[towards].Top());
+			character[3].SetTopLeft(character[towards].Left(), character[towards].Top());	// S for going down
 			towards = 3;
 		}
 	}
-
-	/*
-	if (nChar == 0x44) {
-		character.SetTopLeft(character.Left() + 50, character.Top());	// D for going right
-	}
-	else if (nChar == 0x41) {
-		character.SetTopLeft(character.Left() - 50, character.Top());	// A for going left
-	}
-	else if (nChar == 0x57) {
-		character.SetTopLeft(character.Left(), character.Top() - 50);	// W for going up
-	}
-	else if (nChar == 0x53) {
-		character.SetTopLeft(character.Left(), character.Top() + 50);	// S for going down
-	}
-	*/
 }
 
 void CGameStateRun::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
@@ -148,6 +157,7 @@ void CGameStateRun::OnShow()
 void CGameStateRun::ShowByPhase() {
 	background.ShowBitmap(3);
 	if (phase == 1) {
+		
 		if (towards == 0) {
 			character[towards].ShowBitmap(2);
 		}
@@ -159,6 +169,10 @@ void CGameStateRun::ShowByPhase() {
 		}
 		else if (towards == 3) {
 			character[towards].ShowBitmap(2);
+		}
+
+		for (int i = 0; i < cookieAmount; i++) {
+			cookie[i].ShowBitmap();
 		}
 	}
 }
