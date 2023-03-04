@@ -27,6 +27,7 @@ void CGameStateRun::OnBeginState()
 
 void CGameStateRun::OnMove()							// 移動遊戲元素
 {
+	// character movement
 	if (towards == 0) {
 		character[towards].SetTopLeft(character[towards].Left() + 3, character[towards].Top());
 	}
@@ -39,11 +40,14 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 	else if (towards == 3 && character[towards].Top() < 435) {
 		character[towards].SetTopLeft(character[towards].Left(), character[towards].Top() + 3);
 	}
+
+	// eating cookies
 	for (int i = 0; i < cookieAmount; i++) {
-		if (character[towards].Left() + character[towards].Width() / 2 >= cookie[i].Left()
-			&& character[towards].Left() + character[towards].Width() / 2 <= cookie[i].Left() + cookie[2].Width()
-			&& character[towards].Top() + character[towards].Height() / 2 >= cookie[i].Top()
-			&& character[towards].Top() + character[towards].Height() / 2 <= cookie[i].Top() + cookie[2].Height()) {
+		gameClear &= (cookie[i].GetSelectShowBitmap() == 1);
+		if (cookie[i].Left() >= character[towards].Left()
+			&& cookie[i].Left() <= character[towards].Left() + character[towards].Width()
+			&& cookie[i].Top() >= character[towards].Top()
+			&& cookie[i].Top() <= character[towards].Top() + character[towards].Height()) {
 			cookie[i].SelectShowBitmap(1);
 		}
 	}
@@ -57,7 +61,8 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 
 	// map
 	background.LoadBitmapByString({
-		"resources/initialize_background.bmp"
+		"resources/initialize_background.bmp",
+		"resources/giraffe.bmp"
 	}, RGB(255, 255, 255));
 	background.SetTopLeft(20, 75);
 
@@ -156,8 +161,7 @@ void CGameStateRun::OnShow()
 
 void CGameStateRun::ShowByPhase() {
 	background.ShowBitmap(3);
-	if (phase == 1) {
-		
+	if (phase == 1 && !gameClear) {
 		if (towards == 0) {
 			character[towards].ShowBitmap(2);
 		}
@@ -175,4 +179,5 @@ void CGameStateRun::ShowByPhase() {
 			cookie[i].ShowBitmap();
 		}
 	}
+	
 }

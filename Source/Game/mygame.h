@@ -103,6 +103,7 @@ namespace game_framework {
 		int MAPWIDTH = 38;
 		int MAPHEIGHT = 13;
 		int phase = 1;
+		bool gameClear = false;
 		int towards = 0;
 		int cookieAmount = 0;
 		int map[13][38] = {
