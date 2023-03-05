@@ -28,17 +28,17 @@ void CGameStateRun::OnBeginState()
 void CGameStateRun::OnMove()							// 移動遊戲元素
 {
 	// character movement
-	if (towards == 0) {
-		character[towards].SetTopLeft(character[towards].Left() + 3, character[towards].Top());
+	if (towards == 0 && GetPixelAttribute(character[towards].Left() + (PIXWIDTH + 1), character[towards].Top()) == 0) {
+		character[towards].SetTopLeft(character[towards].Left() + 1, character[towards].Top());
 	}
-	else if (towards == 1) {
-		character[towards].SetTopLeft(character[towards].Left() - 3, character[towards].Top());
+	else if (towards == 1 && GetPixelAttribute(character[towards].Left() + character[towards].Width() - (PIXWIDTH + 1), character[towards].Top()) == 0) {
+		character[towards].SetTopLeft(character[towards].Left() - 1, character[towards].Top());
 	}
-	else if (towards == 2 && character[towards].Top() > 95) {
-		character[towards].SetTopLeft(character[towards].Left(), character[towards].Top() - 3);
+	else if (towards == 2 && GetPixelAttribute(character[towards].Left(), character[towards].Top() + character[towards].Height() - (PIXHEIGHT + 1)) == 0) {
+		character[towards].SetTopLeft(character[towards].Left(), character[towards].Top() - 1);
 	}
-	else if (towards == 3 && character[towards].Top() < 435) {
-		character[towards].SetTopLeft(character[towards].Left(), character[towards].Top() + 3);
+	else if (towards == 3 && GetPixelAttribute(character[towards].Left(), character[towards].Top() + (PIXHEIGHT + 1)) == 0) {
+		character[towards].SetTopLeft(character[towards].Left(), character[towards].Top() + 1);
 	}
 
 	// eating cookies
@@ -56,15 +56,16 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 
 void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 {
-	PIXWIDTH = 37;
-	PIXHEIGHT = 34;
+	PIXWIDTH = 16;
+	PIXHEIGHT = 16;
 
 	// map
 	background.LoadBitmapByString({
-		"resources/initialize_background.bmp",
-		"resources/giraffe.bmp"
+		"resources/map/phase_1.bmp",
+		"resources/map/phase_2.bmp",
+		"resources/map/phase_3.bmp",
 	}, RGB(255, 255, 255));
-	background.SetTopLeft(20, 75);
+	background.SetTopLeft(0, 0);
 
 	// cookies
 	cookieAmount = 0;
@@ -72,7 +73,7 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 		for (int j = 0; j < MAPWIDTH; j++) {
 			if (map[i][j] == 0) {
 				cookie[cookieAmount].LoadBitmapByString({ "resources/stuff/cookie.bmp", "resources/stuff/cookie_empty.bmp" }, RGB(255, 255, 255));
-				cookie[cookieAmount].SetTopLeft(20 + PIXWIDTH * j, 75 + PIXHEIGHT * i);
+				cookie[cookieAmount].SetTopLeft(2 + PIXWIDTH * j, 2 + PIXHEIGHT * i);
 				cookieAmount++;
 			}
 		}
@@ -83,26 +84,26 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 		"resources/pacman/pacman_towardR_1.bmp",
 		"resources/pacman/pacman_towardR_2.bmp",
 	}, RGB(255, 255, 255));
-	character[0].SetTopLeft(120, 150);
-	character[0].SetAnimation(50, 0);
+	character[0].SetTopLeft(16, 64);
+	character[0].SetAnimation(100, 0);
 
 	character[1].LoadBitmapByString({
 		"resources/pacman/pacman_towardL_1.bmp",
 		"resources/pacman/pacman_towardL_2.bmp",
 		}, RGB(255, 255, 255));
-	character[1].SetAnimation(50, 0);
+	character[1].SetAnimation(100, 0);
 
 	character[2].LoadBitmapByString({
 		"resources/pacman/pacman_towardU_1.bmp",
 		"resources/pacman/pacman_towardU_2.bmp",
 		}, RGB(255, 255, 255));
-	character[2].SetAnimation(50, 0);
+	character[2].SetAnimation(100, 0);
 
 	character[3].LoadBitmapByString({
 		"resources/pacman/pacman_towardD_1.bmp",
 		"resources/pacman/pacman_towardD_2.bmp",
 		}, RGB(255, 255, 255));
-	character[3].SetAnimation(50, 0);
+	character[3].SetAnimation(100, 0);
 
 	// monster
 }
@@ -160,24 +161,34 @@ void CGameStateRun::OnShow()
 }
 
 void CGameStateRun::ShowByPhase() {
-	background.ShowBitmap(3);
-	if (phase == 1 && !gameClear) {
+	
+	if (phase == 1) {
+		background.SelectShowBitmap(phase-1);
+		background.ShowBitmap();
 		if (towards == 0) {
-			character[towards].ShowBitmap(2);
+			character[towards].ShowBitmap();
 		}
 		else if (towards == 1) {
-			character[towards].ShowBitmap(2);
+			character[towards].ShowBitmap();
 		}
 		else if (towards == 2) {
-			character[towards].ShowBitmap(2);
+			character[towards].ShowBitmap();
 		}
 		else if (towards == 3) {
-			character[towards].ShowBitmap(2);
+			character[towards].ShowBitmap();
 		}
 
 		for (int i = 0; i < cookieAmount; i++) {
 			cookie[i].ShowBitmap();
 		}
 	}
+	if (phase == 2) {
+		background.SelectShowBitmap(phase - 1);
+		background.ShowBitmap();
+	}
 	
+}
+
+int CGameStateRun::GetPixelAttribute(int left, int top) {
+	return map[top/PIXHEIGHT][left/PIXWIDTH];
 }
