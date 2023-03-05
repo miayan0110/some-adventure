@@ -28,17 +28,21 @@ void CGameStateRun::OnBeginState()
 void CGameStateRun::OnMove()							// ²¾°Ê¹CÀ¸¤¸¯À
 {
 	// character movement
-	if (towards == 0 && GetPixelAttribute(character[towards].Left() + (PIXWIDTH + 1), character[towards].Top()) == 0) {
-		character[towards].SetTopLeft(character[towards].Left() + 1, character[towards].Top());
+	/*
+	if (character[towards].Left() % PIXWIDTH == 0 && character[towards].Top() % PIXHEIGHT == 0) {
+
+	}*/
+	if (towards == 0 && GetPixelAttribute(character[towards].Left() + character[towards].Width() + 1, character[towards].Top()) == 0) {
+		character[towards].SetTopLeft(character[towards].Left() + 2, character[towards].Top());
 	}
-	else if (towards == 1 && GetPixelAttribute(character[towards].Left() + character[towards].Width() - (PIXWIDTH + 1), character[towards].Top()) == 0) {
-		character[towards].SetTopLeft(character[towards].Left() - 1, character[towards].Top());
+	else if (towards == 1 && GetPixelAttribute(character[towards].Left() - 1, character[towards].Top()) == 0) {
+		character[towards].SetTopLeft(character[towards].Left() - 2, character[towards].Top());
 	}
-	else if (towards == 2 && GetPixelAttribute(character[towards].Left(), character[towards].Top() + character[towards].Height() - (PIXHEIGHT + 1)) == 0) {
-		character[towards].SetTopLeft(character[towards].Left(), character[towards].Top() - 1);
+	else if (towards == 2 && GetPixelAttribute(character[towards].Left(), character[towards].Top() - 1) == 0) {
+		character[towards].SetTopLeft(character[towards].Left(), character[towards].Top() - 2);
 	}
-	else if (towards == 3 && GetPixelAttribute(character[towards].Left(), character[towards].Top() + (PIXHEIGHT + 1)) == 0) {
-		character[towards].SetTopLeft(character[towards].Left(), character[towards].Top() + 1);
+	else if (towards == 3 && GetPixelAttribute(character[towards].Left(), character[towards].Top() + character[towards].Height() + 1) == 0) {
+		character[towards].SetTopLeft(character[towards].Left(), character[towards].Top() + 2);
 	}
 
 	// eating cookies
@@ -190,5 +194,8 @@ void CGameStateRun::ShowByPhase() {
 }
 
 int CGameStateRun::GetPixelAttribute(int left, int top) {
+	if ((double)top / PIXHEIGHT - top / PIXHEIGHT > 0.5) {
+
+	}
 	return map[top/PIXHEIGHT][left/PIXWIDTH];
 }
