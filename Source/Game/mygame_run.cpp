@@ -27,35 +27,40 @@ void CGameStateRun::OnBeginState()
 
 void CGameStateRun::OnMove()							// 移動遊戲元素
 {
+	int edge = 4;
 	// character movement
-	/*
-	if (character[towards].Left() % PIXWIDTH == 0 && character[towards].Top() % PIXHEIGHT == 0) {
-
-	}*/
-	if (towards == 0 && GetPixelAttribute(character[towards].Left() + character[towards].Width() + 1, character[towards].Top()) == 0) {
+	if (towards == 0 && GetPixelAttribute(character[towards].Right() + 1, character[towards].Top() + edge) >= 0 && GetPixelAttribute(character[towards].Right() + 1, character[towards].Bottom() - edge) >= 0) {
 		character[towards].SetTopLeft(character[towards].Left() + 2, character[towards].Top());
 	}
-	else if (towards == 1 && GetPixelAttribute(character[towards].Left() - 1, character[towards].Top()) == 0) {
+	else if (towards == 1 && GetPixelAttribute(character[towards].Left() - 1, character[towards].Top() + edge) >= 0 && GetPixelAttribute(character[towards].Left() - 1, character[towards].Bottom() - edge) >= 0) {
 		character[towards].SetTopLeft(character[towards].Left() - 2, character[towards].Top());
 	}
-	else if (towards == 2 && GetPixelAttribute(character[towards].Left(), character[towards].Top() - 1) == 0) {
+	else if (towards == 2 && GetPixelAttribute(character[towards].Left() + edge, character[towards].Top() - 1) >= 0 && GetPixelAttribute(character[towards].Right() - edge, character[towards].Top() - 1) >= 0) {
 		character[towards].SetTopLeft(character[towards].Left(), character[towards].Top() - 2);
 	}
-	else if (towards == 3 && GetPixelAttribute(character[towards].Left(), character[towards].Top() + character[towards].Height() + 1) == 0) {
+	else if (towards == 3 && GetPixelAttribute(character[towards].Left() + edge, character[towards].Bottom() + 1) >= 0 && GetPixelAttribute(character[towards].Right() - edge, character[towards].Bottom() + 1) >= 0) {
 		character[towards].SetTopLeft(character[towards].Left(), character[towards].Top() + 2);
 	}
 
 	// eating cookies
 	for (int i = 0; i < cookieAmount; i++) {
-		gameClear &= (cookie[i].GetSelectShowBitmap() == 1);
+		//gameClear &= (cookie[i].GetSelectShowBitmap() == 1);
 		if (cookie[i].Left() >= character[towards].Left()
-			&& cookie[i].Left() <= character[towards].Left() + character[towards].Width()
+			&& cookie[i].Left() <= character[towards].Right()
 			&& cookie[i].Top() >= character[towards].Top()
-			&& cookie[i].Top() <= character[towards].Top() + character[towards].Height()) {
+			&& cookie[i].Top() <= character[towards].Bottom()) {
 			cookie[i].SelectShowBitmap(1);
 		}
 	}
 	
+	for (int i = 0; i < powerUpCookieAmount; i++) {
+		if (powerUpCookie[i].Left() >= character[towards].Left()
+			&& powerUpCookie[i].Left() <= character[towards].Right()
+			&& powerUpCookie[i].Top() >= character[towards].Top()
+			&& powerUpCookie[i].Top() <= character[towards].Bottom()) {
+			powerUpCookie[i].UnshowBitmap();
+		}
+	}
 }
 
 void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
@@ -73,12 +78,19 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 
 	// cookies
 	cookieAmount = 0;
+	powerUpCookieAmount = 0;
 	for (int i = 0; i < MAPHEIGHT; i++) {
 		for (int j = 0; j < MAPWIDTH; j++) {
 			if (map[i][j] == 0) {
 				cookie[cookieAmount].LoadBitmapByString({ "resources/stuff/cookie.bmp", "resources/stuff/cookie_empty.bmp" }, RGB(255, 255, 255));
-				cookie[cookieAmount].SetTopLeft(2 + PIXWIDTH * j, 2 + PIXHEIGHT * i);
+				cookie[cookieAmount].SetTopLeft(4 + PIXWIDTH * j, 4 + PIXHEIGHT * i);
 				cookieAmount++;
+			}
+			else if (map[i][j] == 1) {
+				powerUpCookie[powerUpCookieAmount].LoadBitmapByString({ "resources/stuff/cookie.bmp", "resources/stuff/cookie_empty.bmp" }, RGB(255, 255, 255));
+				powerUpCookie[powerUpCookieAmount].SetTopLeft(PIXWIDTH*j - 2, PIXHEIGHT*i - 2);
+				powerUpCookie[powerUpCookieAmount].SetAnimation(500, 0);
+				powerUpCookieAmount++;
 			}
 		}
 	}
@@ -183,7 +195,10 @@ void CGameStateRun::ShowByPhase() {
 		}
 
 		for (int i = 0; i < cookieAmount; i++) {
-			cookie[i].ShowBitmap();
+			cookie[i].ShowBitmap(0.5);
+		}
+		for (int i = 0; i < powerUpCookieAmount; i++) {
+			powerUpCookie[i].ShowBitmap(1.5);
 		}
 	}
 	if (phase == 2) {
