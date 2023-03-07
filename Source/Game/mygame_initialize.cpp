@@ -64,22 +64,22 @@ void CGameStateInit::OnShow()
 	character.SetTopLeft(100, 200);
 
 	etRed.ShowBitmap(2.5);
-	etRed.LoadBitmapByString({ "resources/ets/redET_lookup_1.bmp", "resources/ets/redET_lookup_2.bmp" }, RGB(255, 255, 255));
+	etRed.LoadBitmapByString({ "resources/ets/redET_towardU_1.bmp", "resources/ets/redET_towardU_2.bmp" }, RGB(255, 255, 255));
 	etRed.SetAnimation(100, 0);
 	etRed.SetTopLeft(150, 200);
 
 	etPink.ShowBitmap(2.5);
-	etPink.LoadBitmapByString({ "resources/ets/pinkET_lookup_1.bmp", "resources/ets/pinkET_lookup_2.bmp" }, RGB(255, 255, 255));
+	etPink.LoadBitmapByString({ "resources/ets/pinkET_towardU_1.bmp", "resources/ets/pinkET_towardU_2.bmp" }, RGB(255, 255, 255));
 	etPink.SetAnimation(200, 0);
 	etPink.SetTopLeft(200, 200);
 
 	etBlue.ShowBitmap(2.5);
-	etBlue.LoadBitmapByString({ "resources/ets/blueET_lookup_1.bmp", "resources/ets/blueET_lookup_2.bmp" }, RGB(255, 255, 255));
+	etBlue.LoadBitmapByString({ "resources/ets/blueET_towardU_1.bmp", "resources/ets/blueET_towardU_2.bmp" }, RGB(255, 255, 255));
 	etBlue.SetAnimation(100, 0);
 	etBlue.SetTopLeft(250, 200);
 
 	etYellow.ShowBitmap(2.5);
-	etYellow.LoadBitmapByString({ "resources/ets/yellowET_lookup_1.bmp", "resources/ets/yellowET_lookup_2.bmp" }, RGB(255, 255, 255));
+	etYellow.LoadBitmapByString({ "resources/ets/yellowET_towardU_1.bmp", "resources/ets/yellowET_towardU_2.bmp" }, RGB(255, 255, 255));
 	etYellow.SetAnimation(200, 0);
 	etYellow.SetTopLeft(300, 200);
 
@@ -94,13 +94,13 @@ void CGameStateInit::OnShow()
 void CGameStateInit::InitBackground() {
 	character.LoadBitmap({ "resources/pacman/pacman_circle.bmp" }, RGB(255, 255, 255));
 	character.SetTopLeft(100, 200);
-	etRed.LoadBitmap({ "resources/ets/redET_lookup_1.bmp" }, RGB(255, 255, 255));
+	etRed.LoadBitmap({ "resources/ets/redET_towardU_1.bmp" }, RGB(255, 255, 255));
 	etRed.SetTopLeft(150, 200);
-	etPink.LoadBitmap({ "resources/ets/pinkET_lookup_1.bmp" }, RGB(255, 255, 255));
+	etPink.LoadBitmap({ "resources/ets/pinkET_towardU_1.bmp" }, RGB(255, 255, 255));
 	etPink.SetTopLeft(200, 200);
-	etBlue.LoadBitmap({ "resources/ets/blueET_lookup_1.bmp" }, RGB(255, 255, 255));
+	etBlue.LoadBitmap({ "resources/ets/blueET_towardU_1.bmp" }, RGB(255, 255, 255));
 	etBlue.SetTopLeft(250, 200);
-	etYellow.LoadBitmap({ "resources/ets/yellowET_lookup_1.bmp" }, RGB(255, 255, 255));
+	etYellow.LoadBitmap({ "resources/ets/yellowET_towardU_1.bmp" }, RGB(255, 255, 255));
 	etYellow.SetTopLeft(300, 200);
 	start.LoadBitmap({ "resources/start_1.bmp" }, RGB(255, 255, 255));
 	//start.SetTopLeft(175, 425);
