@@ -104,7 +104,7 @@ namespace game_framework {
 		int MAPWIDTH = 28;
 		int MAPHEIGHT = 36;
 		int phase = 1;
-		bool gameClear = false;
+		int gameClear = 0;
 		int towards = 0;
 		int cookieAmount = 0;
 		int powerUpCookieAmount = 0;
@@ -150,6 +150,7 @@ namespace game_framework {
 		CMovingBitmap character[4];
 		CMovingBitmap cookie[500];
 		CMovingBitmap powerUpCookie[10];
+		CMovingBitmap etBlue[4];
 		void ShowByPhase();
 		int GetPixelAttribute(int left, int top);
 	};

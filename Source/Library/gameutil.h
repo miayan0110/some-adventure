@@ -101,6 +101,8 @@ namespace game_framework {
 		int   GetMovingBitmapFrame();
 		int   Right();
 		int   Bottom();
+		double   CenterX();
+		double   CenterY();
 	protected:
 		int selector = 0;
 		int delayCount = 10;

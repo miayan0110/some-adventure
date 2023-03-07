@@ -211,6 +211,18 @@ namespace game_framework {
 		return location.bottom;
 	}
 
+	double CMovingBitmap::CenterX()
+	{
+		GAME_ASSERT(isBitmapLoaded, "A bitmap must be loaded before Top() is called !!!");
+		return 0.5*(location.left + location.right);
+	}
+
+	double CMovingBitmap::CenterY()
+	{
+		GAME_ASSERT(isBitmapLoaded, "A bitmap must be loaded before Top() is called !!!");
+		return 0.5*(location.top + location.bottom);
+	}
+
 	/////////////////////////////////////////////////////////////////////////////
 	// CTextDraw: The class provide the ability to draw the text.
 	// 這個 class 提供文字的呈現
