@@ -50,16 +50,18 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 			&& cookie[i].CenterY() >= character[towards].Top()
 			&& cookie[i].CenterY() <= character[towards].Bottom()) {
 			cookie[i].SelectShowBitmap(1);
+			eatenCookie[i] = 0;
 		}
 	}
 	
-	for (int i = 0; i < powerUpCookieAmount; i++) {
-		if (character[towards].CenterX() >= powerUpCookie[i].Left()
-			&& character[towards].CenterX() <= powerUpCookie[i].Right()
-			&& character[towards].CenterY() >= powerUpCookie[i].Top()
-			&& character[towards].CenterY() <= powerUpCookie[i].Bottom()) {
-			powerUpCookie[i].UnshowBitmap();
-			powerUpCookie[i].SelectShowBitmap(1);
+	for (int i = 0; i < spCookieAmount; i++) {
+		if (character[towards].CenterX() >= spCookie[i].Left()
+			&& character[towards].CenterX() <= spCookie[i].Right()
+			&& character[towards].CenterY() >= spCookie[i].Top()
+			&& character[towards].CenterY() <= spCookie[i].Bottom()) {
+			spCookie[i].UnshowBitmap();
+			spCookie[i].SelectShowBitmap(1);
+			eatenSP[i] = 0;
 		}
 	}
 }
@@ -79,19 +81,21 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 
 	// cookies
 	cookieAmount = 0;
-	powerUpCookieAmount = 0;
+	spCookieAmount = 0;
 	for (int i = 0; i < MAPHEIGHT; i++) {
 		for (int j = 0; j < MAPWIDTH; j++) {
-			if (map[i][j] == 0) {
+			if (map[0][i][j] == 0) {
 				cookie[cookieAmount].LoadBitmapByString({ "resources/stuff/cookie.bmp", "resources/stuff/cookie_empty.bmp" }, RGB(255, 255, 255));
 				cookie[cookieAmount].SetTopLeft(4 + PIXWIDTH * j, 4 + PIXHEIGHT * i);
+				eatenCookie[cookieAmount] = 1;
 				cookieAmount++;
 			}
-			else if (map[i][j] == 1) {
-				powerUpCookie[powerUpCookieAmount].LoadBitmapByString({ "resources/stuff/cookie.bmp", "resources/stuff/cookie_empty.bmp" }, RGB(255, 255, 255));
-				powerUpCookie[powerUpCookieAmount].SetTopLeft(PIXWIDTH*j - 2, PIXHEIGHT*i - 2);
-				powerUpCookie[powerUpCookieAmount].SetAnimation(200, 0);
-				powerUpCookieAmount++;
+			else if (map[0][i][j] == 1) {
+				spCookie[spCookieAmount].LoadBitmapByString({ "resources/stuff/cookie.bmp", "resources/stuff/cookie_empty.bmp" }, RGB(255, 255, 255));
+				spCookie[spCookieAmount].SetTopLeft(PIXWIDTH*j - 2, PIXHEIGHT*i - 2);
+				spCookie[spCookieAmount].SetAnimation(200, 0);
+				eatenSP[spCookieAmount] = 1;
+				spCookieAmount++;
 			}
 		}
 	}
@@ -184,11 +188,20 @@ void CGameStateRun::OnShow()
 }
 
 void CGameStateRun::ShowByPhase() {
-	background.SelectShowBitmap(phase-1);
+	// show phase background
+	background.SelectShowBitmap(phase - 1);
 	background.ShowBitmap();
+
+	// show by phase
 	if (phase == 1) {
-		if (gameClear == cookieAmount + powerUpCookieAmount) phase++;
-		etBlue[0].ShowBitmap(3);
+		// change phase
+		if (!FindElement(eatenCookie, cookieAmount, 1) && !FindElement(eatenSP, spCookieAmount, 1)) {
+			phase++;
+			InitEaten(eatenCookie, cookieAmount);
+			InitEaten(eatenSP, spCookieAmount);
+			cookieAmount = 0;
+			spCookieAmount = 0;
+		}
 
 		//character
 		if (towards == 0) {
@@ -204,19 +217,36 @@ void CGameStateRun::ShowByPhase() {
 			character[towards].ShowBitmap();
 		}
 
+		// cookies
 		for (int i = 0; i < cookieAmount; i++) {
 			cookie[i].ShowBitmap(0.5);
 		}
-		for (int i = 0; i < powerUpCookieAmount; i++) {
-			powerUpCookie[i].ShowBitmap(1.5);
+		for (int i = 0; i < spCookieAmount; i++) {
+			spCookie[i].ShowBitmap(1.5);
 		}
+
+		// monster
+		//etBlue[0].ShowBitmap(3);
 	}
-	if (phase == 2) {
+	else if (phase == 2) {
 
 	}
 	
 }
 
+void CGameStateRun::InitEaten(int *p, int len) {
+	for (int i = 0; i < len; i++) {
+		p[i] = 1;
+	}
+}
+
 int CGameStateRun::GetPixelAttribute(int left, int top) {
 	return map[top/PIXHEIGHT][left/PIXWIDTH];
+}
+
+bool CGameStateRun::FindElement(int *p, int len, int val) {
+	for (int i = 0; i < len; i++) {
+		if (p[i] == val)	return true;
+	}
+	return false;
 }
