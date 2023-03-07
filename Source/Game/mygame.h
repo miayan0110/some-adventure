@@ -104,11 +104,12 @@ namespace game_framework {
 		int MAPWIDTH = 28;
 		int MAPHEIGHT = 36;
 		int phase = 1;
-		int towards = 0;
+		int towards = 0;	// character direction
 		int eatenCookie[500];
 		int eatenSP[10];
 		int cookieAmount = 0;
 		int spCookieAmount = 0;
+		bool isMapLoaded = false;
 		int map[2][36][28] = {
 		{
 			{-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2},
@@ -193,9 +194,11 @@ namespace game_framework {
 		CMovingBitmap spCookie[10];
 		CMovingBitmap etBlue[4];
 		void ShowByPhase();
+		void InitMap();
 		void InitEaten(int *p, int len);
 		int GetPixelAttribute(int left, int top);
 		bool FindElement(int *p, int len, int val);
+		void CheckPhaseClear();
 	};
 
 	/////////////////////////////////////////////////////////////////////////////

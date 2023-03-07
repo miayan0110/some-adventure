@@ -82,23 +82,7 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 	// cookies
 	cookieAmount = 0;
 	spCookieAmount = 0;
-	for (int i = 0; i < MAPHEIGHT; i++) {
-		for (int j = 0; j < MAPWIDTH; j++) {
-			if (map[0][i][j] == 0) {
-				cookie[cookieAmount].LoadBitmapByString({ "resources/stuff/cookie.bmp", "resources/stuff/cookie_empty.bmp" }, RGB(255, 255, 255));
-				cookie[cookieAmount].SetTopLeft(4 + PIXWIDTH * j, 4 + PIXHEIGHT * i);
-				eatenCookie[cookieAmount] = 1;
-				cookieAmount++;
-			}
-			else if (map[0][i][j] == 1) {
-				spCookie[spCookieAmount].LoadBitmapByString({ "resources/stuff/cookie.bmp", "resources/stuff/cookie_empty.bmp" }, RGB(255, 255, 255));
-				spCookie[spCookieAmount].SetTopLeft(PIXWIDTH*j - 2, PIXHEIGHT*i - 2);
-				spCookie[spCookieAmount].SetAnimation(200, 0);
-				eatenSP[spCookieAmount] = 1;
-				spCookieAmount++;
-			}
-		}
-	}
+	InitMap();
 
 	// character
 	character[0].LoadBitmapByString({
@@ -137,23 +121,29 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 
 void CGameStateRun::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	if (phase == 1) {
-		if (nChar == 0x44) {
-			character[0].SetTopLeft(character[towards].Left(), character[towards].Top());	// D for going right
-			towards = 0;
-		}
-		else if (nChar == 0x41) {
-			character[1].SetTopLeft(character[towards].Left(), character[towards].Top());	// A for going left
-			towards = 1;
-		}
-		else if (nChar == 0x57) {
-			character[2].SetTopLeft(character[towards].Left(), character[towards].Top());	// W for going up
-			towards = 2;
-		}
-		else if (nChar == 0x53) {
-			character[3].SetTopLeft(character[towards].Left(), character[towards].Top());	// S for going down
-			towards = 3;
-		}
+	if (nChar == 0x44) {
+		character[0].SetTopLeft(character[towards].Left(), character[towards].Top());	// D for going right
+		towards = 0;
+	}
+	else if (nChar == 0x41) {
+		character[1].SetTopLeft(character[towards].Left(), character[towards].Top());	// A for going left
+		towards = 1;
+	}
+	else if (nChar == 0x57) {
+		character[2].SetTopLeft(character[towards].Left(), character[towards].Top());	// W for going up
+		towards = 2;
+	}
+	else if (nChar == 0x53) {
+		character[3].SetTopLeft(character[towards].Left(), character[towards].Top());	// S for going down
+		towards = 3;
+	}
+	else if (nChar == VK_SPACE) {
+		phase++;
+		InitEaten(eatenCookie, cookieAmount);
+		InitEaten(eatenSP, spCookieAmount);
+		cookieAmount = 0;
+		spCookieAmount = 0;
+		isMapLoaded = false;
 	}
 }
 
@@ -192,46 +182,62 @@ void CGameStateRun::ShowByPhase() {
 	background.SelectShowBitmap(phase - 1);
 	background.ShowBitmap();
 
-	// show by phase
-	if (phase == 1) {
-		// change phase
-		if (!FindElement(eatenCookie, cookieAmount, 1) && !FindElement(eatenSP, spCookieAmount, 1)) {
-			phase++;
-			InitEaten(eatenCookie, cookieAmount);
-			InitEaten(eatenSP, spCookieAmount);
-			cookieAmount = 0;
-			spCookieAmount = 0;
-		}
+	//character
+	if (towards == 0) {
+		character[towards].ShowBitmap();
+	}
+	else if (towards == 1) {
+		character[towards].ShowBitmap();
+	}
+	else if (towards == 2) {
+		character[towards].ShowBitmap();
+	}
+	else if (towards == 3) {
+		character[towards].ShowBitmap();
+	}
 
-		//character
-		if (towards == 0) {
-			character[towards].ShowBitmap();
-		}
-		else if (towards == 1) {
-			character[towards].ShowBitmap();
-		}
-		else if (towards == 2) {
-			character[towards].ShowBitmap();
-		}
-		else if (towards == 3) {
-			character[towards].ShowBitmap();
-		}
+	// cookies
+	for (int i = 0; i < cookieAmount; i++) {
+		cookie[i].ShowBitmap(0.5);
+	}
+	for (int i = 0; i < spCookieAmount; i++) {
+		spCookie[i].ShowBitmap(1.5);
+	}
 
-		// cookies
-		for (int i = 0; i < cookieAmount; i++) {
-			cookie[i].ShowBitmap(0.5);
+	// change phase
+	if (phase < 5) {
+		if (!isMapLoaded) {
+			InitMap();
+			character[0].SetTopLeft(16, 64);
 		}
-		for (int i = 0; i < spCookieAmount; i++) {
-			spCookie[i].ShowBitmap(1.5);
-		}
+		CheckPhaseClear();
 
 		// monster
 		//etBlue[0].ShowBitmap(3);
 	}
-	else if (phase == 2) {
+}
 
+void CGameStateRun::InitMap() {
+	for (int i = 0; i < MAPHEIGHT; i++) {
+		for (int j = 0; j < MAPWIDTH; j++) {
+			if (map[phase - 1][i][j] == 0) {
+				cookie[cookieAmount].LoadBitmapByString({ "resources/stuff/cookie.bmp", "resources/stuff/cookie_empty.bmp" }, RGB(255, 255, 255));
+				cookie[cookieAmount].SetTopLeft(4 + PIXWIDTH * j, 4 + PIXHEIGHT * i);
+				cookie[cookieAmount].SelectShowBitmap(0);
+				eatenCookie[cookieAmount] = 1;
+				cookieAmount++;
+			}
+			else if (map[phase - 1][i][j] == 1) {
+				spCookie[spCookieAmount].LoadBitmapByString({ "resources/stuff/cookie.bmp", "resources/stuff/cookie_empty.bmp" }, RGB(255, 255, 255));
+				spCookie[spCookieAmount].SetTopLeft(PIXWIDTH*j - 2, PIXHEIGHT*i - 2);
+				spCookie[spCookieAmount].SelectShowBitmap(0);
+				spCookie[spCookieAmount].SetAnimation(200, 0);
+				eatenSP[spCookieAmount] = 1;
+				spCookieAmount++;
+			}
+		}
 	}
-	
+	isMapLoaded = true;
 }
 
 void CGameStateRun::InitEaten(int *p, int len) {
@@ -241,7 +247,7 @@ void CGameStateRun::InitEaten(int *p, int len) {
 }
 
 int CGameStateRun::GetPixelAttribute(int left, int top) {
-	return map[top/PIXHEIGHT][left/PIXWIDTH];
+	return map[phase-1][top/PIXHEIGHT][left/PIXWIDTH];
 }
 
 bool CGameStateRun::FindElement(int *p, int len, int val) {
@@ -249,4 +255,15 @@ bool CGameStateRun::FindElement(int *p, int len, int val) {
 		if (p[i] == val)	return true;
 	}
 	return false;
+}
+
+void CGameStateRun::CheckPhaseClear() {
+	if (!FindElement(eatenCookie, cookieAmount, 1) && !FindElement(eatenSP, spCookieAmount, 1)) {
+		phase++;
+		InitEaten(eatenCookie, cookieAmount);
+		InitEaten(eatenSP, spCookieAmount);
+		cookieAmount = 0;
+		spCookieAmount = 0;
+		isMapLoaded = false;
+	}
 }
