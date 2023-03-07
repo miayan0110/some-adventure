@@ -72,6 +72,7 @@ namespace game_framework {
 		CMovingBitmap etBlue;
 		CMovingBitmap etYellow;
 		CMovingBitmap point;
+		CMovingBitmap start;
 		void InitBackground();
 		void InitText();
 	};
