@@ -27,27 +27,45 @@ void CGameStateRun::OnBeginState()
 
 void CGameStateRun::OnMove()							// 移動遊戲元素
 {
-	// character movement
 	int edge = 5;	// space for turning around
 	int speed = 2;	// walking speed
+
+	// character movement
 	if (towards == 0 && GetPixelAttribute(character[towards].Right() + 1, character[towards].Top() + edge) >= 0 && GetPixelAttribute(character[towards].Right() + 1, character[towards].Bottom() - edge) >= 0) {
-		character[towards].ToggleAnimation();
+		character[towards].StopKeepAni(true);
 		character[towards].SetTopLeft(character[towards].Left() + speed, character[towards].Top());
 	}
 	else if (towards == 1 && GetPixelAttribute(character[towards].Left() - 1, character[towards].Top() + edge) >= 0 && GetPixelAttribute(character[towards].Left() - 1, character[towards].Bottom() - edge) >= 0) {
-		character[towards].ToggleAnimation();
+		character[towards].StopKeepAni(true);
 		character[towards].SetTopLeft(character[towards].Left() - speed, character[towards].Top());
 	}
 	else if (towards == 2 && GetPixelAttribute(character[towards].Left() + edge, character[towards].Top() - 1) >= 0 && GetPixelAttribute(character[towards].Right() - edge, character[towards].Top() - 1) >= 0) {
-		character[towards].ToggleAnimation();
+		character[towards].StopKeepAni(true);
 		character[towards].SetTopLeft(character[towards].Left(), character[towards].Top() - speed);
 	}
 	else if (towards == 3 && GetPixelAttribute(character[towards].Left() + edge, character[towards].Bottom() + 1) >= 0 && GetPixelAttribute(character[towards].Right() - edge, character[towards].Bottom() + 1) >= 0) {
-		character[towards].ToggleAnimation();
+		character[towards].StopKeepAni(true);
 		character[towards].SetTopLeft(character[towards].Left(), character[towards].Top() + speed);
 	}
 	else {
-		character[towards].StopAni();
+		character[towards].StopKeepAni(false);
+	}
+
+	// monster movement
+	if (randomTowards[0] == 0 && GetPixelAttribute(etRed[randomTowards[0]].Right() + 1, etRed[randomTowards[0]].Top() + edge) >= -1 && GetPixelAttribute(etRed[randomTowards[0]].Right() + 1, etRed[randomTowards[0]].Bottom() - edge) >= -1) {
+		etRed[randomTowards[0]].SetTopLeft(etRed[randomTowards[0]].Left() + speed, etRed[randomTowards[0]].Top());
+	}
+	else if (randomTowards[0] == 1 && GetPixelAttribute(etRed[randomTowards[0]].Left() - 1, etRed[randomTowards[0]].Top() + edge) >= -1 && GetPixelAttribute(etRed[randomTowards[0]].Left() - 1, etRed[randomTowards[0]].Bottom() - edge) >= -1) {
+		etRed[randomTowards[0]].SetTopLeft(etRed[randomTowards[0]].Left() - speed, etRed[randomTowards[0]].Top());
+	}
+	else if (randomTowards[0] == 2 && GetPixelAttribute(etRed[randomTowards[0]].Left() + edge, etRed[randomTowards[0]].Top() - 1) >= -1 && GetPixelAttribute(etRed[randomTowards[0]].Right() - edge, etRed[randomTowards[0]].Top() - 1) >= -1) {
+		etRed[randomTowards[0]].SetTopLeft(etRed[randomTowards[0]].Left(), etRed[randomTowards[0]].Top() - speed);
+	}
+	else if (randomTowards[0] == 3 && GetPixelAttribute(etRed[randomTowards[0]].Left() + edge, etRed[randomTowards[0]].Bottom() + 1) >= -1 && GetPixelAttribute(etRed[randomTowards[0]].Right() - edge, etRed[randomTowards[0]].Bottom() + 1) >= -1) {
+		etRed[randomTowards[0]].SetTopLeft(etRed[randomTowards[0]].Left(), etRed[randomTowards[0]].Top() + speed);
+	}
+	else {
+		ChangeDir(0, randomTowards[0]);
 	}
 
 	// unshow cookies
@@ -117,12 +135,39 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 		}, RGB(255, 255, 255));
 	character[3].SetAnimation(100, 0);
 
-	// monster
+	//// monster
+	// red
+	etRed[0].LoadBitmapByString({
+		"resources/ets/redET_towardR_1.bmp",
+		"resources/ets/redET_towardR_2.bmp",
+		}, RGB(255, 255, 255));
+	etRed[0].SetTopLeft(192, 272);
+	etRed[0].SetAnimation(100, 0);
+
+	etRed[1].LoadBitmapByString({
+		"resources/ets/redET_towardL_1.bmp",
+		"resources/ets/redET_towardL_2.bmp",
+		}, RGB(255, 255, 255));
+	etRed[1].SetAnimation(100, 0);
+
+	etRed[2].LoadBitmapByString({
+		"resources/ets/redET_towardU_1.bmp",
+		"resources/ets/redET_towardU_2.bmp",
+		}, RGB(255, 255, 255));
+	etRed[2].SetAnimation(100, 0);
+
+	etRed[3].LoadBitmapByString({
+		"resources/ets/redET_towardD_1.bmp",
+		"resources/ets/redET_towardD_2.bmp",
+		}, RGB(255, 255, 255));
+	etRed[3].SetAnimation(100, 0);
+
+	// blue
 	etBlue[0].LoadBitmapByString({
 		"resources/ets/blueET_towardR_1.bmp",
 		"resources/ets/blueET_towardR_2.bmp",
 		}, RGB(255, 255, 255));
-	etBlue[0].SetTopLeft(0, 0);
+	etBlue[0].SetTopLeft(216, 272);
 	etBlue[0].SetAnimation(100, 0);
 
 	etBlue[1].LoadBitmapByString({
@@ -238,7 +283,31 @@ void CGameStateRun::ShowByPhase() {
 		CheckPhaseClear();
 
 		// monster
-		//etBlue[0].ShowBitmap(3);
+		if (randomTowards[0] == 0) {
+			etRed[randomTowards[0]].ShowBitmap();
+		}
+		else if (randomTowards[0] == 1) {
+			etRed[randomTowards[0]].ShowBitmap();
+		}
+		else if (randomTowards[0] == 2) {
+			etRed[randomTowards[0]].ShowBitmap();
+		}
+		else if (randomTowards[0] == 3) {
+			etRed[randomTowards[0]].ShowBitmap();
+		}
+
+		if (randomTowards[1] == 0) {
+			etBlue[randomTowards[1]].ShowBitmap();
+		}
+		else if (randomTowards[1] == 1) {
+			etBlue[randomTowards[1]].ShowBitmap();
+		}
+		else if (randomTowards[1] == 2) {
+			etBlue[randomTowards[1]].ShowBitmap();
+		}
+		else if (randomTowards[1] == 3) {
+			etBlue[randomTowards[1]].ShowBitmap();
+		}
 	}
 }
 
@@ -291,4 +360,8 @@ void CGameStateRun::CheckPhaseClear() {
 		spCookieAmount = 0;
 		isMapLoaded = false;
 	}
+}
+
+void CGameStateRun::ChangeDir(int etNo, int lastDir) {
+
 }

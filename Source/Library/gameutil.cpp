@@ -223,8 +223,8 @@ namespace game_framework {
 		return 0.5*(location.top + location.bottom);
 	}
 
-	void CMovingBitmap::StopAni() {
-		isAnimation = false;
+	void CMovingBitmap::StopKeepAni(bool start) {
+		isAnimation = start;
 	}
 
 	/////////////////////////////////////////////////////////////////////////////

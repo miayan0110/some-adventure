@@ -106,6 +106,7 @@ namespace game_framework {
 		int MAPHEIGHT = 36;
 		int phase = 1;
 		int towards = 0;	// character direction
+		int randomTowards[4] = { 0, 0, 0, 0 };
 		int eatenCookie[500];
 		int eatenSP[10];
 		int cookieAmount = 0;
@@ -193,13 +194,17 @@ namespace game_framework {
 		CMovingBitmap character[4];
 		CMovingBitmap cookie[500];
 		CMovingBitmap spCookie[10];
+		CMovingBitmap etRed[4];
+		CMovingBitmap etPink[4];
 		CMovingBitmap etBlue[4];
+		CMovingBitmap etYellow[4];
 		void ShowByPhase();
 		void InitMap();
 		void InitEaten(int *p, int len);
 		int GetPixelAttribute(int left, int top);
 		bool FindElement(int *p, int len, int val);
 		void CheckPhaseClear();
+		void ChangeDir(int etNo, int lastDir);
 	};
 
 	/////////////////////////////////////////////////////////////////////////////
