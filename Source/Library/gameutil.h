@@ -103,6 +103,7 @@ namespace game_framework {
 		int   Bottom();
 		double   CenterX();
 		double   CenterY();
+		void	StopAni();
 	protected:
 		int selector = 0;
 		int delayCount = 10;

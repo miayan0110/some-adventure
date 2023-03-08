@@ -65,6 +65,7 @@ namespace game_framework {
 	protected:
 		void OnShow();									// 顯示這個狀態的遊戲畫面
 	private:
+		int speed[2] = { 1, -1 };
 		CMovingBitmap logo;								// csie的logo
 		CMovingBitmap character;
 		CMovingBitmap etRed;
@@ -73,8 +74,8 @@ namespace game_framework {
 		CMovingBitmap etYellow;
 		CMovingBitmap point;
 		CMovingBitmap start;
-		void InitBackground();
 		void InitText();
+		int MovingSpeed(CMovingBitmap character, int mode);
 	};
 
 	/////////////////////////////////////////////////////////////////////////////

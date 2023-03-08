@@ -28,19 +28,26 @@ void CGameStateRun::OnBeginState()
 void CGameStateRun::OnMove()							// 移動遊戲元素
 {
 	// character movement
-	int edge = 4;	// space for turning around
+	int edge = 5;	// space for turning around
 	int speed = 2;	// walking speed
 	if (towards == 0 && GetPixelAttribute(character[towards].Right() + 1, character[towards].Top() + edge) >= 0 && GetPixelAttribute(character[towards].Right() + 1, character[towards].Bottom() - edge) >= 0) {
+		character[towards].ToggleAnimation();
 		character[towards].SetTopLeft(character[towards].Left() + speed, character[towards].Top());
 	}
 	else if (towards == 1 && GetPixelAttribute(character[towards].Left() - 1, character[towards].Top() + edge) >= 0 && GetPixelAttribute(character[towards].Left() - 1, character[towards].Bottom() - edge) >= 0) {
+		character[towards].ToggleAnimation();
 		character[towards].SetTopLeft(character[towards].Left() - speed, character[towards].Top());
 	}
 	else if (towards == 2 && GetPixelAttribute(character[towards].Left() + edge, character[towards].Top() - 1) >= 0 && GetPixelAttribute(character[towards].Right() - edge, character[towards].Top() - 1) >= 0) {
+		character[towards].ToggleAnimation();
 		character[towards].SetTopLeft(character[towards].Left(), character[towards].Top() - speed);
 	}
 	else if (towards == 3 && GetPixelAttribute(character[towards].Left() + edge, character[towards].Bottom() + 1) >= 0 && GetPixelAttribute(character[towards].Right() - edge, character[towards].Bottom() + 1) >= 0) {
+		character[towards].ToggleAnimation();
 		character[towards].SetTopLeft(character[towards].Left(), character[towards].Top() + speed);
+	}
+	else {
+		character[towards].StopAni();
 	}
 
 	// unshow cookies
@@ -116,7 +123,25 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 		"resources/ets/blueET_towardR_2.bmp",
 		}, RGB(255, 255, 255));
 	etBlue[0].SetTopLeft(0, 0);
-	//etBlue[0].SetAnimation(100, 0);
+	etBlue[0].SetAnimation(100, 0);
+
+	etBlue[1].LoadBitmapByString({
+		"resources/ets/blueET_towardL_1.bmp",
+		"resources/ets/blueET_towardL_2.bmp",
+		}, RGB(255, 255, 255));
+	etBlue[1].SetAnimation(100, 0);
+
+	etBlue[2].LoadBitmapByString({
+		"resources/ets/blueET_towardU_1.bmp",
+		"resources/ets/blueET_towardU_2.bmp",
+		}, RGB(255, 255, 255));
+	etBlue[2].SetAnimation(100, 0);
+
+	etBlue[3].LoadBitmapByString({
+		"resources/ets/blueET_towardD_1.bmp",
+		"resources/ets/blueET_towardD_2.bmp",
+		}, RGB(255, 255, 255));
+	etBlue[3].SetAnimation(100, 0);
 }
 
 void CGameStateRun::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
@@ -184,16 +209,16 @@ void CGameStateRun::ShowByPhase() {
 
 	//character
 	if (towards == 0) {
-		character[towards].ShowBitmap();
+		character[towards].ShowBitmap(1.25);
 	}
 	else if (towards == 1) {
-		character[towards].ShowBitmap();
+		character[towards].ShowBitmap(1.25);
 	}
 	else if (towards == 2) {
-		character[towards].ShowBitmap();
+		character[towards].ShowBitmap(1.25);
 	}
 	else if (towards == 3) {
-		character[towards].ShowBitmap();
+		character[towards].ShowBitmap(1.25);
 	}
 
 	// cookies

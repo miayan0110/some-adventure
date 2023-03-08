@@ -24,8 +24,34 @@ void CGameStateInit::OnInit()
 	//
 	ShowInitProgress(0, "Start Initialize...");	// 一開始的loading進度為0%
 	Sleep(200);
-	
-	InitBackground();
+
+	// load sprites
+	character.LoadBitmapByString({
+		"resources/pacman/pacman_circle.bmp",
+		"resources/pacman/pacman_towardR_2.bmp",
+		}, RGB(255, 255, 255));
+	character.SetAnimation(300, 0);
+	character.SetTopLeft(100, 200);
+
+	etRed.LoadBitmapByString({ "resources/ets/redET_towardU_1.bmp", "resources/ets/redET_towardU_2.bmp" }, RGB(255, 255, 255));
+	etRed.SetAnimation(100, 0);
+	etRed.SetTopLeft(150, 200);
+
+	etPink.LoadBitmapByString({ "resources/ets/pinkET_towardU_1.bmp", "resources/ets/pinkET_towardU_2.bmp" }, RGB(255, 255, 255));
+	etPink.SetAnimation(200, 0);
+	etPink.SetTopLeft(200, 200);
+
+	etBlue.LoadBitmapByString({ "resources/ets/blueET_towardU_1.bmp", "resources/ets/blueET_towardU_2.bmp" }, RGB(255, 255, 255));
+	etBlue.SetAnimation(100, 0);
+	etBlue.SetTopLeft(250, 200);
+
+	etYellow.LoadBitmapByString({ "resources/ets/yellowET_towardU_1.bmp", "resources/ets/yellowET_towardU_2.bmp" }, RGB(255, 255, 255));
+	etYellow.SetAnimation(200, 0);
+	etYellow.SetTopLeft(300, 200);
+
+	start.LoadBitmapByString({ "resources/start_1.bmp", "resources/start_2.bmp" }, RGB(255, 255, 255));
+	start.SetAnimation(200, 0);
+	start.SetTopLeft(110, 300);
 
 	ShowInitProgress(50, "Initialize...");
 	//
@@ -53,58 +79,20 @@ void CGameStateInit::OnLButtonDown(UINT nFlags, CPoint point)
 
 void CGameStateInit::OnShow()
 {
-	
-
 	character.ShowBitmap(2.5);
-	character.LoadBitmapByString({
-		"resources/pacman/pacman_circle.bmp",
-		"resources/pacman/pacman_towardR_2.bmp",
-		}, RGB(255, 255, 255));
-	character.SetAnimation(300, 0);
-	character.SetTopLeft(100, 200);
-
 	etRed.ShowBitmap(2.5);
-	etRed.LoadBitmapByString({ "resources/ets/redET_towardU_1.bmp", "resources/ets/redET_towardU_2.bmp" }, RGB(255, 255, 255));
-	etRed.SetAnimation(100, 0);
-	etRed.SetTopLeft(150, 200);
-
 	etPink.ShowBitmap(2.5);
-	etPink.LoadBitmapByString({ "resources/ets/pinkET_towardU_1.bmp", "resources/ets/pinkET_towardU_2.bmp" }, RGB(255, 255, 255));
-	etPink.SetAnimation(200, 0);
-	etPink.SetTopLeft(200, 200);
-
 	etBlue.ShowBitmap(2.5);
-	etBlue.LoadBitmapByString({ "resources/ets/blueET_towardU_1.bmp", "resources/ets/blueET_towardU_2.bmp" }, RGB(255, 255, 255));
-	etBlue.SetAnimation(100, 0);
-	etBlue.SetTopLeft(250, 200);
-
 	etYellow.ShowBitmap(2.5);
-	etYellow.LoadBitmapByString({ "resources/ets/yellowET_towardU_1.bmp", "resources/ets/yellowET_towardU_2.bmp" }, RGB(255, 255, 255));
-	etYellow.SetAnimation(200, 0);
-	etYellow.SetTopLeft(300, 200);
-
 	start.ShowBitmap(0.2);
-	start.LoadBitmapByString({ "resources/start_1.bmp", "resources/start_2.bmp" }, RGB(255, 255, 255));
-	start.SetAnimation(200, 0);
-	start.SetTopLeft(110, 300);
 	
-	InitText();
-}
+	// movement
+	etRed.SetTopLeft(etRed.Left(), etRed.Top() + MovingSpeed(etRed, 0));
+	etPink.SetTopLeft(etPink.Left(), etPink.Top() + MovingSpeed(etPink, 1));
+	etBlue.SetTopLeft(etBlue.Left(), etBlue.Top() + MovingSpeed(etBlue, 0));
+	etYellow.SetTopLeft(etYellow.Left(), etYellow.Top() + MovingSpeed(etYellow, 1));
 
-void CGameStateInit::InitBackground() {
-	character.LoadBitmap({ "resources/pacman/pacman_circle.bmp" }, RGB(255, 255, 255));
-	character.SetTopLeft(100, 200);
-	etRed.LoadBitmap({ "resources/ets/redET_towardU_1.bmp" }, RGB(255, 255, 255));
-	etRed.SetTopLeft(150, 200);
-	etPink.LoadBitmap({ "resources/ets/pinkET_towardU_1.bmp" }, RGB(255, 255, 255));
-	etPink.SetTopLeft(200, 200);
-	etBlue.LoadBitmap({ "resources/ets/blueET_towardU_1.bmp" }, RGB(255, 255, 255));
-	etBlue.SetTopLeft(250, 200);
-	etYellow.LoadBitmap({ "resources/ets/yellowET_towardU_1.bmp" }, RGB(255, 255, 255));
-	etYellow.SetTopLeft(300, 200);
-	start.LoadBitmap({ "resources/start_1.bmp" }, RGB(255, 255, 255));
-	//start.SetTopLeft(175, 425);
-	
+	//InitText();
 }
 
 void CGameStateInit::InitText() {
@@ -115,4 +103,14 @@ void CGameStateInit::InitText() {
 	//CTextDraw::Print(pDC, 175, 425,"Start");
 
 	CDDraw::ReleaseBackCDC();
+}
+
+int CGameStateInit::MovingSpeed(CMovingBitmap character, int mode) {
+	if (character.Top() == 190) {
+		speed[mode] = 1;
+	}
+	else if (character.Top() == 210) {
+		speed[mode] = -1;
+	}
+	return speed[mode];
 }

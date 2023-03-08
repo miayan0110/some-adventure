@@ -223,6 +223,10 @@ namespace game_framework {
 		return 0.5*(location.top + location.bottom);
 	}
 
+	void CMovingBitmap::StopAni() {
+		isAnimation = false;
+	}
+
 	/////////////////////////////////////////////////////////////////////////////
 	// CTextDraw: The class provide the ability to draw the text.
 	// 這個 class 提供文字的呈現
