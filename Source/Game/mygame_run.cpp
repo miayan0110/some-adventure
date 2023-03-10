@@ -65,7 +65,7 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 		etRed[randomTowards[0]].SetTopLeft(etRed[randomTowards[0]].Left(), etRed[randomTowards[0]].Top() + speed);
 	}
 	else {
-		ChangeDir(0, randomTowards[0]);
+		ChangeDir(0, randomTowards[0], etRed);
 	}
 
 	// unshow cookies
@@ -191,21 +191,30 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 
 void CGameStateRun::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
+	int edge = 5;	// space for turning around
 	if (nChar == 0x44) {
-		character[0].SetTopLeft(character[towards].Left(), character[towards].Top());	// D for going right
-		towards = 0;
+		if (GetPixelAttribute(character[towards].Right() + 1, character[towards].Top() + edge) >= 0) {
+			character[0].SetTopLeft(character[towards].Left(), character[towards].Top());	// D for going right
+			towards = 0;
+		}
 	}
 	else if (nChar == 0x41) {
-		character[1].SetTopLeft(character[towards].Left(), character[towards].Top());	// A for going left
-		towards = 1;
+		if (GetPixelAttribute(character[towards].Left() - 1, character[towards].Top() + edge) >= 0) {
+			character[1].SetTopLeft(character[towards].Left(), character[towards].Top());	// A for going left
+			towards = 1;
+		}
 	}
 	else if (nChar == 0x57) {
-		character[2].SetTopLeft(character[towards].Left(), character[towards].Top());	// W for going up
-		towards = 2;
+		if (GetPixelAttribute(character[towards].Left() + edge, character[towards].Top() - 1) >= 0) {
+			character[2].SetTopLeft(character[towards].Left(), character[towards].Top());	// W for going up
+			towards = 2;
+		}
 	}
 	else if (nChar == 0x53) {
-		character[3].SetTopLeft(character[towards].Left(), character[towards].Top());	// S for going down
-		towards = 3;
+		if (GetPixelAttribute(character[towards].Left() + edge, character[towards].Bottom() + 1) >= 0) {
+			character[3].SetTopLeft(character[towards].Left(), character[towards].Top());	// S for going down
+			towards = 3;
+		}
 	}
 	else if (nChar == VK_SPACE) {
 		phase++;
@@ -362,6 +371,35 @@ void CGameStateRun::CheckPhaseClear() {
 	}
 }
 
-void CGameStateRun::ChangeDir(int etNo, int lastDir) {
+void CGameStateRun::ChangeDir(int etNo, int lastDir, CMovingBitmap *et) {
+	//int randarr[3];
+	switch (lastDir) {
+	case 0:
+		if (GetPixelAttribute(int(et[0].CenterX() - PIXWIDTH), int(et[0].CenterY())) >= 0)	randomTowards[etNo] = 1;
+		else if (GetPixelAttribute(int(et[0].CenterX()), int(et[0].CenterY() - PIXHEIGHT)) >= 0)	randomTowards[etNo] = 2;
+		else if (GetPixelAttribute(int(et[0].CenterX()), int(et[0].CenterY() + PIXHEIGHT)) >= 0)	randomTowards[etNo] = 3;
+		break;
+	case 1:
+		if (GetPixelAttribute(int(et[0].CenterX() + PIXWIDTH), int(et[0].CenterY()) >= 0))	randomTowards[etNo] = 0;
+		else if (GetPixelAttribute(int(et[0].CenterX()), int(et[0].CenterY() - PIXHEIGHT)) >= 0)	randomTowards[etNo] = 2;
+		else if (GetPixelAttribute(int(et[0].CenterX()), int(et[0].CenterY() + PIXHEIGHT)) >= 0)	randomTowards[etNo] = 3;
+		break;
+	case 2:
+		if (GetPixelAttribute(int(et[0].CenterX() + PIXWIDTH), int(et[0].CenterY()) >= 0))	randomTowards[etNo] = 0;
+		else if (GetPixelAttribute(int(et[0].CenterX() - PIXWIDTH), int(et[0].CenterY())) >= 0)	randomTowards[etNo] = 1;
+		else if (GetPixelAttribute(int(et[0].CenterX()), int(et[0].CenterY() + PIXHEIGHT)) >= 0)	randomTowards[etNo] = 3;
+		break;
+	case 3:
+		if (GetPixelAttribute(int(et[0].CenterX() + PIXWIDTH), int(et[0].CenterY())) >= 0)	randomTowards[etNo] = 0;
+		else if (GetPixelAttribute(int(et[0].CenterX()) - PIXWIDTH, int(et[0].CenterY())) >= 0)	randomTowards[etNo] = 1;
+		else if (GetPixelAttribute(int(et[0].CenterX()), int(et[0].CenterY() - PIXHEIGHT)) >= 0)	randomTowards[etNo] = 2;
+		break;
+	default:
+		break;
+	}
+}
+/*
+int CGameStateRun::CheckRoad(int charX, int charY) {
 
 }
+*/

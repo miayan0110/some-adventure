@@ -74,6 +74,7 @@ namespace game_framework {
 		CMovingBitmap etYellow;
 		CMovingBitmap point;
 		CMovingBitmap start;
+		CMovingBitmap frame;
 		void InitText();
 		int MovingSpeed(CMovingBitmap character, int mode);
 	};
@@ -106,7 +107,7 @@ namespace game_framework {
 		int MAPHEIGHT = 36;
 		int phase = 1;
 		int towards = 0;	// character direction
-		int randomTowards[4] = { 0, 0, 0, 0 };
+		int randomTowards[4] = { 0, 0, 0, 0 };	// monster direction, [0] for red, [1] for pink, [2] for blue, [3] for yellow
 		int eatenCookie[500];
 		int eatenSP[10];
 		int cookieAmount = 0;
@@ -204,7 +205,8 @@ namespace game_framework {
 		int GetPixelAttribute(int left, int top);
 		bool FindElement(int *p, int len, int val);
 		void CheckPhaseClear();
-		void ChangeDir(int etNo, int lastDir);
+		void ChangeDir(int etNo, int lastDir, CMovingBitmap *et);
+		//int CheckRoad(int charX, int charY);
 	};
 
 	/////////////////////////////////////////////////////////////////////////////

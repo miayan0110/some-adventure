@@ -53,6 +53,24 @@ void CGameStateInit::OnInit()
 	start.SetAnimation(200, 0);
 	start.SetTopLeft(110, 300);
 
+	frame.LoadBitmapByString({
+		"resources/frame/1.bmp",
+		"resources/frame/2.bmp",
+		"resources/frame/3.bmp",
+		"resources/frame/4.bmp",
+		"resources/frame/5.bmp",
+		"resources/frame/6.bmp",
+		"resources/frame/7.bmp",
+		"resources/frame/8.bmp",
+		"resources/frame/9.bmp",
+		"resources/frame/10.bmp",
+		"resources/frame/11.bmp",
+		"resources/frame/12.bmp",
+		"resources/frame/13.bmp" 
+		}, RGB(255, 255, 255));
+	frame.SetAnimation(100, 0);
+	frame.SetTopLeft(0, 15);
+
 	ShowInitProgress(50, "Initialize...");
 	//
 	// 開始載入資料
@@ -85,6 +103,7 @@ void CGameStateInit::OnShow()
 	etBlue.ShowBitmap(2.5);
 	etYellow.ShowBitmap(2.5);
 	start.ShowBitmap(0.2);
+	frame.ShowBitmap(1.03);
 	
 	// movement
 	etRed.SetTopLeft(etRed.Left(), etRed.Top() + MovingSpeed(etRed, 0));
