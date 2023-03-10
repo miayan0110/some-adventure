@@ -64,9 +64,6 @@ void CGameStateInit::OnInit()
 		"resources/frame/8.bmp",
 		"resources/frame/9.bmp",
 		"resources/frame/10.bmp",
-		"resources/frame/11.bmp",
-		"resources/frame/12.bmp",
-		"resources/frame/13.bmp" 
 		}, RGB(255, 255, 255));
 	frame.SetAnimation(100, 0);
 	frame.SetTopLeft(0, 15);
