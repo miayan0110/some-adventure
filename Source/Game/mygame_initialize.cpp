@@ -22,8 +22,8 @@ void CGameStateInit::OnInit()
 	// 當圖很多時，OnInit載入所有的圖要花很多時間。為避免玩遊戲的人
 	//     等的不耐煩，遊戲會出現「Loading ...」，顯示Loading的進度。
 	//
-	ShowInitProgress(0, "Start Initialize...");	// 一開始的loading進度為0%
-	Sleep(200);
+	//ShowInitProgress(0, "Start Initialize...");	// 一開始的loading進度為0%
+	//Sleep(200);
 
 	// load sprites
 	character.LoadBitmapByString({
@@ -68,7 +68,7 @@ void CGameStateInit::OnInit()
 	frame.SetAnimation(100, 0);
 	frame.SetTopLeft(0, 15);
 
-	ShowInitProgress(50, "Initialize...");
+	//ShowInitProgress(50, "Initialize...");
 	//
 	// 開始載入資料
 	//
