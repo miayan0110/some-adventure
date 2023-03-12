@@ -105,9 +105,15 @@ namespace game_framework {
 		int PIXHEIGHT = 16;
 		int MAPWIDTH = 28;
 		int MAPHEIGHT = 36;
+		int UP = 0;
+		int LEFT = 1;
+		int DOWN = 2;
+		int RIGHT = 3;
 		int phase = 1;
-		int towards = 0;	// character direction
-		int etTowards[4] = { 0, 0, 0, 0 };	// monster direction, [0] for red, [1] for pink, [2] for blue, [3] for yellow
+		int towards = RIGHT;	// character direction
+		int etTowards[4] = { LEFT, RIGHT, RIGHT, RIGHT };	// monster direction, [0] for red, [1] for pink, [2] for blue, [3] for yellow
+		int edge = 5;	// space for turning around
+		int dirCanGo[4][4];
 		int eatenCookie[500];
 		int eatenSP[10];
 		int cookieAmount = 0;
@@ -208,6 +214,8 @@ namespace game_framework {
 		bool FindElement(int *p, int len, int val);
 		void CheckPhaseClear();
 		void ChaseMode();
+		double Distance(CMovingBitmap a, CMovingBitmap b, int nextdir);
+		bool CheckRoad(CMovingBitmap et, int etNo);
 	};
 
 	/////////////////////////////////////////////////////////////////////////////
