@@ -70,6 +70,7 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 
 	// monster movement
 	// red
+	
 	if (etRed[etTowards[0]].Left() % 16 == 0 && etRed[etTowards[0]].Top() % 16 == 0 && CheckRoad(etRed[etTowards[0]], 0)) {
 		ChaseMode();
 	}
@@ -218,25 +219,25 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 
 void CGameStateRun::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	if (nChar == VK_RIGHT) {	// going right
+	if (nChar == 0x44) {	// going right
 		if (GetPixelAttribute(character[towards].Right() + 1, character[towards].Top() + edge) >= 0 && GetPixelAttribute(character[towards].Right() + 1, character[towards].Bottom() - edge) >= 0) {
 			character[RIGHT].SetTopLeft(character[towards].Left(), character[towards].Top());
 			towards = RIGHT;
 		}
 	}
-	else if (nChar == VK_LEFT) {	// going left
+	else if (nChar == 0x41) {	// going left
 		if (GetPixelAttribute(character[towards].Left() - 1, character[towards].Top() + edge) >= 0 && GetPixelAttribute(character[towards].Left() - 1, character[towards].Bottom() - edge) >= 0) {
 			character[LEFT].SetTopLeft(character[towards].Left(), character[towards].Top());
 			towards = LEFT;
 		}
 	}
-	else if (nChar == VK_UP) {	// going up
+	else if (nChar == 0x57) {	// going up
 		if (GetPixelAttribute(character[towards].Left() + edge, character[towards].Top() - 1) >= 0 && GetPixelAttribute(character[towards].Right() - edge, character[towards].Top() - 1) >= 0) {
 			character[UP].SetTopLeft(character[towards].Left(), character[towards].Top());
 			towards = UP;
 		}
 	}
-	else if (nChar == VK_DOWN) {	// going down
+	else if (nChar == 0x53) {	// going down
 		if (GetPixelAttribute(character[towards].Left() + edge, character[towards].Bottom() + 1) >= 0 && GetPixelAttribute(character[towards].Right() - edge, character[towards].Bottom() + 1) >= 0) {
 			character[DOWN].SetTopLeft(character[towards].Left(), character[towards].Top());
 			towards = DOWN;
@@ -373,7 +374,6 @@ void CGameStateRun::CheckPhaseClear() {
 }
 
 void CGameStateRun::ChaseMode() {
-	//int lastdir[4] = { etTowards[0],etTowards[1] ,etTowards[2] ,etTowards[3] };
 	double mindis[4] = { 2000000000,2000000000,2000000000,2000000000 };
 	int nextdir[4] = { -1,-1,-1,-1 };
 
@@ -398,7 +398,14 @@ void CGameStateRun::ChaseMode() {
 		if (GetPixelAttribute(etRed[etTowards[0]].Left() + edge, etRed[etTowards[0]].Bottom() + 1) >= -1 && GetPixelAttribute(etRed[etTowards[0]].Right() - edge, etRed[etTowards[0]].Bottom() + 1) >= -1) {
 			dirCanGo[0][DOWN] = DOWN;
 		}
-		dirCanGo[0][etTowards[0]] = -1;
+
+		if (etTowards[0] == UP || etTowards[0] == RIGHT) {
+			dirCanGo[0][etTowards[0]-2] = -1;
+		}
+		else if (etTowards[0] == DOWN || etTowards[0] == LEFT) {
+			dirCanGo[0][etTowards[0]+2] = -1;
+		}
+		
 		
 		for (int i = 3; i > -1; i--) {
 			if (dirCanGo[0][i] == i) {
