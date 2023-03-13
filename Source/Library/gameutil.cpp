@@ -227,6 +227,10 @@ namespace game_framework {
 		isAnimation = start;
 	}
 
+	bool CMovingBitmap::IsBitmapLoaded() {
+		return isBitmapLoaded;
+	}
+
 	/////////////////////////////////////////////////////////////////////////////
 	// CTextDraw: The class provide the ability to draw the text.
 	// 這個 class 提供文字的呈現

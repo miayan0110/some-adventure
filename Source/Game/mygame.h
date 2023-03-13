@@ -199,13 +199,13 @@ namespace game_framework {
 		}
 	};
 		CMovingBitmap background;
-		CMovingBitmap character[4];
+		CMovingBitmap character[5];
 		CMovingBitmap cookie[500];
 		CMovingBitmap spCookie[10];
-		CMovingBitmap etRed[4];
-		CMovingBitmap etPink[4];
-		CMovingBitmap etBlue[4];
-		CMovingBitmap etYellow[4];
+		CMovingBitmap etRed[5];
+		CMovingBitmap etPink[5];
+		CMovingBitmap etBlue[5];
+		CMovingBitmap etYellow[5];
 		void ShowByPhase();
 		bool Delay(int delaytime);
 		void InitMap();
@@ -214,7 +214,8 @@ namespace game_framework {
 		bool FindElement(int *p, int len, int val);
 		void CheckPhaseClear();
 		void ChaseMode();
-		double Distance(CMovingBitmap a, CMovingBitmap b, int nextdir);
+		void Tunnel(CMovingBitmap chara, int nowdir);
+		double Distance(CMovingBitmap et, CMovingBitmap target, int nextdir);
 		bool CheckRoad(CMovingBitmap et, int etNo);
 	};
 

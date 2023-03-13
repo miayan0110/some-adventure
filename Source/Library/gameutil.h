@@ -104,6 +104,7 @@ namespace game_framework {
 		double   CenterX();
 		double   CenterY();
 		void	StopKeepAni(bool start);
+		bool	IsBitmapLoaded();
 	protected:
 		int selector = 0;
 		int delayCount = 10;

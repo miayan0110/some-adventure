@@ -63,6 +63,20 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 			character[towards].SetTopLeft(character[towards].Left(), character[towards].Top() + speed);
 		}*/
 	}
+	else if (character[towards].Right() >= 435) {
+		towards = 4;
+		if (Delay(1200)) {
+			towards = RIGHT;
+			character[towards].SetTopLeft(1, character[towards].Top());
+		}
+	}
+	else if (character[towards].Left() <= 3) {
+		towards = 4;
+		if (Delay(1200)) {
+			towards = LEFT;
+			character[towards].SetTopLeft(445, character[towards].Top());
+		}
+	}
 	else {
 		character[towards].StopKeepAni(false);
 		character[towards].SelectShowBitmap(1);
@@ -87,7 +101,10 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 	else if (etTowards[0] == DOWN && GetPixelAttribute(etRed[etTowards[0]].Left() + edge, etRed[etTowards[0]].Bottom() + 1) >= -1 && GetPixelAttribute(etRed[etTowards[0]].Right() - edge, etRed[etTowards[0]].Bottom() + 1) >= -1) {
 		etRed[etTowards[0]].SetTopLeft(etRed[etTowards[0]].Left(), etRed[etTowards[0]].Top() + speed);
 	}
-	else {
+	else if (etRed[etTowards[0]].Right() >= 440 || etRed[etTowards[0]].Left() <= 10) {
+		etTowards[0] = 4;
+	}
+	else if (etRed[etTowards[0]].Left() % 16 == 0 && etRed[etTowards[0]].Top() % 16 == 0) {
 		ChaseMode();
 	}
 
@@ -122,7 +139,7 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 
 	// map
 	background.LoadBitmapByString({
-		"resources/map/phase_1.bmp",
+		"resources/map/phase_1_test.bmp",
 		"resources/map/phase_2.bmp",
 		"resources/map/phase_3.bmp",
 	}, RGB(255, 255, 255));
@@ -163,6 +180,11 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 		}, RGB(255, 255, 255));
 	character[DOWN].SetAnimation(50, 0);
 
+	character[4].LoadBitmapByString({
+		"resources/pacman/pacman_unshow.bmp",
+		"resources/pacman/pacman_unshow.bmp",
+		}, RGB(255, 255, 255));
+
 	//// monster
 	// red
 	etRed[RIGHT].LoadBitmapByString({
@@ -190,6 +212,11 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 		}, RGB(255, 255, 255));
 	etRed[DOWN].SetAnimation(100, 0);
 
+	etRed[4].LoadBitmapByString({
+		"resources/ets/et_unshow.bmp",
+		"resources/ets/et_unshow.bmp",
+		}, RGB(255, 255, 255));
+
 	// blue
 	etBlue[RIGHT].LoadBitmapByString({
 		"resources/ets/blueET_towardR_1.bmp",
@@ -215,6 +242,11 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 		"resources/ets/blueET_towardD_2.bmp",
 		}, RGB(255, 255, 255));
 	etBlue[DOWN].SetAnimation(100, 0);
+
+	etBlue[4].LoadBitmapByString({
+		"resources/ets/et_unshow.bmp",
+		"resources/ets/et_unshow.bmp",
+		}, RGB(255, 255, 255));
 }
 
 void CGameStateRun::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
@@ -399,10 +431,10 @@ void CGameStateRun::ChaseMode() {
 			dirCanGo[0][DOWN] = DOWN;
 		}
 
-		if (etTowards[0] == UP || etTowards[0] == RIGHT) {
+		if (etTowards[0] == DOWN || etTowards[0] == RIGHT) {
 			dirCanGo[0][etTowards[0]-2] = -1;
 		}
-		else if (etTowards[0] == DOWN || etTowards[0] == LEFT) {
+		if (etTowards[0] == UP || etTowards[0] == LEFT) {
 			dirCanGo[0][etTowards[0]+2] = -1;
 		}
 		
@@ -415,8 +447,31 @@ void CGameStateRun::ChaseMode() {
 				}
 			}
 		}
-		etRed[nextdir[0]].SetTopLeft(etRed[etTowards[0]].Left(), etRed[etTowards[0]].Top());
-		etTowards[0] = nextdir[0];
+
+		if (etRed[etTowards[0]].IsBitmapLoaded()) {
+			if (etRed[etTowards[0]].Right() >= 440 || etRed[etTowards[0]].Left() <= 10) {
+				return;
+			}
+			etRed[nextdir[0]].SetTopLeft(etRed[etTowards[0]].Left(), etRed[etTowards[0]].Top());
+			etTowards[0] = nextdir[0];
+		}
+	}
+}
+
+void CGameStateRun::Tunnel(CMovingBitmap chara, int nowdir) {
+	if (nowdir == RIGHT) {
+		towards = 4;
+		if (Delay(1200)) {
+			towards = RIGHT;
+			chara.SetTopLeft(1, chara.Top());
+		}
+	}
+	else if (nowdir == LEFT) {
+		towards = 4;
+		if (Delay(1200)) {
+			towards = LEFT;
+			chara.SetTopLeft(445, chara.Top());
+		}
 	}
 }
 
