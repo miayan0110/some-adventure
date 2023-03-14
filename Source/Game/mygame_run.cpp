@@ -34,34 +34,18 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 	if (towards == RIGHT && GetPixelAttribute(character[towards].Right() + 1, character[towards].Top() + edge) >= 0 && GetPixelAttribute(character[towards].Right() + 1, character[towards].Bottom() - edge) >= 0) {
 		character[towards].StopKeepAni(true);
 		character[towards].SetTopLeft(character[towards].Left() + speed, character[towards].Top());
-		/*
-		if (Delay(85)) {
-			character[towards].SetTopLeft(character[towards].Left() + speed, character[towards].Top());
-		}*/
 	}
 	else if (towards == LEFT && GetPixelAttribute(character[towards].Left() - 1, character[towards].Top() + edge) >= 0 && GetPixelAttribute(character[towards].Left() - 1, character[towards].Bottom() - edge) >= 0) {
 		character[towards].StopKeepAni(true);
 		character[towards].SetTopLeft(character[towards].Left() - speed, character[towards].Top());
-		/*
-		if (Delay(85)) {
-			character[towards].SetTopLeft(character[towards].Left() - speed, character[towards].Top());
-		}*/
 	}
 	else if (towards == UP && GetPixelAttribute(character[towards].Left() + edge, character[towards].Top() - 1) >= 0 && GetPixelAttribute(character[towards].Right() - edge, character[towards].Top() - 1) >= 0) {
 		character[towards].StopKeepAni(true);
 		character[towards].SetTopLeft(character[towards].Left(), character[towards].Top() - speed);
-		/*
-		if (Delay(85)) {
-			character[towards].SetTopLeft(character[towards].Left(), character[towards].Top() - speed);
-		}*/
 	}
 	else if (towards == DOWN && GetPixelAttribute(character[towards].Left() + edge, character[towards].Bottom() + 1) >= 0 && GetPixelAttribute(character[towards].Right() - edge, character[towards].Bottom() + 1) >= 0) {
 		character[towards].StopKeepAni(true);
 		character[towards].SetTopLeft(character[towards].Left(), character[towards].Top() + speed);
-		/*
-		if (Delay(85)) {
-			character[towards].SetTopLeft(character[towards].Left(), character[towards].Top() + speed);
-		}*/
 	}
 	else if (character[towards].Right() >= 435) {
 		towards = 4;
@@ -84,7 +68,6 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 
 	// monster movement
 	// red
-	
 	if (etRed[etTowards[0]].Left() % 16 == 0 && etRed[etTowards[0]].Top() % 16 == 0 && CheckRoad(etRed[etTowards[0]], 0)) {
 		ChaseMode();
 	}
@@ -101,10 +84,21 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 	else if (etTowards[0] == DOWN && GetPixelAttribute(etRed[etTowards[0]].Left() + edge, etRed[etTowards[0]].Bottom() + 1) >= -1 && GetPixelAttribute(etRed[etTowards[0]].Right() - edge, etRed[etTowards[0]].Bottom() + 1) >= -1) {
 		etRed[etTowards[0]].SetTopLeft(etRed[etTowards[0]].Left(), etRed[etTowards[0]].Top() + speed);
 	}
-	else if (etRed[etTowards[0]].Right() >= 440 || etRed[etTowards[0]].Left() <= 10) {
+	else if (etRed[etTowards[0]].Right() >= 440) {
 		etTowards[0] = 4;
+		if (Delay(100)) {
+			etTowards[0] = RIGHT;
+			etRed[etTowards[0]].SetTopLeft(1, etRed[etTowards[0]].Top());
+		}
 	}
-	else if (etRed[etTowards[0]].Left() % 16 == 0 && etRed[etTowards[0]].Top() % 16 == 0) {
+	else if (etRed[etTowards[0]].Left() <= 3) {
+		etTowards[0] = 4;
+		if (Delay(100)) {
+			etTowards[0] = LEFT;
+			etRed[etTowards[0]].SetTopLeft(445, etRed[etTowards[0]].Top());
+		}
+	}
+	else {
 		ChaseMode();
 	}
 
