@@ -213,7 +213,7 @@ namespace game_framework {
 		int GetPixelAttribute(int left, int top);
 		bool FindElement(int *p, int len, int val);
 		void CheckPhaseClear();
-		void ChaseMode();
+		void ChaseMode(string name);
 		void Tunnel(CMovingBitmap chara, int nowdir);
 		double Distance(CMovingBitmap et, CMovingBitmap target, int nextdir);
 		bool CheckRoad(CMovingBitmap et, int etNo);

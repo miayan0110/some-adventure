@@ -69,7 +69,7 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 	// monster movement
 	// red
 	if (etRed[etTowards[0]].Left() % 16 == 0 && etRed[etTowards[0]].Top() % 16 == 0 && CheckRoad(etRed[etTowards[0]], 0)) {
-		ChaseMode();
+		ChaseMode("red");
 	}
 
 	if (etTowards[0] == RIGHT && GetPixelAttribute(etRed[etTowards[0]].Right() + 1, etRed[etTowards[0]].Top() + edge) >= -1 && GetPixelAttribute(etRed[etTowards[0]].Right() + 1, etRed[etTowards[0]].Bottom() - edge) >= -1) {
@@ -98,8 +98,11 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 			etRed[etTowards[0]].SetTopLeft(445, etRed[etTowards[0]].Top());
 		}
 	}
+	else if (etRed[etTowards[0]].Left() % 16 == 0 && etRed[etTowards[0]].Top() % 16 == 0) {
+		ChaseMode("red");
+	}
 	else {
-		ChaseMode();
+		ChaseMode("red");
 	}
 
 
@@ -399,7 +402,7 @@ void CGameStateRun::CheckPhaseClear() {
 	}
 }
 
-void CGameStateRun::ChaseMode() {
+void CGameStateRun::ChaseMode(string name) {
 	double mindis[4] = { 2000000000,2000000000,2000000000,2000000000 };
 	int nextdir[4] = { -1,-1,-1,-1 };
 
@@ -411,45 +414,49 @@ void CGameStateRun::ChaseMode() {
 	}
 
 	// red
-	if (etRed[etTowards[0]].Top() != character[towards].Top() || etRed[etTowards[0]].Left() != character[towards].Left()) {
-		if (GetPixelAttribute(etRed[etTowards[0]].Right() + 1, etRed[etTowards[0]].Top() + edge) >= -1 && GetPixelAttribute(etRed[etTowards[0]].Right() + 1, etRed[etTowards[0]].Bottom() - edge) >= -1) {
-			dirCanGo[0][RIGHT] = RIGHT;
-		}
-		if (GetPixelAttribute(etRed[etTowards[0]].Left() - 1, etRed[etTowards[0]].Top() + edge) >= -1 && GetPixelAttribute(etRed[etTowards[0]].Left() - 1, etRed[etTowards[0]].Bottom() - edge) >= -1) {
-			dirCanGo[0][LEFT] = LEFT;
-		}
-		if (GetPixelAttribute(etRed[etTowards[0]].Left() + edge, etRed[etTowards[0]].Top() - 1) >= -1 && GetPixelAttribute(etRed[etTowards[0]].Right() - edge, etRed[etTowards[0]].Top() - 1) >= -1) {
-			dirCanGo[0][UP] = UP;
-		}
-		if (GetPixelAttribute(etRed[etTowards[0]].Left() + edge, etRed[etTowards[0]].Bottom() + 1) >= -1 && GetPixelAttribute(etRed[etTowards[0]].Right() - edge, etRed[etTowards[0]].Bottom() + 1) >= -1) {
-			dirCanGo[0][DOWN] = DOWN;
-		}
+	if (name == "red") {
+		if (etRed[etTowards[0]].Top() != character[towards].Top() || etRed[etTowards[0]].Left() != character[towards].Left()) {
+			if (GetPixelAttribute(etRed[etTowards[0]].Right() + 1, etRed[etTowards[0]].Top() + edge) >= -1 && GetPixelAttribute(etRed[etTowards[0]].Right() + 1, etRed[etTowards[0]].Bottom() - edge) >= -1) {
+				dirCanGo[0][RIGHT] = RIGHT;
+			}
+			if (GetPixelAttribute(etRed[etTowards[0]].Left() - 1, etRed[etTowards[0]].Top() + edge) >= -1 && GetPixelAttribute(etRed[etTowards[0]].Left() - 1, etRed[etTowards[0]].Bottom() - edge) >= -1) {
+				dirCanGo[0][LEFT] = LEFT;
+			}
+			if (GetPixelAttribute(etRed[etTowards[0]].Left() + edge, etRed[etTowards[0]].Top() - 1) >= -1 && GetPixelAttribute(etRed[etTowards[0]].Right() - edge, etRed[etTowards[0]].Top() - 1) >= -1) {
+				dirCanGo[0][UP] = UP;
+			}
+			if (GetPixelAttribute(etRed[etTowards[0]].Left() + edge, etRed[etTowards[0]].Bottom() + 1) >= -1 && GetPixelAttribute(etRed[etTowards[0]].Right() - edge, etRed[etTowards[0]].Bottom() + 1) >= -1) {
+				dirCanGo[0][DOWN] = DOWN;
+			}
 
-		if (etTowards[0] == DOWN || etTowards[0] == RIGHT) {
-			dirCanGo[0][etTowards[0]-2] = -1;
-		}
-		if (etTowards[0] == UP || etTowards[0] == LEFT) {
-			dirCanGo[0][etTowards[0]+2] = -1;
-		}
-		
-		
-		for (int i = 3; i > -1; i--) {
-			if (dirCanGo[0][i] == i) {
-				if (Distance(etRed[etTowards[0]], character[towards], i) <= mindis[0]) {
-					mindis[0] = Distance(etRed[etTowards[0]], character[towards], i);
-					nextdir[0] = i;
+			if (etTowards[0] == DOWN || etTowards[0] == RIGHT) {
+				dirCanGo[0][etTowards[0] - 2] = -1;
+			}
+			if (etTowards[0] == UP || etTowards[0] == LEFT) {
+				dirCanGo[0][etTowards[0] + 2] = -1;
+			}
+
+
+			for (int i = 3; i > -1; i--) {
+				if (dirCanGo[0][i] == i) {
+					if (Distance(etRed[etTowards[0]], character[towards], i) <= mindis[0]) {
+						mindis[0] = Distance(etRed[etTowards[0]], character[towards], i);
+						nextdir[0] = i;
+					}
 				}
 			}
-		}
 
-		if (etRed[etTowards[0]].IsBitmapLoaded()) {
-			if (etRed[etTowards[0]].Right() >= 440 || etRed[etTowards[0]].Left() <= 10) {
-				return;
+			if (etRed[etTowards[0]].IsBitmapLoaded()) {
+				if (etRed[etTowards[0]].Right() >= 440 || etRed[etTowards[0]].Left() <= 10) {
+					return;
+				}
+				etRed[nextdir[0]].SetTopLeft(etRed[etTowards[0]].Left(), etRed[etTowards[0]].Top());
+				etTowards[0] = nextdir[0];
 			}
-			etRed[nextdir[0]].SetTopLeft(etRed[etTowards[0]].Left(), etRed[etTowards[0]].Top());
-			etTowards[0] = nextdir[0];
 		}
 	}
+	
+	// blue
 }
 
 void CGameStateRun::Tunnel(CMovingBitmap chara, int nowdir) {
@@ -471,16 +478,16 @@ void CGameStateRun::Tunnel(CMovingBitmap chara, int nowdir) {
 
 double CGameStateRun::Distance(CMovingBitmap et, CMovingBitmap target, int nextdir) {
 	if (nextdir == RIGHT) {
-		return sqrt(pow(et.CenterX() + 16 - target.CenterX(), 2) + pow(et.CenterY() - target.CenterY(), 2));
+		return sqrt(pow((int)et.CenterX()/16 + 1 - (int)target.CenterX()/16, 2) + pow((int)et.CenterY()/16 - (int)target.CenterY()/16, 2));
 	}
 	else if (nextdir == LEFT) {
-		return sqrt(pow(et.CenterX() - 16 - target.CenterX(), 2) + pow(et.CenterY() - target.CenterY(), 2));
+		return sqrt(pow((int)et.CenterX()/16 - 1 - (int)target.CenterX()/16, 2) + pow((int)et.CenterY()/16 - (int)target.CenterY()/16, 2));
 	}
 	else if (nextdir == UP) {
-		return sqrt(pow(et.CenterX() - target.CenterX(), 2) + pow(et.CenterY() - 16 - target.CenterY(), 2));
+		return sqrt(pow((int)et.CenterX()/16 - (int)target.CenterX()/16, 2) + pow((int)et.CenterY()/16 - 1 - (int)target.CenterY()/16, 2));
 	}
 	else if (nextdir == DOWN) {
-		return sqrt(pow(et.CenterX() - target.CenterX(), 2) + pow(et.CenterY() + 16 - target.CenterY(), 2));
+		return sqrt(pow((int)et.CenterX()/16 - (int)target.CenterX()/16, 2) + pow((int)et.CenterY()/16 + 1 - (int)target.CenterY()/16, 2));
 	}
 	return 2000000000;
 }
