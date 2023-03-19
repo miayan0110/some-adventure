@@ -9,7 +9,7 @@
 
 using namespace game_framework;
 /////////////////////////////////////////////////////////////////////////////
-// ³o­Óclass¬°¹CÀ¸ªº¹CÀ¸¶}ÀYµe­±ª«¥ó
+// é€™å€‹classç‚ºéŠæˆ²çš„éŠæˆ²é–‹é ­ç•«é¢ç‰©ä»¶
 /////////////////////////////////////////////////////////////////////////////
 
 CGameStateInit::CGameStateInit(CGame *g) : CGameState(g)
@@ -19,11 +19,17 @@ CGameStateInit::CGameStateInit(CGame *g) : CGameState(g)
 void CGameStateInit::OnInit()
 {
 	//
-	// ·í¹Ï«Ü¦h®É¡AOnInit¸ü¤J©Ò¦³ªº¹Ï­nªá«Ü¦h®É¶¡¡C¬°Á×§Kª±¹CÀ¸ªº¤H
-	//     µ¥ªº¤£­@·Ğ¡A¹CÀ¸·|¥X²{¡uLoading ...¡v¡AÅã¥ÜLoadingªº¶i«×¡C
+	// ç•¶åœ–å¾ˆå¤šæ™‚ï¼ŒOnInitè¼‰å…¥æ‰€æœ‰çš„åœ–è¦èŠ±å¾ˆå¤šæ™‚é–“ã€‚ç‚ºé¿å…ç©éŠæˆ²çš„äºº
+	//     ç­‰çš„ä¸è€ç…©ï¼ŒéŠæˆ²æœƒå‡ºç¾ã€ŒLoading ...ã€ï¼Œé¡¯ç¤ºLoadingçš„é€²åº¦ã€‚
 	//
-	//ShowInitProgress(0, "Start Initialize...");	// ¤@¶}©lªºloading¶i«×¬°0%
-	//Sleep(200);
+	// ShowInitProgress(0, "Start Initialize...");	// ä¸€é–‹å§‹çš„loadingé€²åº¦ç‚º0%
+	//
+	// é–‹å§‹è¼‰å…¥è³‡æ–™
+	//
+	// Sleep(1000);				// æ”¾æ…¢ï¼Œä»¥ä¾¿çœ‹æ¸…æ¥šé€²åº¦ï¼Œå¯¦éš›éŠæˆ²è«‹åˆªé™¤æ­¤Sleep
+	//
+	// æ­¤OnInitå‹•ä½œæœƒæ¥åˆ°CGameStaterRun::OnInit()ï¼Œæ‰€ä»¥é€²åº¦é‚„æ²’åˆ°100%
+	//
 
 	// load sprites
 	character.LoadBitmapByString({
@@ -67,15 +73,6 @@ void CGameStateInit::OnInit()
 		}, RGB(255, 255, 255));
 	frame.SetAnimation(100, 0);
 	frame.SetTopLeft(0, 15);
-
-	//ShowInitProgress(50, "Initialize...");
-	//
-	// ¶}©l¸ü¤J¸ê®Æ
-	//
-	// Sleep(1000);				// ©ñºC¡A¥H«K¬İ²M·¡¶i«×¡A¹ê»Ú¹CÀ¸½Ğ§R°£¦¹Sleep
-	//
-	// ¦¹OnInit°Ê§@·|±µ¨ìCGameStaterRun::OnInit()¡A©Ò¥H¶i«×ÁÙ¨S¨ì100%
-	//
 }
 
 void CGameStateInit::OnBeginState()
@@ -84,16 +81,16 @@ void CGameStateInit::OnBeginState()
 
 void CGameStateInit::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	GotoGameState(GAME_STATE_RUN);		// ¤Á´«¦ÜGAME_STATE_RUN
+	GotoGameState(GAME_STATE_RUN);		// åˆ‡æ›è‡³GAME_STATE_RUN
 }
 
 void CGameStateInit::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	
 }
 
 void CGameStateInit::OnShow()
 {
+	// show sprites
 	character.ShowBitmap(2.5);
 	etRed.ShowBitmap(2.5);
 	etPink.ShowBitmap(2.5);
@@ -101,32 +98,20 @@ void CGameStateInit::OnShow()
 	etYellow.ShowBitmap(2.5);
 	start.ShowBitmap(0.2);
 	frame.ShowBitmap(1.03);
-	
-	// movement
-	etRed.SetTopLeft(etRed.Left(), etRed.Top() + MovingSpeed(etRed, 0));
-	etPink.SetTopLeft(etPink.Left(), etPink.Top() + MovingSpeed(etPink, 1));
-	etBlue.SetTopLeft(etBlue.Left(), etBlue.Top() + MovingSpeed(etBlue, 0));
-	etYellow.SetTopLeft(etYellow.Left(), etYellow.Top() + MovingSpeed(etYellow, 1));
 
-	//InitText();
+	// animations
+	etRed.SetTopLeft(etRed.GetLeft(), etRed.GetTop() + MovingAnimation(etRed, 0));
+	etPink.SetTopLeft(etPink.GetLeft(), etPink.GetTop() + MovingAnimation(etPink, 1));
+	etBlue.SetTopLeft(etBlue.GetLeft(), etBlue.GetTop() + MovingAnimation(etBlue, 0));
+	etYellow.SetTopLeft(etYellow.GetLeft(), etYellow.GetTop() + MovingAnimation(etYellow, 1));
 }
 
-void CGameStateInit::InitText() {
-	CDC *pDC = CDDraw::GetBackCDC();
-	CFont* fp;
-
-	CTextDraw::ChangeFontLog(pDC, fp, 50, "·L³n¥¿¶ÂÅé", RGB(255, 255, 255));
-	//CTextDraw::Print(pDC, 175, 425,"Start");
-
-	CDDraw::ReleaseBackCDC();
-}
-
-int CGameStateInit::MovingSpeed(CMovingBitmap character, int mode) {
-	if (character.Top() == 190) {
-		speed[mode] = 1;
+int CGameStateInit::MovingAnimation(CMovingBitmap character, int mode) {
+	if (character.GetTop() == 190) {
+		speed[mode] = 1;	// go upward
 	}
-	else if (character.Top() == 210) {
-		speed[mode] = -1;
+	else if (character.GetTop() == 210) {
+		speed[mode] = -1;	// go downward
 	}
 	return speed[mode];
 }

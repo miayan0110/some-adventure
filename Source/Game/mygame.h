@@ -1,5 +1,5 @@
 /*
- * mygame.h: ¥»ÀÉ®×Àx¹CÀ¸¥»¨­ªºclassªºinterface
+ * mygame.h: æœ¬æª”æ¡ˆå„²éŠæˆ²æœ¬èº«çš„classçš„interface
  * Copyright (C) 2002-2008 Woei-Kae Chen <wkc@csie.ntut.edu.tw>
  *
  * This file is part of game, a free game development framework for windows.
@@ -37,89 +37,120 @@
  *      2. Replace the demonstration of animation as a new bouncing ball.
  *      3. Use ShowInitProgress(percent) to display loading progress.
 */
-
+#include "myfunc.h"
 
 namespace game_framework {
 	/////////////////////////////////////////////////////////////////////////////
 	// Constants
 	/////////////////////////////////////////////////////////////////////////////
 
-	enum AUDIO_ID {				// ©w¸q¦UºØ­µ®Äªº½s¸¹
+	enum AUDIO_ID {				// å®šç¾©å„ç¨®éŸ³æ•ˆçš„ç·¨è™Ÿ
 		AUDIO_DING,				// 0
 		AUDIO_LAKE,				// 1
 		AUDIO_NTUT				// 2
 	};
 
 	/////////////////////////////////////////////////////////////////////////////
-	// ³o­Óclass¬°¹CÀ¸ªº¹CÀ¸¶}ÀYµe­±ª«¥ó
-	// ¨C­ÓMember functionªºImplementation³£­n§ËÀ´
+	// é€™å€‹classç‚ºéŠæˆ²çš„éŠæˆ²é–‹é ­ç•«é¢ç‰©ä»¶
+	// æ¯å€‹Member functionçš„Implementationéƒ½è¦å¼„æ‡‚
 	/////////////////////////////////////////////////////////////////////////////
 
 	class CGameStateInit : public CGameState {
 	public:
 		CGameStateInit(CGame *g);
-		void OnInit();  								// ¹CÀ¸ªºªì­È¤Î¹Ï§Î³]©w
-		void OnBeginState();							// ³]©w¨C¦¸­«ª±©Ò»İªºÅÜ¼Æ
-		void OnKeyUp(UINT, UINT, UINT); 				// ³B²zÁä½LUpªº°Ê§@
-		void OnLButtonDown(UINT nFlags, CPoint point);  // ³B²z·Æ¹«ªº°Ê§@
+		void OnInit();  								// éŠæˆ²çš„åˆå€¼åŠåœ–å½¢è¨­å®š
+		void OnBeginState();							// è¨­å®šæ¯æ¬¡é‡ç©æ‰€éœ€çš„è®Šæ•¸
+		void OnKeyUp(UINT, UINT, UINT); 				// è™•ç†éµç›¤Upçš„å‹•ä½œ
+		void OnLButtonDown(UINT nFlags, CPoint point);  // è™•ç†æ»‘é¼ çš„å‹•ä½œ
 	protected:
-		void OnShow();									// Åã¥Ü³o­Óª¬ºAªº¹CÀ¸µe­±
+		void OnShow();									// é¡¯ç¤ºé€™å€‹ç‹€æ…‹çš„éŠæˆ²ç•«é¢
 	private:
-		int speed[2] = { 1, -1 };
-		CMovingBitmap logo;								// csieªºlogo
+		CMovingBitmap logo;								// csieçš„logo
+		
+		// sprites
 		CMovingBitmap character;
 		CMovingBitmap etRed;
 		CMovingBitmap etPink;
 		CMovingBitmap etBlue;
 		CMovingBitmap etYellow;
-		CMovingBitmap point;
 		CMovingBitmap start;
 		CMovingBitmap frame;
-		void InitText();
-		int MovingSpeed(CMovingBitmap character, int mode);
+
+		// constant
+		int speed[2] = { 1,-1 };
+
+		// functions
+		int MovingAnimation(CMovingBitmap character, int mode);
 	};
 
 	/////////////////////////////////////////////////////////////////////////////
-	// ³o­Óclass¬°¹CÀ¸ªº¹CÀ¸°õ¦æª«¥ó¡A¥D­nªº¹CÀ¸µ{¦¡³£¦b³o¸Ì
-	// ¨C­ÓMember functionªºImplementation³£­n§ËÀ´
+	// é€™å€‹classç‚ºéŠæˆ²çš„éŠæˆ²åŸ·è¡Œç‰©ä»¶ï¼Œä¸»è¦çš„éŠæˆ²ç¨‹å¼éƒ½åœ¨é€™è£¡
+	// æ¯å€‹Member functionçš„Implementationéƒ½è¦å¼„æ‡‚
 	/////////////////////////////////////////////////////////////////////////////
 
 	class CGameStateRun : public CGameState {
 	public:
 		CGameStateRun(CGame *g);
 		~CGameStateRun();
-		void OnBeginState();							// ³]©w¨C¦¸­«ª±©Ò»İªºÅÜ¼Æ
-		void OnInit();  								// ¹CÀ¸ªºªì­È¤Î¹Ï§Î³]©w
+		void OnBeginState();							// è¨­å®šæ¯æ¬¡é‡ç©æ‰€éœ€çš„è®Šæ•¸
+		void OnInit();  								// éŠæˆ²çš„åˆå€¼åŠåœ–å½¢è¨­å®š
 		void OnKeyDown(UINT, UINT, UINT);
 		void OnKeyUp(UINT, UINT, UINT);
-		void OnLButtonDown(UINT nFlags, CPoint point);  // ³B²z·Æ¹«ªº°Ê§@
-		void OnLButtonUp(UINT nFlags, CPoint point);	// ³B²z·Æ¹«ªº°Ê§@
-		void OnMouseMove(UINT nFlags, CPoint point);	// ³B²z·Æ¹«ªº°Ê§@ 
-		void OnRButtonDown(UINT nFlags, CPoint point);  // ³B²z·Æ¹«ªº°Ê§@
-		void OnRButtonUp(UINT nFlags, CPoint point);	// ³B²z·Æ¹«ªº°Ê§@
+		void OnLButtonDown(UINT nFlags, CPoint point);  // è™•ç†æ»‘é¼ çš„å‹•ä½œ
+		void OnLButtonUp(UINT nFlags, CPoint point);	// è™•ç†æ»‘é¼ çš„å‹•ä½œ
+		void OnMouseMove(UINT nFlags, CPoint point);	// è™•ç†æ»‘é¼ çš„å‹•ä½œ 
+		void OnRButtonDown(UINT nFlags, CPoint point);  // è™•ç†æ»‘é¼ çš„å‹•ä½œ
+		void OnRButtonUp(UINT nFlags, CPoint point);	// è™•ç†æ»‘é¼ çš„å‹•ä½œ
 	protected:
-		void OnMove();									// ²¾°Ê¹CÀ¸¤¸¯À
-		void OnShow();									// Åã¥Ü³o­Óª¬ºAªº¹CÀ¸µe­±
+		void OnMove();									// ç§»å‹•éŠæˆ²å…ƒç´ 
+		void OnShow();									// é¡¯ç¤ºé€™å€‹ç‹€æ…‹çš„éŠæˆ²ç•«é¢
 	private:
-		int PIXWIDTH = 16;
-		int PIXHEIGHT = 16;
-		int MAPWIDTH = 28;
-		int MAPHEIGHT = 36;
-		int UP = 0;
-		int LEFT = 1;
-		int DOWN = 2;
-		int RIGHT = 3;
+		// sprites
+		CMovingBitmap background;
+		MyBitmap character[5];
+		MyBitmap etRed[5];
+		MyBitmap etPink[5];
+		MyBitmap etBlue[5];
+		MyBitmap etYellow[5];
+		MyBitmap cookie[500];
+		MyBitmap spCookie[10];
+
+		// constants
+		const int PIXWIDTH = 16;
+		const int PIXHEIGHT = 16;
+		const int MAPWIDTH = 28;
+		const int MAPHEIGHT = 36;
+		const int UP = 0;
+		const int LEFT = 1;
+		const int DOWN = 2;
+		const int RIGHT = 3;
+		
+		// flags & parameters
 		int phase = 1;
-		int towards = RIGHT;	// character direction
-		int etTowards[4] = { LEFT, RIGHT, RIGHT, RIGHT };	// monster direction, [0] for red, [1] for pink, [2] for blue, [3] for yellow
+		int towards = RIGHT;	// pacman direction
+		int etTowards[4] = { LEFT,RIGHT,RIGHT,RIGHT };	// ghost directions
+		int cookieAmount = 0;	// total amount of common cookies
+		int spCookieAmount = 0;	// total amount of sp cookies
+		int eatenCookie[500];	// use to record cookies are eaten or not
+		int eatenSP[10];	// use to record sp cookies are eaten or not
+		int speed = 2;	// moving speed
 		int edge = 5;	// space for turning around
-		int dirCanGo[4][4];
-		int eatenCookie[500];
-		int eatenSP[10];
-		int cookieAmount = 0;
-		int spCookieAmount = 0;
-		bool isMapLoaded = false;
-		clock_t	last_time = clock();
+		int dirCanGo[4][4];	// save all direction could go for each ghost
+		clock_t last_time = clock();	// use in Delay function
+		bool isMapLoaded = false;	// check if the map is loaded 
+
+		// functions
+		void ShowByPhase();
+		void InitMap();
+		void InitEaten(int *p, int len);
+		void CheckPhaseClear();
+		void ChaseMode(char mode);
+		int GetPixelAttribute(int left, int top);
+		double Distance(MyBitmap mb1, MyBitmap mb2, int nextdir);
+		bool Delay(int delaytime);
+		bool FindElement(int *p, int len, int target);
+
+		// map
 		int map[2][36][28] = {
 		{
 			{-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2},
@@ -197,43 +228,24 @@ namespace game_framework {
 			{-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2},
 			{-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2},
 		}
-	};
-		CMovingBitmap background;
-		CMovingBitmap character[5];
-		CMovingBitmap cookie[500];
-		CMovingBitmap spCookie[10];
-		CMovingBitmap etRed[5];
-		CMovingBitmap etPink[5];
-		CMovingBitmap etBlue[5];
-		CMovingBitmap etYellow[5];
-		void ShowByPhase();
-		bool Delay(int delaytime);
-		void InitMap();
-		void InitEaten(int *p, int len);
-		int GetPixelAttribute(int left, int top);
-		bool FindElement(int *p, int len, int val);
-		void CheckPhaseClear();
-		void ChaseMode(string name);
-		void Tunnel(CMovingBitmap chara, int nowdir);
-		double Distance(CMovingBitmap et, CMovingBitmap target, int nextdir);
-		bool CheckRoad(CMovingBitmap et, int etNo);
+		};
 	};
 
 	/////////////////////////////////////////////////////////////////////////////
-	// ³o­Óclass¬°¹CÀ¸ªºµ²§ôª¬ºA(Game Over)
-	// ¨C­ÓMember functionªºImplementation³£­n§ËÀ´
+	// é€™å€‹classç‚ºéŠæˆ²çš„çµæŸç‹€æ…‹(Game Over)
+	// æ¯å€‹Member functionçš„Implementationéƒ½è¦å¼„æ‡‚
 	/////////////////////////////////////////////////////////////////////////////
 
 	class CGameStateOver : public CGameState {
 	public:
 		CGameStateOver(CGame *g);
-		void OnBeginState();							// ³]©w¨C¦¸­«ª±©Ò»İªºÅÜ¼Æ
+		void OnBeginState();							// è¨­å®šæ¯æ¬¡é‡ç©æ‰€éœ€çš„è®Šæ•¸
 		void OnInit();
 	protected:
-		void OnMove();									// ²¾°Ê¹CÀ¸¤¸¯À
-		void OnShow();									// Åã¥Ü³o­Óª¬ºAªº¹CÀ¸µe­±
+		void OnMove();									// ç§»å‹•éŠæˆ²å…ƒç´ 
+		void OnShow();									// é¡¯ç¤ºé€™å€‹ç‹€æ…‹çš„éŠæˆ²ç•«é¢
 	private:
-		int counter;	// ­Ë¼Æ¤§­p¼Æ¾¹
+		int counter;	// å€’æ•¸ä¹‹è¨ˆæ•¸å™¨
 	};
 
 }
