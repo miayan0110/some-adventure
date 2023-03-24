@@ -90,14 +90,14 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 		etTowards[0] = 4;
 		if (Delay(100)) {
 			etTowards[0] = RIGHT;
-			etRed[etTowards[0]].SetTopLeft(1, etRed[etTowards[0]].GetTop());
+			etRed[etTowards[0]].SetTopLeft(0, etRed[etTowards[0]].GetTop());
 		}
 	}
 	else if (etRed[etTowards[0]].GetLeft() <= 3) {
 		etTowards[0] = 4;
 		if (Delay(100)) {
 			etTowards[0] = LEFT;
-			etRed[etTowards[0]].SetTopLeft(445, etRed[etTowards[0]].GetTop());
+			etRed[etTowards[0]].SetTopLeft(446, etRed[etTowards[0]].GetTop());
 		}
 	}
 	else if (etRed[etTowards[0]].GetLeft() % 16 == 0 && etRed[etTowards[0]].GetTop() % 16 == 0) {
@@ -128,14 +128,14 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 		etTowards[1] = 4;
 		if (Delay(100)) {
 			etTowards[1] = RIGHT;
-			etPink[etTowards[1]].SetTopLeft(1, etPink[etTowards[1]].GetTop());
+			etPink[etTowards[1]].SetTopLeft(0, etPink[etTowards[1]].GetTop());
 		}
 	}
 	else if (etPink[etTowards[1]].GetLeft() <= 3) {
 		etTowards[1] = 4;
 		if (Delay(100)) {
 			etTowards[1] = LEFT;
-			etPink[etTowards[1]].SetTopLeft(445, etPink[etTowards[1]].GetTop());
+			etPink[etTowards[1]].SetTopLeft(446, etPink[etTowards[1]].GetTop());
 		}
 	}
 	else if (etPink[etTowards[1]].GetLeft() % 16 == 0 && etPink[etTowards[1]].GetTop() % 16 == 0) {
@@ -476,6 +476,9 @@ void CGameStateRun::ChaseMode(char mode) {
 			target[1][0] = character[towards].CenterX();
 			target[1][1] = character[towards].CenterY() + 4 * PIXHEIGHT;
 		}
+		break;
+	default:
+		break;
 	}
 
 	// clear dirCanGo for each ghost
