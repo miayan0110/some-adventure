@@ -128,7 +128,7 @@ namespace game_framework {
 		// flags & parameters
 		int phase = 1;
 		int towards = RIGHT;	// pacman direction
-		int etTowards[4] = { LEFT,RIGHT,RIGHT,RIGHT };	// ghost directions
+		int etTowards[4] = { LEFT,DOWN,UP,UP };	// ghost directions
 		int cookieAmount = 0;	// total amount of common cookies
 		int spCookieAmount = 0;	// total amount of sp cookies
 		int eatenCookie[500];	// use to record cookies are eaten or not
@@ -136,6 +136,7 @@ namespace game_framework {
 		int speed = 2;	// moving speed
 		int edge = 5;	// space for turning around
 		int dirCanGo[4][4];	// save all direction could go for each ghost
+		clock_t start_time;
 		clock_t last_time = clock();	// use in Delay function
 		bool isMapLoaded = false;	// check if the map is loaded 
 

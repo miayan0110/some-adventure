@@ -27,7 +27,11 @@ void CGameStateRun::OnBeginState()
 }
 
 void CGameStateRun::OnMove()							// 移動遊戲元素
-{
+{	
+	if (clock()-start_time <= 5*1000) {
+		Sleep(5000);
+	}
+
 	/* pacman movement */
 	if (towards == RIGHT && GetPixelAttribute(character[towards].GetRight() + 1, character[towards].GetTop() + edge) >= 0 && GetPixelAttribute(character[towards].GetRight() + 1, character[towards].GetBottom() - edge) >= 0) {
 		character[towards].StopKeepAni(true);
@@ -103,6 +107,42 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 		ChaseMode('r');
 	}
 
+	// pink
+	if ((etPink[etTowards[1]].GetLeft() % 16 <= 0 && etPink[etTowards[1]].GetTop() % 16 <= 0) || (etPink[etTowards[1]].GetLeft() % 16 >= 15 && etPink[etTowards[1]].GetTop() % 16 >= 15)) {
+		ChaseMode('p');
+	}
+	if (etTowards[1] == RIGHT && GetPixelAttribute(etPink[etTowards[1]].GetRight() + 1, etPink[etTowards[1]].GetTop() + edge) >= -1 && GetPixelAttribute(etPink[etTowards[1]].GetRight() + 1, etPink[etTowards[1]].GetBottom() - edge) >= -1) {
+		etPink[etTowards[1]].SetTopLeft(etPink[etTowards[1]].GetLeft() + speed, etPink[etTowards[1]].GetTop());
+	}
+	else if (etTowards[1] == LEFT && GetPixelAttribute(etPink[etTowards[1]].GetLeft() - 1, etPink[etTowards[1]].GetTop() + edge) >= -1 && GetPixelAttribute(etPink[etTowards[1]].GetLeft() - 1, etPink[etTowards[1]].GetBottom() - edge) >= -1) {
+		etPink[etTowards[1]].SetTopLeft(etPink[etTowards[1]].GetLeft() - speed, etPink[etTowards[1]].GetTop());
+	}
+	else if (etTowards[1] == UP && GetPixelAttribute(etPink[etTowards[1]].GetLeft() + edge, etPink[etTowards[1]].GetTop() - 1) >= -1 && GetPixelAttribute(etPink[etTowards[1]].GetRight() - edge, etPink[etTowards[1]].GetTop() - 1) >= -1) {
+		etPink[etTowards[1]].SetTopLeft(etPink[etTowards[1]].GetLeft(), etPink[etTowards[1]].GetTop() - speed);
+	}
+	else if (etTowards[1] == DOWN && GetPixelAttribute(etPink[etTowards[1]].GetLeft() + edge, etPink[etTowards[1]].GetBottom() + 1) >= -1 && GetPixelAttribute(etPink[etTowards[1]].GetRight() - edge, etPink[etTowards[1]].GetBottom() + 1) >= -1) {
+		etPink[etTowards[1]].SetTopLeft(etPink[etTowards[1]].GetLeft(), etPink[etTowards[1]].GetTop() + speed);
+	}
+	else if (etPink[etTowards[1]].GetRight() >= 440) {
+		etTowards[1] = 4;
+		if (Delay(100)) {
+			etTowards[1] = RIGHT;
+			etPink[etTowards[1]].SetTopLeft(1, etPink[etTowards[1]].GetTop());
+		}
+	}
+	else if (etPink[etTowards[1]].GetLeft() <= 3) {
+		etTowards[1] = 4;
+		if (Delay(100)) {
+			etTowards[1] = LEFT;
+			etPink[etTowards[1]].SetTopLeft(445, etPink[etTowards[1]].GetTop());
+		}
+	}
+	else if (etPink[etTowards[1]].GetLeft() % 16 == 0 && etPink[etTowards[1]].GetTop() % 16 == 0) {
+		ChaseMode('p');
+	}
+	else {
+		ChaseMode('p');
+	}
 
 	/* unshow cookies */
 	for (int i = 0; i < cookieAmount; i++) {
@@ -125,7 +165,7 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 {
 	/* load map */
 	background.LoadBitmapByString({
-		"resources/map/phase_1_test.bmp",
+		"resources/map/phase_1.bmp",
 		"resources/map/phase_2.bmp",
 		"resources/map/phase_3.bmp",
 		}, RGB(255, 255, 255));
@@ -134,7 +174,6 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 	/* init cookies */
 	cookieAmount = 0;
 	spCookieAmount = 0;
-	InitMap();
 
 	/* character */
 	character[RIGHT].LoadBitmapByString({
@@ -183,7 +222,7 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 		"resources/ets/redET_towardL_1.bmp",
 		"resources/ets/redET_towardL_2.bmp",
 		}, RGB(255, 255, 255));
-	etRed[LEFT].SetTopLeft(208, 224);
+	etRed[LEFT].SetTopLeft(216, 224);
 	etRed[LEFT].SetAnimation(100, 0);
 
 	etRed[UP].LoadBitmapByString({
@@ -199,6 +238,68 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 	etRed[DOWN].SetAnimation(100, 0);
 
 	etRed[4].LoadBitmapByString({
+		"resources/ets/et_unshow.bmp",
+		"resources/ets/et_unshow.bmp",
+		}, RGB(255, 255, 255));
+
+	// pink
+	etPink[RIGHT].LoadBitmapByString({
+		"resources/ets/pinkET_towardR_1.bmp",
+		"resources/ets/pinkET_towardR_2.bmp",
+		}, RGB(255, 255, 255));
+	etPink[RIGHT].SetAnimation(100, 0);
+
+	etPink[LEFT].LoadBitmapByString({
+		"resources/ets/pinkET_towardL_1.bmp",
+		"resources/ets/pinkET_towardL_2.bmp",
+		}, RGB(255, 255, 255));
+	etPink[LEFT].SetAnimation(100, 0);
+
+	etPink[UP].LoadBitmapByString({
+		"resources/ets/pinkET_towardU_1.bmp",
+		"resources/ets/pinkET_towardU_2.bmp",
+		}, RGB(255, 255, 255));
+	etPink[UP].SetAnimation(100, 0);
+
+	etPink[DOWN].LoadBitmapByString({
+		"resources/ets/pinkET_towardD_1.bmp",
+		"resources/ets/pinkET_towardD_2.bmp",
+		}, RGB(255, 255, 255));
+	etPink[DOWN].SetTopLeft(216, 272);
+	etPink[DOWN].SetAnimation(100, 0);
+
+	etPink[4].LoadBitmapByString({
+		"resources/ets/et_unshow.bmp",
+		"resources/ets/et_unshow.bmp",
+		}, RGB(255, 255, 255));
+
+	// blue
+	etBlue[RIGHT].LoadBitmapByString({
+		"resources/ets/blueET_towardR_1.bmp",
+		"resources/ets/blueET_towardR_2.bmp",
+		}, RGB(255, 255, 255));
+	etBlue[RIGHT].SetAnimation(100, 0);
+
+	etBlue[LEFT].LoadBitmapByString({
+		"resources/ets/blueET_towardL_1.bmp",
+		"resources/ets/blueET_towardL_2.bmp",
+		}, RGB(255, 255, 255));
+	etBlue[LEFT].SetAnimation(100, 0);
+
+	etBlue[UP].LoadBitmapByString({
+		"resources/ets/blueET_towardU_1.bmp",
+		"resources/ets/blueET_towardU_2.bmp",
+		}, RGB(255, 255, 255));
+	etBlue[UP].SetTopLeft(186, 272);
+	etBlue[UP].SetAnimation(100, 0);
+
+	etBlue[DOWN].LoadBitmapByString({
+		"resources/ets/blueET_towardD_1.bmp",
+		"resources/ets/blueET_towardD_2.bmp",
+		}, RGB(255, 255, 255));
+	etBlue[DOWN].SetAnimation(100, 0);
+
+	etBlue[4].LoadBitmapByString({
 		"resources/ets/et_unshow.bmp",
 		"resources/ets/et_unshow.bmp",
 		}, RGB(255, 255, 255));
@@ -272,6 +373,19 @@ void CGameStateRun::OnShow()
 }
 
 void CGameStateRun::ShowByPhase() {
+	/* check and change phase */
+	if (phase < 5) {
+		if (!isMapLoaded) {
+			start_time = clock();
+			InitMap();
+			character[RIGHT].SetTopLeft(16, 64);
+			etRed[LEFT].SetTopLeft(216, 224);
+			etPink[DOWN].SetTopLeft(216, 272);
+			etBlue[UP].SetTopLeft(186, 272);
+		}
+		CheckPhaseClear();
+	}
+
 	/* show phase background */
 	background.SetFrameIndexOfBitmap(phase - 1);
 	background.ShowBitmap();
@@ -289,15 +403,8 @@ void CGameStateRun::ShowByPhase() {
 
 	/* show ghosts */
 	etRed[etTowards[0]].ShowBitmap(1.25);
-
-	/* check and change phase */
-	if (phase < 5) {
-		if (!isMapLoaded) {
-			InitMap();
-			character[RIGHT].SetTopLeft(16, 64);
-		}
-		CheckPhaseClear();
-	}
+	etPink[etTowards[1]].ShowBitmap(1.25);
+	etBlue[etTowards[2]].ShowBitmap(1.25);
 }
 
 void CGameStateRun::InitMap() {
@@ -353,20 +460,20 @@ void CGameStateRun::ChaseMode(char mode) {
 		break;
 	case 'p':
 		if (towards == RIGHT) {
-			target[0] = character[towards].CenterX() + 2 * PIXWIDTH;
+			target[0] = character[towards].CenterX() + 4 * PIXWIDTH;
 			target[1] = character[towards].CenterY();
 		}
 		else if (towards == LEFT) {
-			target[0] = character[towards].CenterX() - 2 * PIXWIDTH;
+			target[0] = character[towards].CenterX() - 4 * PIXWIDTH;
 			target[1] = character[towards].CenterY();
 		}
 		else if (towards == UP) {
-			target[0] = character[towards].CenterX();
-			target[1] = character[towards].CenterY() - 2 * PIXHEIGHT;
+			target[0] = character[towards].CenterX() - 4 * PIXWIDTH;
+			target[1] = character[towards].CenterY() - 4 * PIXHEIGHT;
 		}
 		else if (towards == DOWN) {
 			target[0] = character[towards].CenterX();
-			target[1] = character[towards].CenterY() + 2 * PIXHEIGHT;
+			target[1] = character[towards].CenterY() + 4 * PIXHEIGHT;
 		}
 	}
 
@@ -418,7 +525,47 @@ void CGameStateRun::ChaseMode(char mode) {
 				etTowards[0] = nextdir[0];
 			}
 		}
-		
+	}
+	else if (mode == 'p') {
+		if (etPink[etTowards[1]].CenterX() != target[0] || etPink[etTowards[1]].CenterY() != target[1]) {
+			if (GetPixelAttribute(etPink[etTowards[1]].GetRight() + 1, etPink[etTowards[1]].GetTop() + edge) >= -1 && GetPixelAttribute(etPink[etTowards[1]].GetRight() + 1, etPink[etTowards[1]].GetBottom() - edge) >= -1) {
+				dirCanGo[1][RIGHT] = RIGHT;
+			}
+			if (GetPixelAttribute(etPink[etTowards[1]].GetLeft() - 1, etPink[etTowards[1]].GetTop() + edge) >= -1 && GetPixelAttribute(etPink[etTowards[1]].GetLeft() - 1, etPink[etTowards[1]].GetBottom() - edge) >= -1) {
+				dirCanGo[1][LEFT] = LEFT;
+			}
+			if (GetPixelAttribute(etPink[etTowards[1]].GetLeft() + edge, etPink[etTowards[1]].GetTop() - 1) >= -1 && GetPixelAttribute(etPink[etTowards[1]].GetRight() - edge, etPink[etTowards[1]].GetTop() - 1) >= -1) {
+				dirCanGo[1][UP] = UP;
+			}
+			if (GetPixelAttribute(etPink[etTowards[1]].GetLeft() + edge, etPink[etTowards[1]].GetBottom() + 1) >= -1 && GetPixelAttribute(etPink[etTowards[1]].GetRight() - edge, etPink[etTowards[1]].GetBottom() + 1) >= -1) {
+				dirCanGo[1][DOWN] = DOWN;
+			}
+
+			if (etTowards[1] == DOWN || etTowards[1] == RIGHT) {
+				dirCanGo[1][etTowards[1] - 2] = -1;
+			}
+			if (etTowards[1] == UP || etTowards[1] == LEFT) {
+				dirCanGo[1][etTowards[1] + 2] = -1;
+			}
+
+
+			for (int i = 3; i > -1; i--) {
+				if (dirCanGo[1][i] == i) {
+					if (Distance(etPink[etTowards[1]], character[towards], i) <= mindis[1]) {
+						mindis[1] = Distance(etPink[etTowards[1]], character[towards], i);
+						nextdir[1] = i;
+					}
+				}
+			}
+
+			if (etPink[etTowards[1]].IsBitmapLoaded()) {
+				if (etPink[etTowards[1]].GetRight() >= 440 || etPink[etTowards[1]].GetLeft() <= 10) {
+					return;
+				}
+				etPink[nextdir[1]].SetTopLeft(etPink[etTowards[1]].GetLeft(), etPink[etTowards[1]].GetTop());
+				etTowards[1] = nextdir[1];
+			}
+		}
 	}
 }
 
