@@ -28,8 +28,8 @@ void CGameStateRun::OnBeginState()
 
 void CGameStateRun::OnMove()							// 移動遊戲元素
 {	
-	if (clock()-start_time <= 5*1000) {
-		Sleep(5000);
+	if (clock()-start_time <= 3*1000) {
+		Sleep(3000);
 	}
 
 	/* pacman movement */
@@ -108,6 +108,7 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 	}
 
 	// pink
+	//if(clock())
 	if ((etPink[etTowards[1]].GetLeft() % 16 <= 0 && etPink[etTowards[1]].GetTop() % 16 <= 0) || (etPink[etTowards[1]].GetLeft() % 16 >= 15 && etPink[etTowards[1]].GetTop() % 16 >= 15)) {
 		ChaseMode('p');
 	}
@@ -165,7 +166,7 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 {
 	/* load map */
 	background.LoadBitmapByString({
-		"resources/map/phase_1.bmp",
+		"resources/map/phase_1_test.bmp",
 		"resources/map/phase_2.bmp",
 		"resources/map/phase_3.bmp",
 		}, RGB(255, 255, 255));
@@ -378,10 +379,10 @@ void CGameStateRun::ShowByPhase() {
 		if (!isMapLoaded) {
 			start_time = clock();
 			InitMap();
-			character[RIGHT].SetTopLeft(16, 64);
-			etRed[LEFT].SetTopLeft(216, 224);
-			etPink[DOWN].SetTopLeft(216, 272);
-			etBlue[UP].SetTopLeft(186, 272);
+			character[towards].SetTopLeft(16, 64);
+			etRed[etTowards[0]].SetTopLeft(216, 224);
+			etPink[etTowards[1]].SetTopLeft(216, 272);
+			etBlue[etTowards[2]].SetTopLeft(186, 272);
 		}
 		CheckPhaseClear();
 	}
@@ -450,30 +451,30 @@ void CGameStateRun::CheckPhaseClear() {
 void CGameStateRun::ChaseMode(char mode) {
 	double mindis[4] = { 2000000000,2000000000,2000000000,2000000000 };
 	int nextdir[4] = { -1,-1,-1,-1 };
-	double target[2];
+	double target[4][2];
 
 	// init target for each ghost
 	switch (mode) {
 	case 'r':
-		target[0] = character[towards].CenterX();
-		target[1] = character[towards].CenterY();
+		target[0][0] = character[towards].CenterX();
+		target[0][1] = character[towards].CenterY();
 		break;
 	case 'p':
 		if (towards == RIGHT) {
-			target[0] = character[towards].CenterX() + 4 * PIXWIDTH;
-			target[1] = character[towards].CenterY();
+			target[1][0] = character[towards].CenterX() + 4 * PIXWIDTH;
+			target[1][1] = character[towards].CenterY();
 		}
 		else if (towards == LEFT) {
-			target[0] = character[towards].CenterX() - 4 * PIXWIDTH;
-			target[1] = character[towards].CenterY();
+			target[1][0] = character[towards].CenterX() - 4 * PIXWIDTH;
+			target[1][1] = character[towards].CenterY();
 		}
 		else if (towards == UP) {
-			target[0] = character[towards].CenterX() - 4 * PIXWIDTH;
-			target[1] = character[towards].CenterY() - 4 * PIXHEIGHT;
+			target[1][0] = character[towards].CenterX() - 4 * PIXWIDTH;
+			target[1][1] = character[towards].CenterY() - 4 * PIXHEIGHT;
 		}
 		else if (towards == DOWN) {
-			target[0] = character[towards].CenterX();
-			target[1] = character[towards].CenterY() + 4 * PIXHEIGHT;
+			target[1][0] = character[towards].CenterX();
+			target[1][1] = character[towards].CenterY() + 4 * PIXHEIGHT;
 		}
 	}
 
@@ -486,7 +487,7 @@ void CGameStateRun::ChaseMode(char mode) {
 
 	// decide the next direction
 	if (mode == 'r') {
-		if (etRed[etTowards[0]].CenterX() != target[0] || etRed[etTowards[0]].CenterY() != target[1]) {
+		if (etRed[etTowards[0]].CenterX() != target[0][0] || etRed[etTowards[0]].CenterY() != target[0][1]) {
 			if (GetPixelAttribute(etRed[etTowards[0]].GetRight() + 1, etRed[etTowards[0]].GetTop() + edge) >= -1 && GetPixelAttribute(etRed[etTowards[0]].GetRight() + 1, etRed[etTowards[0]].GetBottom() - edge) >= -1) {
 				dirCanGo[0][RIGHT] = RIGHT;
 			}
@@ -527,7 +528,7 @@ void CGameStateRun::ChaseMode(char mode) {
 		}
 	}
 	else if (mode == 'p') {
-		if (etPink[etTowards[1]].CenterX() != target[0] || etPink[etTowards[1]].CenterY() != target[1]) {
+		if (etPink[etTowards[1]].CenterX() != target[1][0] || etPink[etTowards[1]].CenterY() != target[1][1]) {
 			if (GetPixelAttribute(etPink[etTowards[1]].GetRight() + 1, etPink[etTowards[1]].GetTop() + edge) >= -1 && GetPixelAttribute(etPink[etTowards[1]].GetRight() + 1, etPink[etTowards[1]].GetBottom() - edge) >= -1) {
 				dirCanGo[1][RIGHT] = RIGHT;
 			}
