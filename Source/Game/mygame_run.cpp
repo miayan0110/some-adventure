@@ -72,7 +72,8 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 	/* ghost */
 	// red
 	if ((etRed[etTowards[0]].GetLeft() % 16 <= 0 && etRed[etTowards[0]].GetTop() % 16 <= 0) || (etRed[etTowards[0]].GetLeft() % 16 >= 15 && etRed[etTowards[0]].GetTop() % 16 >= 15)) {
-		ChaseMode('r');
+	if (ghostmode == 0) ChaseMode('r');
+	else if (ghostmode == 1) ScatterMode('r');
 	}
 	if (etTowards[0] == RIGHT && GetPixelAttribute(etRed[etTowards[0]].GetRight() + 1, etRed[etTowards[0]].GetTop() + edge) >= -1 && GetPixelAttribute(etRed[etTowards[0]].GetRight() + 1, etRed[etTowards[0]].GetBottom() - edge) >= -1) {
 		etRed[etTowards[0]].SetTopLeft(etRed[etTowards[0]].GetLeft() + speed, etRed[etTowards[0]].GetTop());
@@ -101,10 +102,12 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 		}
 	}
 	else if (etRed[etTowards[0]].GetLeft() % 16 == 0 && etRed[etTowards[0]].GetTop() % 16 == 0) {
-		ChaseMode('r');
+		if (ghostmode == 0) ChaseMode('r');
+		else if (ghostmode == 1) ScatterMode('r');
 	}
 	else {
-		ChaseMode('r');
+		if (ghostmode == 0) ChaseMode('r');
+		else if (ghostmode == 1) ScatterMode('r');
 	}
 
 	// pink
@@ -143,6 +146,44 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 	}
 	else {
 		ChaseMode('p');
+	}
+
+	// blue
+	//if(clock())
+	if ((etBlue[etTowards[2]].GetLeft() % 16 <= 0 && etBlue[etTowards[2]].GetTop() % 16 <= 0) || (etBlue[etTowards[2]].GetLeft() % 16 >= 15 && etBlue[etTowards[2]].GetTop() % 16 >= 15)) {
+		ChaseMode('b');
+	}
+	if (etTowards[2] == RIGHT && GetPixelAttribute(etBlue[etTowards[2]].GetRight() + 1, etBlue[etTowards[2]].GetTop() + edge) >= -1 && GetPixelAttribute(etBlue[etTowards[2]].GetRight() + 1, etBlue[etTowards[2]].GetBottom() - edge) >= -1) {
+		etBlue[etTowards[2]].SetTopLeft(etBlue[etTowards[2]].GetLeft() + speed, etBlue[etTowards[2]].GetTop());
+	}
+	else if (etTowards[2] == LEFT && GetPixelAttribute(etBlue[etTowards[2]].GetLeft() - 1, etBlue[etTowards[2]].GetTop() + edge) >= -1 && GetPixelAttribute(etBlue[etTowards[2]].GetLeft() - 1, etBlue[etTowards[2]].GetBottom() - edge) >= -1) {
+		etBlue[etTowards[2]].SetTopLeft(etBlue[etTowards[2]].GetLeft() - speed, etBlue[etTowards[2]].GetTop());
+	}
+	else if (etTowards[2] == UP && GetPixelAttribute(etBlue[etTowards[2]].GetLeft() + edge, etBlue[etTowards[2]].GetTop() - 1) >= -1 && GetPixelAttribute(etBlue[etTowards[2]].GetRight() - edge, etBlue[etTowards[2]].GetTop() - 1) >= -1) {
+		etBlue[etTowards[2]].SetTopLeft(etBlue[etTowards[2]].GetLeft(), etBlue[etTowards[2]].GetTop() - speed);
+	}
+	else if (etTowards[2] == DOWN && GetPixelAttribute(etBlue[etTowards[2]].GetLeft() + edge, etBlue[etTowards[2]].GetBottom() + 1) >= -1 && GetPixelAttribute(etBlue[etTowards[2]].GetRight() - edge, etBlue[etTowards[2]].GetBottom() + 1) >= -1) {
+		etBlue[etTowards[2]].SetTopLeft(etBlue[etTowards[2]].GetLeft(), etBlue[etTowards[2]].GetTop() + speed);
+	}
+	else if (etBlue[etTowards[2]].GetRight() >= 440) {
+		etTowards[2] = 4;
+		if (Delay(100)) {
+			etTowards[2] = RIGHT;
+			etBlue[etTowards[2]].SetTopLeft(0, etBlue[etTowards[2]].GetTop());
+		}
+	}
+	else if (etBlue[etTowards[2]].GetLeft() <= 3) {
+		etTowards[2] = 4;
+		if (Delay(100)) {
+			etTowards[2] = LEFT;
+			etBlue[etTowards[2]].SetTopLeft(446, etBlue[etTowards[2]].GetTop());
+		}
+	}
+	else if (etBlue[etTowards[2]].GetLeft() % 16 == 0 && etBlue[etTowards[2]].GetTop() % 16 == 0) {
+		ChaseMode('b');
+	}
+	else {
+		ChaseMode('b');
 	}
 
 	/* unshow cookies */
@@ -341,6 +382,9 @@ void CGameStateRun::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		spCookieAmount = 0;
 		isMapLoaded = false;
 	}
+	else if (nChar == VK_DOWN) {
+		ghostmode = 1;	/* change ghost mode to scatter mode by hand */
+	}
 }
 
 void CGameStateRun::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
@@ -451,9 +495,8 @@ void CGameStateRun::CheckPhaseClear() {
 void CGameStateRun::ChaseMode(char mode) {
 	double mindis[4] = { 2000000000,2000000000,2000000000,2000000000 };
 	int nextdir[4] = { -1,-1,-1,-1 };
-	double target[4][2];
 
-	// init target for each ghost
+	/* init target for each ghost */
 	switch (mode) {
 	case 'r':
 		target[0][0] = character[towards].CenterX();
@@ -477,18 +520,36 @@ void CGameStateRun::ChaseMode(char mode) {
 			target[1][1] = character[towards].CenterY() + 4 * PIXHEIGHT;
 		}
 		break;
+	case 'b':
+		if (towards == RIGHT) {
+			target[2][0] = 2 * (character[towards].CenterX() + 2 * PIXWIDTH) - etRed[etTowards[0]].CenterX();
+			target[2][1] = 2 * character[towards].CenterY() - etRed[etTowards[0]].CenterY();
+		}
+		else if (towards == LEFT) {
+			target[2][0] = 2 * (character[towards].CenterX() - 2 * PIXWIDTH) - etRed[etTowards[0]].CenterX();
+			target[2][1] = 2 * character[towards].CenterY() - etRed[etTowards[0]].CenterY();
+		}
+		else if (towards == UP) {
+			target[2][0] = 2 * (character[towards].CenterX() - 2 * PIXWIDTH) - etRed[etTowards[0]].CenterX();
+			target[2][1] = 2 * (character[towards].CenterY() - 2 * PIXHEIGHT) - etRed[etTowards[0]].CenterY();
+		}
+		else if (towards == DOWN) {
+			target[2][0] = 2 * (character[towards].CenterX()) - etRed[etTowards[0]].CenterX();
+			target[2][1] = 2 * character[towards].CenterY() + 2 * PIXHEIGHT - etRed[etTowards[0]].CenterY();
+		}
+		break;
 	default:
 		break;
 	}
 
-	// clear dirCanGo for each ghost
+	/* clear dirCanGo for each ghost */
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
 			dirCanGo[i][j] = -1;
 		}
 	}
 
-	// decide the next direction
+	/* decide the next direction */
 	if (mode == 'r') {
 		if (etRed[etTowards[0]].CenterX() != target[0][0] || etRed[etTowards[0]].CenterY() != target[0][1]) {
 			if (GetPixelAttribute(etRed[etTowards[0]].GetRight() + 1, etRed[etTowards[0]].GetTop() + edge) >= -1 && GetPixelAttribute(etRed[etTowards[0]].GetRight() + 1, etRed[etTowards[0]].GetBottom() - edge) >= -1) {
@@ -571,6 +632,82 @@ void CGameStateRun::ChaseMode(char mode) {
 			}
 		}
 	}
+	else if (mode == 'b') {
+		if (etBlue[etTowards[2]].CenterX() != target[2][0] || etBlue[etTowards[2]].CenterY() != target[2][1]) {
+			if (GetPixelAttribute(etBlue[etTowards[2]].GetRight() + 1, etBlue[etTowards[2]].GetTop() + edge) >= -1 && GetPixelAttribute(etBlue[etTowards[2]].GetRight() + 1, etBlue[etTowards[2]].GetBottom() - edge) >= -1) {
+				dirCanGo[2][RIGHT] = RIGHT;
+			}
+			if (GetPixelAttribute(etBlue[etTowards[2]].GetLeft() - 1, etBlue[etTowards[2]].GetTop() + edge) >= -1 && GetPixelAttribute(etBlue[etTowards[2]].GetLeft() - 1, etBlue[etTowards[2]].GetBottom() - edge) >= -1) {
+				dirCanGo[2][LEFT] = LEFT;
+			}
+			if (GetPixelAttribute(etBlue[etTowards[2]].GetLeft() + edge, etBlue[etTowards[2]].GetTop() - 1) >= -1 && GetPixelAttribute(etBlue[etTowards[2]].GetRight() - edge, etBlue[etTowards[2]].GetTop() - 1) >= -1) {
+				dirCanGo[2][UP] = UP;
+			}
+			if (GetPixelAttribute(etBlue[etTowards[2]].GetLeft() + edge, etBlue[etTowards[2]].GetBottom() + 1) >= -1 && GetPixelAttribute(etBlue[etTowards[2]].GetRight() - edge, etBlue[etTowards[2]].GetBottom() + 1) >= -1) {
+				dirCanGo[2][DOWN] = DOWN;
+			}
+
+			if (etTowards[2] == DOWN || etTowards[2] == RIGHT) {
+				dirCanGo[2][etTowards[2] - 2] = -1;
+			}
+			if (etTowards[2] == UP || etTowards[2] == LEFT) {
+				dirCanGo[2][etTowards[2] + 2] = -1;
+			}
+
+
+			for (int i = 3; i > -1; i--) {
+				if (dirCanGo[2][i] == i) {
+					if (Distance(etBlue[etTowards[2]], character[towards], i) <= mindis[2]) {
+						mindis[2] = Distance(etBlue[etTowards[2]], character[towards], i);
+						nextdir[2] = i;
+					}
+				}
+			}
+
+			if (etBlue[etTowards[2]].IsBitmapLoaded()) {
+				if (etBlue[etTowards[2]].GetRight() >= 440 || etBlue[etTowards[2]].GetLeft() <= 10) {
+					return;
+				}
+				etBlue[nextdir[2]].SetTopLeft(etBlue[etTowards[2]].GetLeft(), etBlue[etTowards[2]].GetTop());
+				etTowards[2] = nextdir[2];
+			}
+		}
+	}
+}
+
+void CGameStateRun::ScatterMode(char mode) {
+	/* turn back when enter scatter mode */
+	/*
+	for (int i = 0; i < 4; i++) {
+		if (etTowards[i] == DOWN || etTowards[i] == RIGHT) {
+			etTowards[i] = etTowards[i] - 2;
+		}
+		else if (etTowards[i] == UP || etTowards[i] == LEFT) {
+			etTowards[i] = etTowards[i] + 2;
+		}
+	}
+	etRed[etTowards[0]].SetTopLeft(etRed[etTowards[0]].GetLeft(), etRed[etTowards[0]].GetTop());*/
+
+	/* set target for scatter mode */
+	switch (mode)
+	{
+	case 'r':
+		target[0][0] = 398;
+		target[0][1] = 24;
+		break;
+	case 'p':
+		target[1][0] = 40;
+		target[1][1] = 24;
+	case 'b':
+		target[2][0] = 398;
+		target[2][1] = 568;
+	case 'y':
+		target[3][0] = 40;
+		target[3][1] = 568;
+	default:
+		break;
+	}
+	// ghostmode = 0;
 }
 
 int CGameStateRun::GetPixelAttribute(int left, int top) {
