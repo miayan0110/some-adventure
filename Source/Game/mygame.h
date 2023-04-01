@@ -108,10 +108,10 @@ namespace game_framework {
 		// sprites
 		CMovingBitmap background;
 		MyBitmap character[5];
-		MyBitmap etRed[5];
-		MyBitmap etPink[5];
-		MyBitmap etBlue[5];
-		MyBitmap etYellow[5];
+		MyBitmap etRed[7];
+		MyBitmap etPink[7];
+		MyBitmap etBlue[7];
+		MyBitmap etYellow[7];
 		MyBitmap cookie[500];
 		MyBitmap spCookie[10];
 
@@ -124,6 +124,9 @@ namespace game_framework {
 		const int LEFT = 1;
 		const int DOWN = 2;
 		const int RIGHT = 3;
+		const int UNSHOW = 4;
+		const int SCARED = 5;
+		const int TRANSIT = 6;
 		
 		// flags & parameters
 		int phase = 1;
@@ -141,11 +144,13 @@ namespace game_framework {
 		clock_t start_time;
 		clock_t last_time = clock();	// use in Delay function
 		bool isMapLoaded = false;	// check if the map is loaded 
+		bool isGameStart = true;
 
 		// functions
 		void ShowByPhase();
 		void InitMap();
 		void InitEaten(int *p, int len);
+		void InitGhostMovement(char mode);
 		void CheckPhaseClear();
 		void ChaseMode(char mode);
 		void ScatterMode(char mode);
@@ -153,6 +158,7 @@ namespace game_framework {
 		void TurnAround(int dirR, int dirP, int dirB, int dirY);
 		int GetPixelAttribute(int left, int top);
 		double Distance(MyBitmap mb1, int mode, int nextdir);
+		double Distance(MyBitmap mb1, MyBitmap mb2);
 		bool Delay(int delaytime);
 		bool FindElement(int *p, int len, int target);
 
