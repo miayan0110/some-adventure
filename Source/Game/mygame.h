@@ -129,7 +129,7 @@ namespace game_framework {
 		int phase = 1;
 		int ghostmode = 0;	// 0 for chaseMode, 1 for scatterMode, 2 for scareMode
 		int towards = RIGHT;	// pacman direction
-		int etTowards[4] = { LEFT,DOWN,UP,UP };	// ghost directions
+		int etTowards[4] = { LEFT,DOWN,UP,UP };	// ghost directions, 0 for red, 1 for pink, 2 for blue, 3 for yellow
 		int cookieAmount = 0;	// total amount of common cookies
 		int spCookieAmount = 0;	// total amount of sp cookies
 		int eatenCookie[500];	// use to record cookies are eaten or not
@@ -149,8 +149,10 @@ namespace game_framework {
 		void CheckPhaseClear();
 		void ChaseMode(char mode);
 		void ScatterMode(char mode);
+		void NextDir(char mode);
+		void TurnAround(int dirR, int dirP, int dirB, int dirY);
 		int GetPixelAttribute(int left, int top);
-		double Distance(MyBitmap mb1, MyBitmap mb2, int nextdir);
+		double Distance(MyBitmap mb1, int mode, int nextdir);
 		bool Delay(int delaytime);
 		bool FindElement(int *p, int len, int target);
 
