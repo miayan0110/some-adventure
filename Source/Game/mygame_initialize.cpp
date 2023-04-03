@@ -72,7 +72,7 @@ void CGameStateInit::OnInit()
 		"resources/frame/10.bmp",
 		}, RGB(255, 255, 255));
 	frame.SetAnimation(100, 0);
-	frame.SetTopLeft(0, 15);
+	frame.SetTopLeft(0, 10);
 }
 
 void CGameStateInit::OnBeginState()

@@ -7,6 +7,8 @@
 #include "../Library/gamecore.h"
 #include "mygame.h"
 #include "myfunc.h"
+#include <stdlib.h>
+#include <time.h>
 
 using namespace game_framework;
 
@@ -48,14 +50,14 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 	else if (towards == DOWN && GetPixelAttribute(character[towards].GetLeft() + edge, character[towards].GetBottom() + 1) >= 0 && GetPixelAttribute(character[towards].GetRight() - edge, character[towards].GetBottom() + 1) >= 0) {
 		character[towards].StopKeepAni(true);
 		character[towards].SetTopLeft(character[towards].GetLeft(), character[towards].GetTop() + speed);
-	}// through tunnel
+	}// through right tunnel
 	else if (character[towards].GetRight() >= 435) {
 		towards = 4;
 		if (Delay(1200)) {
 			towards = RIGHT;
 			character[towards].SetTopLeft(1, character[towards].GetTop());
 		}
-	}// through tunnel
+	}// through left tunnel
 	else if (character[towards].GetLeft() <= 3) {
 		towards = 4;
 		if (Delay(1200)) {
@@ -68,25 +70,33 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 		character[towards].SetFrameIndexOfBitmap(1);
 	}
 
-
-	/* ghost */
+	/* ghost movement */
 	// red
 	if ((etRed[etTowards[0]].GetLeft() % 16 <= 0 && etRed[etTowards[0]].GetTop() % 16 <= 0) || (etRed[etTowards[0]].GetLeft() % 16 >= 15 && etRed[etTowards[0]].GetTop() % 16 >= 15)) {
 		if (ghostmode == 0) ChaseMode('r');
 		else if (ghostmode == 1) ScatterMode('r');
+		else if (ghostmode >= 2) ScaredMode('r');
 		NextDir('r');
 	}
-	if (etTowards[0] == RIGHT && GetPixelAttribute(etRed[etTowards[0]].GetRight() + 1, etRed[etTowards[0]].GetTop() + edge) >= -1 && GetPixelAttribute(etRed[etTowards[0]].GetRight() + 1, etRed[etTowards[0]].GetBottom() - edge) >= -1) {
+	if (etTowards[0] == RIGHT && GetPixelAttribute(etRed[etTowards[0]].GetRight() + 1, etRed[etTowards[0]].GetTop() + edge) >= roadGhostCanGo[0] && GetPixelAttribute(etRed[etTowards[0]].GetRight() + 1, etRed[etTowards[0]].GetBottom() - edge) >= roadGhostCanGo[0]) {
 		etRed[etTowards[0]].SetTopLeft(etRed[etTowards[0]].GetLeft() + speed, etRed[etTowards[0]].GetTop());
+		etRed[SCARED].SetTopLeft(etRed[etTowards[0]].GetLeft() + speed, etRed[etTowards[0]].GetTop());
+		etRed[TRANSIT].SetTopLeft(etRed[etTowards[0]].GetLeft() + speed, etRed[etTowards[0]].GetTop());
 	}
-	else if (etTowards[0] == LEFT && GetPixelAttribute(etRed[etTowards[0]].GetLeft() - 1, etRed[etTowards[0]].GetTop() + edge) >= -1 && GetPixelAttribute(etRed[etTowards[0]].GetLeft() - 1, etRed[etTowards[0]].GetBottom() - edge) >= -1) {
+	else if (etTowards[0] == LEFT && GetPixelAttribute(etRed[etTowards[0]].GetLeft() - 1, etRed[etTowards[0]].GetTop() + edge) >= roadGhostCanGo[0] && GetPixelAttribute(etRed[etTowards[0]].GetLeft() - 1, etRed[etTowards[0]].GetBottom() - edge) >= roadGhostCanGo[0]) {
 		etRed[etTowards[0]].SetTopLeft(etRed[etTowards[0]].GetLeft() - speed, etRed[etTowards[0]].GetTop());
+		etRed[SCARED].SetTopLeft(etRed[etTowards[0]].GetLeft() - speed, etRed[etTowards[0]].GetTop());
+		etRed[TRANSIT].SetTopLeft(etRed[etTowards[0]].GetLeft() - speed, etRed[etTowards[0]].GetTop());
 	}
-	else if (etTowards[0] == UP && GetPixelAttribute(etRed[etTowards[0]].GetLeft() + edge, etRed[etTowards[0]].GetTop() - 1) >= -1 && GetPixelAttribute(etRed[etTowards[0]].GetRight() - edge, etRed[etTowards[0]].GetTop() - 1) >= -1) {
+	else if (etTowards[0] == UP && GetPixelAttribute(etRed[etTowards[0]].GetLeft() + edge, etRed[etTowards[0]].GetTop() - 1) >= roadGhostCanGo[0] && GetPixelAttribute(etRed[etTowards[0]].GetRight() - edge, etRed[etTowards[0]].GetTop() - 1) >= roadGhostCanGo[0]) {
 		etRed[etTowards[0]].SetTopLeft(etRed[etTowards[0]].GetLeft(), etRed[etTowards[0]].GetTop() - speed);
+		etRed[SCARED].SetTopLeft(etRed[etTowards[0]].GetLeft(), etRed[etTowards[0]].GetTop() - speed);
+		etRed[TRANSIT].SetTopLeft(etRed[etTowards[0]].GetLeft(), etRed[etTowards[0]].GetTop() - speed);
 	}
-	else if (etTowards[0] == DOWN && GetPixelAttribute(etRed[etTowards[0]].GetLeft() + edge, etRed[etTowards[0]].GetBottom() + 1) >= -1 && GetPixelAttribute(etRed[etTowards[0]].GetRight() - edge, etRed[etTowards[0]].GetBottom() + 1) >= -1) {
+	else if (etTowards[0] == DOWN && GetPixelAttribute(etRed[etTowards[0]].GetLeft() + edge, etRed[etTowards[0]].GetBottom() + 1) >= roadGhostCanGo[0] && GetPixelAttribute(etRed[etTowards[0]].GetRight() - edge, etRed[etTowards[0]].GetBottom() + 1) >= roadGhostCanGo[0]) {
 		etRed[etTowards[0]].SetTopLeft(etRed[etTowards[0]].GetLeft(), etRed[etTowards[0]].GetTop() + speed);
+		etRed[SCARED].SetTopLeft(etRed[etTowards[0]].GetLeft(), etRed[etTowards[0]].GetTop() + speed);
+		etRed[TRANSIT].SetTopLeft(etRed[etTowards[0]].GetLeft(), etRed[etTowards[0]].GetTop() + speed);
 	}
 	else if (etRed[etTowards[0]].GetRight() >= 440) {
 		etTowards[0] = UNSHOW;
@@ -105,32 +115,44 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 	else if (etRed[etTowards[0]].GetLeft() % 16 == 0 && etRed[etTowards[0]].GetTop() % 16 == 0) {
 		if (ghostmode == 0) ChaseMode('r');
 		else if (ghostmode == 1) ScatterMode('r');
+		else if (ghostmode >= 2) ScaredMode('r');
 		NextDir('r');
 	}
 	else {
 		if (ghostmode == 0) ChaseMode('r');
 		else if (ghostmode == 1) ScatterMode('r');
+		else if (ghostmode >= 2) ScaredMode('r');
 		NextDir('r');
 	}
 
 	// pink
 	//if(clock())
 	if ((etPink[etTowards[1]].GetLeft() % 16 <= 0 && etPink[etTowards[1]].GetTop() % 16 <= 0) || (etPink[etTowards[1]].GetLeft() % 16 >= 15 && etPink[etTowards[1]].GetTop() % 16 >= 15)) {
-		if (ghostmode == 0) ChaseMode('p');
+		if (roadGhostCanGo[1] == -1) InitMode('p');
+		else if (ghostmode == 0) ChaseMode('p');
 		else if (ghostmode == 1) ScatterMode('p');
+		else if (ghostmode >= 2) ScaredMode('p');
 		NextDir('p');
 	}
-	if (etTowards[1] == RIGHT && GetPixelAttribute(etPink[etTowards[1]].GetRight() + 1, etPink[etTowards[1]].GetTop() + edge) >= -1 && GetPixelAttribute(etPink[etTowards[1]].GetRight() + 1, etPink[etTowards[1]].GetBottom() - edge) >= -1) {
+	if (etTowards[1] == RIGHT && GetPixelAttribute(etPink[etTowards[1]].GetRight() + 1, etPink[etTowards[1]].GetTop() + edge) >= roadGhostCanGo[1] && GetPixelAttribute(etPink[etTowards[1]].GetRight() + 1, etPink[etTowards[1]].GetBottom() - edge) >= roadGhostCanGo[1]) {
 		etPink[etTowards[1]].SetTopLeft(etPink[etTowards[1]].GetLeft() + speed, etPink[etTowards[1]].GetTop());
+		etPink[SCARED].SetTopLeft(etPink[etTowards[1]].GetLeft() + speed, etPink[etTowards[1]].GetTop());
+		etPink[TRANSIT].SetTopLeft(etPink[etTowards[1]].GetLeft() + speed, etPink[etTowards[1]].GetTop());
 	}
-	else if (etTowards[1] == LEFT && GetPixelAttribute(etPink[etTowards[1]].GetLeft() - 1, etPink[etTowards[1]].GetTop() + edge) >= -1 && GetPixelAttribute(etPink[etTowards[1]].GetLeft() - 1, etPink[etTowards[1]].GetBottom() - edge) >= -1) {
+	else if (etTowards[1] == LEFT && GetPixelAttribute(etPink[etTowards[1]].GetLeft() - 1, etPink[etTowards[1]].GetTop() + edge) >= roadGhostCanGo[1] && GetPixelAttribute(etPink[etTowards[1]].GetLeft() - 1, etPink[etTowards[1]].GetBottom() - edge) >= roadGhostCanGo[1]) {
 		etPink[etTowards[1]].SetTopLeft(etPink[etTowards[1]].GetLeft() - speed, etPink[etTowards[1]].GetTop());
+		etPink[SCARED].SetTopLeft(etPink[etTowards[1]].GetLeft() - speed, etPink[etTowards[1]].GetTop());
+		etPink[TRANSIT].SetTopLeft(etPink[etTowards[1]].GetLeft() - speed, etPink[etTowards[1]].GetTop());
 	}
-	else if (etTowards[1] == UP && GetPixelAttribute(etPink[etTowards[1]].GetLeft() + edge, etPink[etTowards[1]].GetTop() - 1) >= -1 && GetPixelAttribute(etPink[etTowards[1]].GetRight() - edge, etPink[etTowards[1]].GetTop() - 1) >= -1) {
+	else if (etTowards[1] == UP && GetPixelAttribute(etPink[etTowards[1]].GetLeft() + edge, etPink[etTowards[1]].GetTop() - 1) >= roadGhostCanGo[1] && GetPixelAttribute(etPink[etTowards[1]].GetRight() - edge, etPink[etTowards[1]].GetTop() - 1) >= roadGhostCanGo[1]) {
 		etPink[etTowards[1]].SetTopLeft(etPink[etTowards[1]].GetLeft(), etPink[etTowards[1]].GetTop() - speed);
+		etPink[SCARED].SetTopLeft(etPink[etTowards[1]].GetLeft(), etPink[etTowards[1]].GetTop() - speed);
+		etPink[TRANSIT].SetTopLeft(etPink[etTowards[1]].GetLeft(), etPink[etTowards[1]].GetTop() - speed);
 	}
-	else if (etTowards[1] == DOWN && GetPixelAttribute(etPink[etTowards[1]].GetLeft() + edge, etPink[etTowards[1]].GetBottom() + 1) >= -1 && GetPixelAttribute(etPink[etTowards[1]].GetRight() - edge, etPink[etTowards[1]].GetBottom() + 1) >= -1) {
+	else if (etTowards[1] == DOWN && GetPixelAttribute(etPink[etTowards[1]].GetLeft() + edge, etPink[etTowards[1]].GetBottom() + 1) >= roadGhostCanGo[1] && GetPixelAttribute(etPink[etTowards[1]].GetRight() - edge, etPink[etTowards[1]].GetBottom() + 1) >= roadGhostCanGo[1]) {
 		etPink[etTowards[1]].SetTopLeft(etPink[etTowards[1]].GetLeft(), etPink[etTowards[1]].GetTop() + speed);
+		etPink[SCARED].SetTopLeft(etPink[etTowards[1]].GetLeft(), etPink[etTowards[1]].GetTop() + speed);
+		etPink[TRANSIT].SetTopLeft(etPink[etTowards[1]].GetLeft(), etPink[etTowards[1]].GetTop() + speed);
 	}
 	else if (etPink[etTowards[1]].GetRight() >= 440) {
 		etTowards[1] = UNSHOW;
@@ -147,34 +169,48 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 		}
 	}
 	else if (etPink[etTowards[1]].GetLeft() % 16 == 0 && etPink[etTowards[1]].GetTop() % 16 == 0) {
-		if (ghostmode == 0) ChaseMode('p');
+		if (roadGhostCanGo[1] == -1) InitMode('p');
+		else if (ghostmode == 0) ChaseMode('p');
 		else if (ghostmode == 1) ScatterMode('p');
+		else if (ghostmode >= 2) ScaredMode('p');
 		NextDir('p');
 	}
 	else {
-		if (ghostmode == 0) ChaseMode('p');
+		if (roadGhostCanGo[1] == -1) InitMode('p');
+		else if (ghostmode == 0) ChaseMode('p');
 		else if (ghostmode == 1) ScatterMode('p');
+		else if (ghostmode >= 2) ScaredMode('p');
 		NextDir('p');
 	}
 
 	// blue
 	//if(clock())
 	if ((etBlue[etTowards[2]].GetLeft() % 16 <= 0 && etBlue[etTowards[2]].GetTop() % 16 <= 0) || (etBlue[etTowards[2]].GetLeft() % 16 >= 15 && etBlue[etTowards[2]].GetTop() % 16 >= 15)) {
-		if (ghostmode == 0) ChaseMode('b');
+		if (roadGhostCanGo[2] == -1) InitMode('b');
+		else if (ghostmode == 0) ChaseMode('b');
 		else if (ghostmode == 1) ScatterMode('b');
+		else if (ghostmode >= 2) ScaredMode('b');
 		NextDir('b');
 	}
-	if (etTowards[2] == RIGHT && GetPixelAttribute(etBlue[etTowards[2]].GetRight() + 1, etBlue[etTowards[2]].GetTop() + edge) >= -1 && GetPixelAttribute(etBlue[etTowards[2]].GetRight() + 1, etBlue[etTowards[2]].GetBottom() - edge) >= -1) {
+	if (etTowards[2] == RIGHT && GetPixelAttribute(etBlue[etTowards[2]].GetRight() + 1, etBlue[etTowards[2]].GetTop() + edge) >= roadGhostCanGo[2] && GetPixelAttribute(etBlue[etTowards[2]].GetRight() + 1, etBlue[etTowards[2]].GetBottom() - edge) >= roadGhostCanGo[2]) {
 		etBlue[etTowards[2]].SetTopLeft(etBlue[etTowards[2]].GetLeft() + speed, etBlue[etTowards[2]].GetTop());
+		etBlue[SCARED].SetTopLeft(etBlue[etTowards[2]].GetLeft() + speed, etBlue[etTowards[2]].GetTop());
+		etBlue[TRANSIT].SetTopLeft(etBlue[etTowards[2]].GetLeft() + speed, etBlue[etTowards[2]].GetTop());
 	}
-	else if (etTowards[2] == LEFT && GetPixelAttribute(etBlue[etTowards[2]].GetLeft() - 1, etBlue[etTowards[2]].GetTop() + edge) >= -1 && GetPixelAttribute(etBlue[etTowards[2]].GetLeft() - 1, etBlue[etTowards[2]].GetBottom() - edge) >= -1) {
+	else if (etTowards[2] == LEFT && GetPixelAttribute(etBlue[etTowards[2]].GetLeft() - 1, etBlue[etTowards[2]].GetTop() + edge) >= roadGhostCanGo[2] && GetPixelAttribute(etBlue[etTowards[2]].GetLeft() - 1, etBlue[etTowards[2]].GetBottom() - edge) >= roadGhostCanGo[2]) {
 		etBlue[etTowards[2]].SetTopLeft(etBlue[etTowards[2]].GetLeft() - speed, etBlue[etTowards[2]].GetTop());
+		etBlue[SCARED].SetTopLeft(etBlue[etTowards[2]].GetLeft() - speed, etBlue[etTowards[2]].GetTop());
+		etBlue[TRANSIT].SetTopLeft(etBlue[etTowards[2]].GetLeft() - speed, etBlue[etTowards[2]].GetTop());
 	}
-	else if (etTowards[2] == UP && GetPixelAttribute(etBlue[etTowards[2]].GetLeft() + edge, etBlue[etTowards[2]].GetTop() - 1) >= -1 && GetPixelAttribute(etBlue[etTowards[2]].GetRight() - edge, etBlue[etTowards[2]].GetTop() - 1) >= -1) {
+	else if (etTowards[2] == UP && GetPixelAttribute(etBlue[etTowards[2]].GetLeft() + edge, etBlue[etTowards[2]].GetTop() - 1) >= roadGhostCanGo[2] && GetPixelAttribute(etBlue[etTowards[2]].GetRight() - edge, etBlue[etTowards[2]].GetTop() - 1) >= roadGhostCanGo[2]) {
 		etBlue[etTowards[2]].SetTopLeft(etBlue[etTowards[2]].GetLeft(), etBlue[etTowards[2]].GetTop() - speed);
+		etBlue[SCARED].SetTopLeft(etBlue[etTowards[2]].GetLeft(), etBlue[etTowards[2]].GetTop() - speed);
+		etBlue[TRANSIT].SetTopLeft(etBlue[etTowards[2]].GetLeft(), etBlue[etTowards[2]].GetTop() - speed);
 	}
-	else if (etTowards[2] == DOWN && GetPixelAttribute(etBlue[etTowards[2]].GetLeft() + edge, etBlue[etTowards[2]].GetBottom() + 1) >= -1 && GetPixelAttribute(etBlue[etTowards[2]].GetRight() - edge, etBlue[etTowards[2]].GetBottom() + 1) >= -1) {
+	else if (etTowards[2] == DOWN && GetPixelAttribute(etBlue[etTowards[2]].GetLeft() + edge, etBlue[etTowards[2]].GetBottom() + 1) >= roadGhostCanGo[2] && GetPixelAttribute(etBlue[etTowards[2]].GetRight() - edge, etBlue[etTowards[2]].GetBottom() + 1) >= roadGhostCanGo[2]) {
 		etBlue[etTowards[2]].SetTopLeft(etBlue[etTowards[2]].GetLeft(), etBlue[etTowards[2]].GetTop() + speed);
+		etBlue[SCARED].SetTopLeft(etBlue[etTowards[2]].GetLeft(), etBlue[etTowards[2]].GetTop() + speed);
+		etBlue[TRANSIT].SetTopLeft(etBlue[etTowards[2]].GetLeft(), etBlue[etTowards[2]].GetTop() + speed);
 	}
 	else if (etBlue[etTowards[2]].GetRight() >= 440) {
 		etTowards[2] = UNSHOW;
@@ -191,34 +227,48 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 		}
 	}
 	else if (etBlue[etTowards[2]].GetLeft() % 16 == 0 && etBlue[etTowards[2]].GetTop() % 16 == 0) {
-		if (ghostmode == 0) ChaseMode('b');
+		if (roadGhostCanGo[2] == -1) InitMode('b');
+		else if (ghostmode == 0) ChaseMode('b');
 		else if (ghostmode == 1) ScatterMode('b');
+		else if (ghostmode >= 2) ScaredMode('b');
 		NextDir('b');
 	}
 	else {
-		if (ghostmode == 0) ChaseMode('b');
+		if (roadGhostCanGo[2] == -1) InitMode('b');
+		else if (ghostmode == 0) ChaseMode('b');
 		else if (ghostmode == 1) ScatterMode('b');
+		else if (ghostmode >= 2) ScaredMode('b');
 		NextDir('b');
 	}
 
 	// yellow
 	//if(clock())
 	if ((etYellow[etTowards[3]].GetLeft() % 16 <= 0 && etYellow[etTowards[3]].GetTop() % 16 <= 0) || (etYellow[etTowards[3]].GetLeft() % 16 >= 15 && etYellow[etTowards[3]].GetTop() % 16 >= 15)) {
-		if (Distance(etYellow[etTowards[3]], character[towards]) > 128 && ghostmode == 0) ChaseMode('y');
-		else if (Distance(etYellow[etTowards[3]], character[towards]) <= 128 || ghostmode == 1) ScatterMode('y');
+		if (roadGhostCanGo[3] == -1) InitMode('y');
+		else if (Distance(etYellow[etTowards[3]], character[towards]) > 8 && ghostmode == 0) ChaseMode('y');
+		else if (Distance(etYellow[etTowards[3]], character[towards]) <= 8 || ghostmode == 1) ScatterMode('y');
+		else if (ghostmode >= 2) ScaredMode('y');
 		NextDir('y');
 	}
-	if (etTowards[3] == RIGHT && GetPixelAttribute(etYellow[etTowards[3]].GetRight() + 1, etYellow[etTowards[3]].GetTop() + edge) >= -1 && GetPixelAttribute(etYellow[etTowards[3]].GetRight() + 1, etYellow[etTowards[3]].GetBottom() - edge) >= -1) {
+	if (etTowards[3] == RIGHT && GetPixelAttribute(etYellow[etTowards[3]].GetRight() + 1, etYellow[etTowards[3]].GetTop() + edge) >= roadGhostCanGo[3] && GetPixelAttribute(etYellow[etTowards[3]].GetRight() + 1, etYellow[etTowards[3]].GetBottom() - edge) >= roadGhostCanGo[3]) {
 		etYellow[etTowards[3]].SetTopLeft(etYellow[etTowards[3]].GetLeft() + speed, etYellow[etTowards[3]].GetTop());
+		etYellow[SCARED].SetTopLeft(etYellow[etTowards[3]].GetLeft() + speed, etYellow[etTowards[3]].GetTop());
+		etYellow[TRANSIT].SetTopLeft(etYellow[etTowards[3]].GetLeft() + speed, etYellow[etTowards[3]].GetTop());
 	}
-	else if (etTowards[3] == LEFT && GetPixelAttribute(etYellow[etTowards[3]].GetLeft() - 1, etYellow[etTowards[3]].GetTop() + edge) >= -1 && GetPixelAttribute(etYellow[etTowards[3]].GetLeft() - 1, etYellow[etTowards[3]].GetBottom() - edge) >= -1) {
+	else if (etTowards[3] == LEFT && GetPixelAttribute(etYellow[etTowards[3]].GetLeft() - 1, etYellow[etTowards[3]].GetTop() + edge) >= roadGhostCanGo[3] && GetPixelAttribute(etYellow[etTowards[3]].GetLeft() - 1, etYellow[etTowards[3]].GetBottom() - edge) >= roadGhostCanGo[3]) {
 		etYellow[etTowards[3]].SetTopLeft(etYellow[etTowards[3]].GetLeft() - speed, etYellow[etTowards[3]].GetTop());
+		etYellow[SCARED].SetTopLeft(etYellow[etTowards[3]].GetLeft() - speed, etYellow[etTowards[3]].GetTop());
+		etYellow[TRANSIT].SetTopLeft(etYellow[etTowards[3]].GetLeft() - speed, etYellow[etTowards[3]].GetTop());
 	}
-	else if (etTowards[3] == UP && GetPixelAttribute(etYellow[etTowards[3]].GetLeft() + edge, etYellow[etTowards[3]].GetTop() - 1) >= -1 && GetPixelAttribute(etYellow[etTowards[3]].GetRight() - edge, etYellow[etTowards[3]].GetTop() - 1) >= -1) {
+	else if (etTowards[3] == UP && GetPixelAttribute(etYellow[etTowards[3]].GetLeft() + edge, etYellow[etTowards[3]].GetTop() - 1) >= roadGhostCanGo[3] && GetPixelAttribute(etYellow[etTowards[3]].GetRight() - edge, etYellow[etTowards[3]].GetTop() - 1) >= roadGhostCanGo[3]) {
 		etYellow[etTowards[3]].SetTopLeft(etYellow[etTowards[3]].GetLeft(), etYellow[etTowards[3]].GetTop() - speed);
+		etYellow[SCARED].SetTopLeft(etYellow[etTowards[3]].GetLeft(), etYellow[etTowards[3]].GetTop() - speed);
+		etYellow[TRANSIT].SetTopLeft(etYellow[etTowards[3]].GetLeft(), etYellow[etTowards[3]].GetTop() - speed);
 	}
-	else if (etTowards[3] == DOWN && GetPixelAttribute(etYellow[etTowards[3]].GetLeft() + edge, etYellow[etTowards[3]].GetBottom() + 1) >= -1 && GetPixelAttribute(etYellow[etTowards[3]].GetRight() - edge, etYellow[etTowards[3]].GetBottom() + 1) >= -1) {
+	else if (etTowards[3] == DOWN && GetPixelAttribute(etYellow[etTowards[3]].GetLeft() + edge, etYellow[etTowards[3]].GetBottom() + 1) >= roadGhostCanGo[3] && GetPixelAttribute(etYellow[etTowards[3]].GetRight() - edge, etYellow[etTowards[3]].GetBottom() + 1) >= roadGhostCanGo[3]) {
 		etYellow[etTowards[3]].SetTopLeft(etYellow[etTowards[3]].GetLeft(), etYellow[etTowards[3]].GetTop() + speed);
+		etYellow[SCARED].SetTopLeft(etYellow[etTowards[3]].GetLeft(), etYellow[etTowards[3]].GetTop() + speed);
+		etYellow[TRANSIT].SetTopLeft(etYellow[etTowards[3]].GetLeft(), etYellow[etTowards[3]].GetTop() + speed);
 	}
 	else if (etYellow[etTowards[3]].GetRight() >= 440) {
 		etTowards[3] = UNSHOW;
@@ -235,13 +285,17 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 		}
 	}
 	else if (etYellow[etTowards[3]].GetLeft() % 16 == 0 && etYellow[etTowards[3]].GetTop() % 16 == 0) {
-		if (Distance(etYellow[etTowards[3]], character[towards]) > 128 && ghostmode == 0) ChaseMode('y');
-		else if (Distance(etYellow[etTowards[3]], character[towards]) <= 128 || ghostmode == 1) ScatterMode('y');
+		if (roadGhostCanGo[3] == -1) InitMode('y');
+		else if (Distance(etYellow[etTowards[3]], character[towards]) > 8 && ghostmode == 0) ChaseMode('y');
+		else if (Distance(etYellow[etTowards[3]], character[towards]) <= 8 || ghostmode == 1) ScatterMode('y');
+		else if (ghostmode >= 2) ScaredMode('y');
 		NextDir('y');
 	}
 	else {
-		if (Distance(etYellow[etTowards[3]], character[towards]) > 128 && ghostmode == 0) ChaseMode('y');
-		else if (Distance(etYellow[etTowards[3]], character[towards]) <= 128 || ghostmode == 1) ScatterMode('y');
+		if (roadGhostCanGo[3] == -1) InitMode('y');
+		else if (Distance(etYellow[etTowards[3]], character[towards]) > 8 && ghostmode == 0) ChaseMode('y');
+		else if (Distance(etYellow[etTowards[3]], character[towards]) <= 8 || ghostmode == 1) ScatterMode('y');
+		else if (ghostmode >= 2) ScaredMode('y');
 		NextDir('y');
 	}
 
@@ -264,6 +318,10 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 
 void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 {
+	/* init flags */
+	isGameStartInit = true;
+	isMapLoaded = false;
+
 	/* load map */
 	background.LoadBitmapByString({
 		"resources/map/phase_1_test.bmp",
@@ -342,7 +400,7 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 		"resources/ets/et_unshow.bmp",
 		"resources/ets/et_unshow.bmp",
 		}, RGB(255, 255, 255));
-	/*
+	
 	etRed[SCARED].LoadBitmapByString({
 		"resources/ets/et_scared_1.bmp",
 		"resources/ets/et_scared_2.bmp",
@@ -353,7 +411,7 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 		"resources/ets/et_scared_1.bmp",
 		"resources/ets/et_transit_2.bmp",
 		}, RGB(255, 255, 255));
-	etRed[TRANSIT].SetAnimation(100, 0);*/
+	etRed[TRANSIT].SetAnimation(100, 0);
 
 	// pink
 	etPink[RIGHT].LoadBitmapByString({
@@ -385,7 +443,7 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 		"resources/ets/et_unshow.bmp",
 		"resources/ets/et_unshow.bmp",
 		}, RGB(255, 255, 255));
-	/*
+	
 	etPink[SCARED].LoadBitmapByString({
 		"resources/ets/et_scared_1.bmp",
 		"resources/ets/et_scared_2.bmp",
@@ -396,7 +454,7 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 		"resources/ets/et_scared_1.bmp",
 		"resources/ets/et_transit_2.bmp",
 		}, RGB(255, 255, 255));
-	etPink[TRANSIT].SetAnimation(100, 0);*/
+	etPink[TRANSIT].SetAnimation(100, 0);
 
 	// blue
 	etBlue[RIGHT].LoadBitmapByString({
@@ -428,7 +486,7 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 		"resources/ets/et_unshow.bmp",
 		"resources/ets/et_unshow.bmp",
 		}, RGB(255, 255, 255));
-	/*
+	
 	etBlue[SCARED].LoadBitmapByString({
 		"resources/ets/et_scared_1.bmp",
 		"resources/ets/et_scared_2.bmp",
@@ -439,7 +497,7 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 		"resources/ets/et_scared_1.bmp",
 		"resources/ets/et_transit_2.bmp",
 		}, RGB(255, 255, 255));
-	etBlue[TRANSIT].SetAnimation(100, 0);*/
+	etBlue[TRANSIT].SetAnimation(100, 0);
 
 	// yellow
 	etYellow[RIGHT].LoadBitmapByString({
@@ -471,7 +529,7 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 		"resources/ets/et_unshow.bmp",
 		"resources/ets/et_unshow.bmp",
 		}, RGB(255, 255, 255));
-	/*
+	
 	etYellow[SCARED].LoadBitmapByString({
 		"resources/ets/et_scared_1.bmp",
 		"resources/ets/et_scared_2.bmp",
@@ -482,7 +540,15 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 		"resources/ets/et_scared_1.bmp",
 		"resources/ets/et_transit_2.bmp",
 		}, RGB(255, 255, 255));
-	etYellow[TRANSIT].SetAnimation(100, 0);*/
+	etYellow[TRANSIT].SetAnimation(100, 0);
+
+	/* testing */
+	/*
+	giraffe.LoadBitmapByString({
+		"resources/giraffe.bmp",
+		"resources/ets/et_unshow.bmp"
+		}, RGB(255, 255, 255));
+	giraffe.SetTopLeft(0, 0);*/
 }
 
 void CGameStateRun::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
@@ -527,6 +593,14 @@ void CGameStateRun::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	}
 	else if (nChar == VK_DOWN) {
 		ghostmode = 1;	/* change ghost mode to scatter mode by hand */
+		TurnAround(etTowards[0], etTowards[1], etTowards[2], etTowards[3]);
+	}
+	else if (nChar == VK_RIGHT) {
+		ghostmode = 2;	/* change ghost mode to scared mode by hand */
+		TurnAround(etTowards[0], etTowards[1], etTowards[2], etTowards[3]);
+	}
+	else if (nChar == VK_LEFT) {
+		ghostmode = 3;	/* change ghost mode to transit mode by hand */
 		TurnAround(etTowards[0], etTowards[1], etTowards[2], etTowards[3]);
 	}
 }
@@ -591,10 +665,27 @@ void CGameStateRun::ShowByPhase() {
 	}
 
 	/* show ghosts */
-	etRed[etTowards[0]].ShowBitmap(1.25);
-	etPink[etTowards[1]].ShowBitmap(1.25);
-	etBlue[etTowards[2]].ShowBitmap(1.25);
-	etYellow[etTowards[3]].ShowBitmap(1.25);
+	if (ghostmode < 2) {
+		etRed[etTowards[0]].ShowBitmap(1.25);
+		etPink[etTowards[1]].ShowBitmap(1.25);
+		etBlue[etTowards[2]].ShowBitmap(1.25);
+		etYellow[etTowards[3]].ShowBitmap(1.25);
+	}
+	else if (ghostmode == 2) {
+		etRed[SCARED].ShowBitmap(1.25);
+		etPink[SCARED].ShowBitmap(1.25);
+		etBlue[SCARED].ShowBitmap(1.25);
+		etYellow[SCARED].ShowBitmap(1.25);
+	}
+	else if (ghostmode == 3) {
+		etRed[TRANSIT].ShowBitmap(1.25);
+		etPink[TRANSIT].ShowBitmap(1.25);
+		etBlue[TRANSIT].ShowBitmap(1.25);
+		etYellow[TRANSIT].ShowBitmap(1.25);
+	}
+
+	/* testing */
+	// giraffe.ShowBitmap(0.5);
 }
 
 void CGameStateRun::InitMap() {
@@ -625,19 +716,6 @@ void CGameStateRun::InitEaten(int *p, int len) {
 		p[i] = 1;
 	}
 }
-/*
-void CGameStateRun::InitGhostMovement(char mode) {
-	switch (mode)
-	{
-	case 'b':
-		while (etBlue[etTowards[2]].GetLeft() != 216 && etBlue[etTowards[2]].GetTop() != 272) {
-			etBlue[etTowards[2]].SetTopLeft(etBlue[etTowards[2]].GetLeft() + 1, etBlue[etTowards[2]].GetTop());
-		}
-		break;
-	default:
-		break;
-	}
-}*/
 
 void CGameStateRun::CheckPhaseClear() {
 	if (!FindElement(eatenCookie, cookieAmount, 1) && !FindElement(eatenSP, spCookieAmount, 1)) {
@@ -651,7 +729,7 @@ void CGameStateRun::CheckPhaseClear() {
 }
 
 void CGameStateRun::ChaseMode(char mode) {
-	/* init target for each ghost */
+	/* set target for chase mode */
 	switch (mode) {
 	case 'r':
 		target[0][0] = character[towards].CenterX();
@@ -703,7 +781,6 @@ void CGameStateRun::ChaseMode(char mode) {
 }
 
 void CGameStateRun::ScatterMode(char mode) {
-	/* turn back when enter scatter mode */
 	/* set target for scatter mode */
 	switch (mode)
 	{
@@ -725,6 +802,63 @@ void CGameStateRun::ScatterMode(char mode) {
 	}
 }
 
+void CGameStateRun::ScaredMode(char mode) {
+	srand(clock());
+	/* set target for scared mode */
+	switch (mode)
+	{
+	case 'r':
+		target[0][0] = rand() % 401 + 24;
+		target[0][1] = rand() % 449 + 72;
+		break;
+	case 'p':
+		target[1][0] = rand() % 401 + 24;
+		target[1][1] = rand() % 449 + 72;
+	case 'b':
+		target[2][0] = rand() % 401 + 24;
+		target[2][1] = rand() % 449 + 72;
+	case 'y':
+		target[3][0] = rand() % 401 + 24;
+		target[3][1] = rand() % 449 + 72;
+	default:
+		break;
+	}
+}
+
+void CGameStateRun::InitMode(char mode) {
+	switch (mode)
+	{
+	case 'p':
+		if (etPink[etTowards[1]].GetTop() >= 232) {
+			target[1][0] = etPink[etTowards[1]].CenterX();
+			target[1][1] = 224;
+		}
+		else {
+			roadGhostCanGo[1] = 0;
+		}
+	case 'b':
+		if (etBlue[etTowards[2]].GetTop() >= 232) {
+			target[2][0] = 224;
+			target[2][1] = 232;
+		}
+		else {
+			roadGhostCanGo[2] = 0;
+		}
+		break;
+	case 'y':
+		if (etYellow[etTowards[3]].GetTop() >= 232) {
+			target[3][0] = 224;
+			target[3][1] = 232;
+		}
+		else {
+			roadGhostCanGo[3] = 0;
+		}
+		break;
+	default:
+		break;
+	}
+}
+
 void CGameStateRun::NextDir(char mode) {
 	double mindis[4] = { 2000000000,2000000000,2000000000,2000000000 };
 	int nextdir[4] = { -1,-1,-1,-1 };
@@ -739,16 +873,16 @@ void CGameStateRun::NextDir(char mode) {
 	/* decide the next direction */
 	if (mode == 'r') {
 		if (etRed[etTowards[0]].CenterX() != target[0][0] || etRed[etTowards[0]].CenterY() != target[0][1]) {
-			if (GetPixelAttribute(etRed[etTowards[0]].GetRight() + 1, etRed[etTowards[0]].GetTop() + edge) >= -1 && GetPixelAttribute(etRed[etTowards[0]].GetRight() + 1, etRed[etTowards[0]].GetBottom() - edge) >= -1) {
+			if (GetPixelAttribute(etRed[etTowards[0]].GetRight() + 1, etRed[etTowards[0]].GetTop() + edge) >= roadGhostCanGo[0] && GetPixelAttribute(etRed[etTowards[0]].GetRight() + 1, etRed[etTowards[0]].GetBottom() - edge) >= roadGhostCanGo[0]) {
 				dirCanGo[0][RIGHT] = RIGHT;
 			}
-			if (GetPixelAttribute(etRed[etTowards[0]].GetLeft() - 1, etRed[etTowards[0]].GetTop() + edge) >= -1 && GetPixelAttribute(etRed[etTowards[0]].GetLeft() - 1, etRed[etTowards[0]].GetBottom() - edge) >= -1) {
+			if (GetPixelAttribute(etRed[etTowards[0]].GetLeft() - 1, etRed[etTowards[0]].GetTop() + edge) >= roadGhostCanGo[0] && GetPixelAttribute(etRed[etTowards[0]].GetLeft() - 1, etRed[etTowards[0]].GetBottom() - edge) >= roadGhostCanGo[0]) {
 				dirCanGo[0][LEFT] = LEFT;
 			}
-			if (GetPixelAttribute(etRed[etTowards[0]].GetLeft() + edge, etRed[etTowards[0]].GetTop() - 1) >= -1 && GetPixelAttribute(etRed[etTowards[0]].GetRight() - edge, etRed[etTowards[0]].GetTop() - 1) >= -1) {
+			if (GetPixelAttribute(etRed[etTowards[0]].GetLeft() + edge, etRed[etTowards[0]].GetTop() - 1) >= roadGhostCanGo[0] && GetPixelAttribute(etRed[etTowards[0]].GetRight() - edge, etRed[etTowards[0]].GetTop() - 1) >= roadGhostCanGo[0]) {
 				dirCanGo[0][UP] = UP;
 			}
-			if (GetPixelAttribute(etRed[etTowards[0]].GetLeft() + edge, etRed[etTowards[0]].GetBottom() + 1) >= -1 && GetPixelAttribute(etRed[etTowards[0]].GetRight() - edge, etRed[etTowards[0]].GetBottom() + 1) >= -1) {
+			if (GetPixelAttribute(etRed[etTowards[0]].GetLeft() + edge, etRed[etTowards[0]].GetBottom() + 1) >= roadGhostCanGo[0] && GetPixelAttribute(etRed[etTowards[0]].GetRight() - edge, etRed[etTowards[0]].GetBottom() + 1) >= roadGhostCanGo[0]) {
 				dirCanGo[0][DOWN] = DOWN;
 			}
 
@@ -780,16 +914,16 @@ void CGameStateRun::NextDir(char mode) {
 	}
 	else if (mode == 'p') {
 		if (etPink[etTowards[1]].CenterX() != target[1][0] || etPink[etTowards[1]].CenterY() != target[1][1]) {
-			if (GetPixelAttribute(etPink[etTowards[1]].GetRight() + 1, etPink[etTowards[1]].GetTop() + edge) >= -1 && GetPixelAttribute(etPink[etTowards[1]].GetRight() + 1, etPink[etTowards[1]].GetBottom() - edge) >= -1) {
+			if (GetPixelAttribute(etPink[etTowards[1]].GetRight() + 1, etPink[etTowards[1]].GetTop() + edge) >= roadGhostCanGo[1] && GetPixelAttribute(etPink[etTowards[1]].GetRight() + 1, etPink[etTowards[1]].GetBottom() - edge) >= roadGhostCanGo[1]) {
 				dirCanGo[1][RIGHT] = RIGHT;
 			}
-			if (GetPixelAttribute(etPink[etTowards[1]].GetLeft() - 1, etPink[etTowards[1]].GetTop() + edge) >= -1 && GetPixelAttribute(etPink[etTowards[1]].GetLeft() - 1, etPink[etTowards[1]].GetBottom() - edge) >= -1) {
+			if (GetPixelAttribute(etPink[etTowards[1]].GetLeft() - 1, etPink[etTowards[1]].GetTop() + edge) >= roadGhostCanGo[1] && GetPixelAttribute(etPink[etTowards[1]].GetLeft() - 1, etPink[etTowards[1]].GetBottom() - edge) >= roadGhostCanGo[1]) {
 				dirCanGo[1][LEFT] = LEFT;
 			}
-			if (GetPixelAttribute(etPink[etTowards[1]].GetLeft() + edge, etPink[etTowards[1]].GetTop() - 1) >= -1 && GetPixelAttribute(etPink[etTowards[1]].GetRight() - edge, etPink[etTowards[1]].GetTop() - 1) >= -1) {
+			if (GetPixelAttribute(etPink[etTowards[1]].GetLeft() + edge, etPink[etTowards[1]].GetTop() - 1) >= roadGhostCanGo[1] && GetPixelAttribute(etPink[etTowards[1]].GetRight() - edge, etPink[etTowards[1]].GetTop() - 1) >= roadGhostCanGo[1]) {
 				dirCanGo[1][UP] = UP;
 			}
-			if (GetPixelAttribute(etPink[etTowards[1]].GetLeft() + edge, etPink[etTowards[1]].GetBottom() + 1) >= -1 && GetPixelAttribute(etPink[etTowards[1]].GetRight() - edge, etPink[etTowards[1]].GetBottom() + 1) >= -1) {
+			if (GetPixelAttribute(etPink[etTowards[1]].GetLeft() + edge, etPink[etTowards[1]].GetBottom() + 1) >= roadGhostCanGo[1] && GetPixelAttribute(etPink[etTowards[1]].GetRight() - edge, etPink[etTowards[1]].GetBottom() + 1) >= roadGhostCanGo[1]) {
 				dirCanGo[1][DOWN] = DOWN;
 			}
 
@@ -821,16 +955,16 @@ void CGameStateRun::NextDir(char mode) {
 	}
 	else if (mode == 'b') {
 		if (etBlue[etTowards[2]].CenterX() != target[2][0] || etBlue[etTowards[2]].CenterY() != target[2][1]) {
-			if (GetPixelAttribute(etBlue[etTowards[2]].GetRight() + 1, etBlue[etTowards[2]].GetTop() + edge) >= -1 && GetPixelAttribute(etBlue[etTowards[2]].GetRight() + 1, etBlue[etTowards[2]].GetBottom() - edge) >= -1) {
+			if (GetPixelAttribute(etBlue[etTowards[2]].GetRight() + 1, etBlue[etTowards[2]].GetTop() + edge) >= roadGhostCanGo[2] && GetPixelAttribute(etBlue[etTowards[2]].GetRight() + 1, etBlue[etTowards[2]].GetBottom() - edge) >= roadGhostCanGo[2]) {
 				dirCanGo[2][RIGHT] = RIGHT;
 			}
-			if (GetPixelAttribute(etBlue[etTowards[2]].GetLeft() - 1, etBlue[etTowards[2]].GetTop() + edge) >= -1 && GetPixelAttribute(etBlue[etTowards[2]].GetLeft() - 1, etBlue[etTowards[2]].GetBottom() - edge) >= -1) {
+			if (GetPixelAttribute(etBlue[etTowards[2]].GetLeft() - 1, etBlue[etTowards[2]].GetTop() + edge) >= roadGhostCanGo[2] && GetPixelAttribute(etBlue[etTowards[2]].GetLeft() - 1, etBlue[etTowards[2]].GetBottom() - edge) >= roadGhostCanGo[2]) {
 				dirCanGo[2][LEFT] = LEFT;
 			}
-			if (GetPixelAttribute(etBlue[etTowards[2]].GetLeft() + edge, etBlue[etTowards[2]].GetTop() - 1) >= -1 && GetPixelAttribute(etBlue[etTowards[2]].GetRight() - edge, etBlue[etTowards[2]].GetTop() - 1) >= -1) {
+			if (GetPixelAttribute(etBlue[etTowards[2]].GetLeft() + edge, etBlue[etTowards[2]].GetTop() - 1) >= roadGhostCanGo[2] && GetPixelAttribute(etBlue[etTowards[2]].GetRight() - edge, etBlue[etTowards[2]].GetTop() - 1) >= roadGhostCanGo[2]) {
 				dirCanGo[2][UP] = UP;
 			}
-			if (GetPixelAttribute(etBlue[etTowards[2]].GetLeft() + edge, etBlue[etTowards[2]].GetBottom() + 1) >= -1 && GetPixelAttribute(etBlue[etTowards[2]].GetRight() - edge, etBlue[etTowards[2]].GetBottom() + 1) >= -1) {
+			if (GetPixelAttribute(etBlue[etTowards[2]].GetLeft() + edge, etBlue[etTowards[2]].GetBottom() + 1) >= roadGhostCanGo[2] && GetPixelAttribute(etBlue[etTowards[2]].GetRight() - edge, etBlue[etTowards[2]].GetBottom() + 1) >= roadGhostCanGo[2]) {
 				dirCanGo[2][DOWN] = DOWN;
 			}
 
@@ -862,16 +996,16 @@ void CGameStateRun::NextDir(char mode) {
 	}
 	else if (mode == 'y') {
 		if (etYellow[etTowards[3]].CenterX() != target[3][0] || etYellow[etTowards[3]].CenterY() != target[3][1]) {
-			if (GetPixelAttribute(etYellow[etTowards[3]].GetRight() + 1, etYellow[etTowards[3]].GetTop() + edge) >= -1 && GetPixelAttribute(etYellow[etTowards[3]].GetRight() + 1, etYellow[etTowards[3]].GetBottom() - edge) >= -1) {
+			if (GetPixelAttribute(etYellow[etTowards[3]].GetRight() + 1, etYellow[etTowards[3]].GetTop() + edge) >= roadGhostCanGo[3] && GetPixelAttribute(etYellow[etTowards[3]].GetRight() + 1, etYellow[etTowards[3]].GetBottom() - edge) >= roadGhostCanGo[3]) {
 				dirCanGo[3][RIGHT] = RIGHT;
 			}
-			if (GetPixelAttribute(etYellow[etTowards[3]].GetLeft() - 1, etYellow[etTowards[3]].GetTop() + edge) >= -1 && GetPixelAttribute(etYellow[etTowards[3]].GetLeft() - 1, etYellow[etTowards[3]].GetBottom() - edge) >= -1) {
+			if (GetPixelAttribute(etYellow[etTowards[3]].GetLeft() - 1, etYellow[etTowards[3]].GetTop() + edge) >= roadGhostCanGo[3] && GetPixelAttribute(etYellow[etTowards[3]].GetLeft() - 1, etYellow[etTowards[3]].GetBottom() - edge) >= roadGhostCanGo[3]) {
 				dirCanGo[3][LEFT] = LEFT;
 			}
-			if (GetPixelAttribute(etYellow[etTowards[3]].GetLeft() + edge, etYellow[etTowards[3]].GetTop() - 1) >= -1 && GetPixelAttribute(etYellow[etTowards[3]].GetRight() - edge, etYellow[etTowards[3]].GetTop() - 1) >= -1) {
+			if (GetPixelAttribute(etYellow[etTowards[3]].GetLeft() + edge, etYellow[etTowards[3]].GetTop() - 1) >= roadGhostCanGo[3] && GetPixelAttribute(etYellow[etTowards[3]].GetRight() - edge, etYellow[etTowards[3]].GetTop() - 1) >= roadGhostCanGo[3]) {
 				dirCanGo[3][UP] = UP;
 			}
-			if (GetPixelAttribute(etYellow[etTowards[3]].GetLeft() + edge, etYellow[etTowards[3]].GetBottom() + 1) >= -1 && GetPixelAttribute(etYellow[etTowards[3]].GetRight() - edge, etYellow[etTowards[3]].GetBottom() + 1) >= -1) {
+			if (GetPixelAttribute(etYellow[etTowards[3]].GetLeft() + edge, etYellow[etTowards[3]].GetBottom() + 1) >= roadGhostCanGo[3] && GetPixelAttribute(etYellow[etTowards[3]].GetRight() - edge, etYellow[etTowards[3]].GetBottom() + 1) >= roadGhostCanGo[3]) {
 				dirCanGo[3][DOWN] = DOWN;
 			}
 

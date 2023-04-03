@@ -114,6 +114,7 @@ namespace game_framework {
 		MyBitmap etYellow[7];
 		MyBitmap cookie[500];
 		MyBitmap spCookie[10];
+		// MyBitmap giraffe;
 
 		// constants
 		const int PIXWIDTH = 16;
@@ -130,7 +131,7 @@ namespace game_framework {
 		
 		// flags & parameters
 		int phase = 1;
-		int ghostmode = 0;	// 0 for chaseMode, 1 for scatterMode, 2 for scareMode
+		int ghostmode = 0;	// 0 for chaseMode, 1 for scatterMode, 2 for scareMode, 3 for transitMode, -1 for initMode
 		int towards = RIGHT;	// pacman direction
 		int etTowards[4] = { LEFT,DOWN,UP,UP };	// ghost directions, 0 for red, 1 for pink, 2 for blue, 3 for yellow
 		int cookieAmount = 0;	// total amount of common cookies
@@ -139,21 +140,23 @@ namespace game_framework {
 		int eatenSP[10];	// use to record sp cookies are eaten or not
 		int speed = 2;	// moving speed
 		int edge = 5;	// space for turning around
+		int roadGhostCanGo[4] = { 0,-1,-1,-1 };
 		int dirCanGo[4][4];	// save all direction could go for each ghost
 		double target[4][2];	// save ghosts' target
 		clock_t start_time;
 		clock_t last_time = clock();	// use in Delay function
 		bool isMapLoaded = false;	// check if the map is loaded 
-		bool isGameStart = true;
+		bool isGameStartInit;
 
 		// functions
 		void ShowByPhase();
 		void InitMap();
 		void InitEaten(int *p, int len);
-		void InitGhostMovement(char mode);
 		void CheckPhaseClear();
 		void ChaseMode(char mode);
 		void ScatterMode(char mode);
+		void ScaredMode(char mode);
+		void InitMode(char mode);
 		void NextDir(char mode);
 		void TurnAround(int dirR, int dirP, int dirB, int dirY);
 		int GetPixelAttribute(int left, int top);
