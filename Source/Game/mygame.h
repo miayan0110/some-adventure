@@ -131,7 +131,9 @@ namespace game_framework {
 		
 		// flags & parameters
 		int phase = 1;
-		int ghostmode = 0;	// 0 for chaseMode, 1 for scatterMode, 2 for scareMode, 3 for transitMode, -1 for initMode
+		int modePhase = 1;
+		int ghostmode = 1;	// 0 for chaseMode, 1 for scatterMode, 2 for scareMode, 3 for transitMode, -1 for initMode
+		int lastGhostmode = 1;
 		int towards = RIGHT;	// pacman direction
 		int etTowards[4] = { LEFT,DOWN,UP,UP };	// ghost directions, 0 for red, 1 for pink, 2 for blue, 3 for yellow
 		int cookieAmount = 0;	// total amount of common cookies
@@ -139,11 +141,13 @@ namespace game_framework {
 		int eatenCookie[500];	// use to record cookies are eaten or not
 		int eatenSP[10];	// use to record sp cookies are eaten or not
 		int speed = 2;	// moving speed
+		int ghostspeed = 2;
 		int edge = 5;	// space for turning around
 		int roadGhostCanGo[4] = { 0,-1,-1,-1 };
 		int dirCanGo[4][4];	// save all direction could go for each ghost
 		double target[4][2];	// save ghosts' target
 		clock_t start_time;
+		clock_t mode_time;
 		clock_t last_time = clock();	// use in Delay function
 		bool isMapLoaded = false;	// check if the map is loaded 
 		bool isGameStartInit;
@@ -164,6 +168,9 @@ namespace game_framework {
 		double Distance(MyBitmap mb1, MyBitmap mb2);
 		bool Delay(int delaytime);
 		bool FindElement(int *p, int len, int target);
+
+		// Game Controller
+		void TimeController();
 
 		// map
 		int map[3][36][28] = {
