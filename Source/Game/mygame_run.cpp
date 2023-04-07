@@ -313,6 +313,7 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 			spCookie[i].SetFrameIndexOfBitmap(1);
 			eatenSP[i] = 0;
 			ghostmode = 2;
+			scared_start = clock();
 			TurnAround(etTowards[0], etTowards[1], etTowards[2], etTowards[3]);
 		}
 	}
@@ -1133,6 +1134,12 @@ bool CGameStateRun::FindElement(int *p, int len, int target) {
 
 void CGameStateRun::TimeController() {
 	lastGhostmode = ghostmode;
+	/*
+	if (ghostmode == 2) {
+		if (clock() - scared_start<=) {
+
+		}
+	}*/
 	if (phase < 5 && modePhase < 3) {
 		if (clock() - mode_time <= 7 * 1000) {
 			ghostmode = 1;

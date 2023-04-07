@@ -148,6 +148,7 @@ namespace game_framework {
 		double target[4][2];	// save ghosts' target
 		clock_t start_time;
 		clock_t mode_time;
+		clock_t scared_start;
 		clock_t last_time = clock();	// use in Delay function
 		bool isMapLoaded = false;	// check if the map is loaded 
 		bool isGameStartInit;
