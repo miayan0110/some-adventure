@@ -600,11 +600,11 @@ void CGameStateRun::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	}
 	else if (nChar == VK_RIGHT) {
 		ghostmode = 2;	/* change ghost mode to scared mode by hand */
+		scared_start = clock();
 		TurnAround(etTowards[0], etTowards[1], etTowards[2], etTowards[3]);
 	}
 	else if (nChar == VK_LEFT) {
-		ghostmode = 3;	/* change ghost mode to transit mode by hand */
-		TurnAround(etTowards[0], etTowards[1], etTowards[2], etTowards[3]);
+		//ghostmode = 3;	/* change ghost mode to transit mode by hand */
 	}
 }
 
@@ -649,14 +649,14 @@ void CGameStateRun::ShowByPhase() {
 			etRed[etTowards[0]].SetTopLeft(216, 224);
 			etPink[etTowards[1]].SetTopLeft(216, 272);
 			etBlue[etTowards[2]].SetTopLeft(186, 272);
+			etYellow[etTowards[3]].SetTopLeft(246, 272);
 		}
 
+		TimeController();
 		if (lastGhostmode != ghostmode) {
 			TurnAround(etTowards[0], etTowards[1], etTowards[2], etTowards[3]);
 		}
-		if (ghostmode < 2) {
-			TimeController();
-		}
+
 		CheckPhaseClear();
 	}
 
@@ -1134,13 +1134,19 @@ bool CGameStateRun::FindElement(int *p, int len, int target) {
 
 void CGameStateRun::TimeController() {
 	lastGhostmode = ghostmode;
-	/*
-	if (ghostmode == 2) {
-		if (clock() - scared_start<=) {
-
+	
+	if (ghostmode >= 2) {
+		if (clock() - scared_start <= 7 * 1000) {
+			ghostmode = 2;
 		}
-	}*/
-	if (phase < 5 && modePhase < 3) {
+		else if (clock() - scared_start <= 9 * 1000) {
+			ghostmode = 3;
+		}
+		else {
+			ghostmode = 0;
+		}
+	}
+	else if (phase < 5 && modePhase < 3) {
 		if (clock() - mode_time <= 7 * 1000) {
 			ghostmode = 1;
 		}
