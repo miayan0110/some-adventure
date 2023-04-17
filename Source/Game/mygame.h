@@ -105,18 +105,24 @@ namespace game_framework {
 		void OnMove();									// 移動遊戲元素
 		void OnShow();									// 顯示這個狀態的遊戲畫面
 	private:
-		// sprites
+		/* sprites */
+		// game
 		CMovingBitmap background;
 		MyBitmap character[5];
-		MyBitmap etRed[7];
-		MyBitmap etPink[7];
-		MyBitmap etBlue[7];
-		MyBitmap etYellow[7];
+		MyBitmap etRed[8];
+		MyBitmap etPink[8];
+		MyBitmap etBlue[8];
+		MyBitmap etYellow[8];
 		MyBitmap cookie[500];
 		MyBitmap spCookie[10];
 		// MyBitmap giraffe;
+		// ui
+		MyBitmap props[5];
+		MyBitmap oneP;
+		MyBitmap scoreNum[10];
+		
 
-		// constants
+		/* constants */
 		const int PIXWIDTH = 16;
 		const int PIXHEIGHT = 16;
 		const int MAPWIDTH = 28;
@@ -128,11 +134,13 @@ namespace game_framework {
 		const int UNSHOW = 4;
 		const int SCARED = 5;
 		const int TRANSIT = 6;
+		const int DIED = 7;
 		
-		// flags & parameters
+		/* flags & parameters */
+		// game
 		int phase = 1;
 		int modePhase = 1;
-		int ghostmode = 1;	// 0 for chaseMode, 1 for scatterMode, 2 for scareMode, 3 for transitMode, -1 for initMode
+		int ghostmode = 1;	// 0 for chaseMode, 1 for scatterMode, 2 for scareMode, 3 for transitMode
 		int lastGhostmode = 1;
 		int towards = RIGHT;	// pacman direction
 		int etTowards[4] = { LEFT,DOWN,UP,UP };	// ghost directions, 0 for red, 1 for pink, 2 for blue, 3 for yellow
@@ -141,7 +149,7 @@ namespace game_framework {
 		int eatenCookie[500];	// use to record cookies are eaten or not
 		int eatenSP[10];	// use to record sp cookies are eaten or not
 		int speed = 2;	// moving speed
-		int ghostspeed = 2;
+		int ghostspeed[4] = { 2,2,2,2 };
 		int edge = 5;	// space for turning around
 		int roadGhostCanGo[4] = { 0,-1,-1,-1 };
 		int dirCanGo[4][4];	// save all direction could go for each ghost
@@ -152,8 +160,14 @@ namespace game_framework {
 		clock_t last_time = clock();	// use in Delay function
 		bool isMapLoaded = false;	// check if the map is loaded 
 		bool isGameStartInit;
+		bool isDied[4] = { false, false, false, false };
+		bool lastDiedMode[4] = { false, false, false, false };
+		bool showOrigin[4] = { false,false,false,false };
+		// ui
+		int score = 0;
 
-		// functions
+		/* functions */
+		// game
 		void ShowByPhase();
 		void InitMap();
 		void InitEaten(int *p, int len);
@@ -162,6 +176,7 @@ namespace game_framework {
 		void ScatterMode(char mode);
 		void ScaredMode(char mode);
 		void InitMode(char mode);
+		void DiedMode(char mode);
 		void NextDir(char mode);
 		void TurnAround(int dirR, int dirP, int dirB, int dirY);
 		int GetPixelAttribute(int left, int top);
@@ -169,11 +184,13 @@ namespace game_framework {
 		double Distance(MyBitmap mb1, MyBitmap mb2);
 		bool Delay(int delaytime);
 		bool FindElement(int *p, int len, int target);
+		// ui
+		void ShowUI();
 
-		// Game Controller
+		/* Game Controller */
 		void TimeController();
 
-		// map
+		/* map */
 		int map[3][36][28] = {
 		{
 			{-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2},
