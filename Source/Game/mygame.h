@@ -120,6 +120,7 @@ namespace game_framework {
 		MyBitmap props[5];
 		MyBitmap oneP;
 		MyBitmap scoreNum[10];
+		MyBitmap bonusPoints;
 		
 
 		/* constants */
@@ -140,17 +141,21 @@ namespace game_framework {
 		// game
 		int phase = 1;
 		int modePhase = 1;
-		int ghostmode = 1;	// 0 for chaseMode, 1 for scatterMode, 2 for scareMode, 3 for transitMode
-		int lastGhostmode = 1;
+		int edge = 5;	// space for turning around
+
 		int towards = RIGHT;	// pacman direction
-		int etTowards[4] = { LEFT,DOWN,UP,UP };	// ghost directions, 0 for red, 1 for pink, 2 for blue, 3 for yellow
+		int speed = 2;	// moving speed
+		int eatenGhostAmount = 0;	// count of eaten ghost
+		
 		int cookieAmount = 0;	// total amount of common cookies
 		int spCookieAmount = 0;	// total amount of sp cookies
 		int eatenCookie[500];	// use to record cookies are eaten or not
 		int eatenSP[10];	// use to record sp cookies are eaten or not
-		int speed = 2;	// moving speed
+		
+		int ghostmode = 1;	// 0 for chaseMode, 1 for scatterMode, 2 for scareMode, 3 for transitMode
+		int lastGhostmode = 1;
 		int ghostspeed[4] = { 2,2,2,2 };
-		int edge = 5;	// space for turning around
+		int etTowards[4] = { LEFT,DOWN,UP,UP };	// ghost directions, 0 for red, 1 for pink, 2 for blue, 3 for yellow
 		int roadGhostCanGo[4] = { 0,-1,-1,-1 };
 		int dirCanGo[4][4];	// save all direction could go for each ghost
 		double target[4][2];	// save ghosts' target
@@ -160,11 +165,11 @@ namespace game_framework {
 		clock_t last_time = clock();	// use in Delay function
 		bool isMapLoaded = false;	// check if the map is loaded 
 		bool isGameStartInit;
-		bool isDied[4] = { false, false, false, false };
-		bool lastDiedMode[4] = { false, false, false, false };
-		bool showOrigin[4] = { false,false,false,false };
+		bool isDied[4] = { false, false, false, false };	// is ghost eaten
+		bool showOrigin[4] = { false,false,false,false };	// had ghost get back to ghost house
 		// ui
 		int score = 0;
+		int stuffEaten = 0;	// there are stuff eaten or not
 
 		/* functions */
 		// game
@@ -186,6 +191,7 @@ namespace game_framework {
 		bool FindElement(int *p, int len, int target);
 		// ui
 		void ShowUI();
+		void ShowBonusPoint(int toShow);
 
 		/* Game Controller */
 		void TimeController();

@@ -5,6 +5,7 @@
 #define GAME_TITLE           "Game"
 //! 設定遊戲畫面的解析度（寬度）
 #define SIZE_X				 466	
+// #define SIZE_X				 500	
 //! 設定遊戲畫面的解析度（高度）
 #define SIZE_Y				 600
 //! 是否以全螢幕方式開啟遊戲

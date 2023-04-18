@@ -369,29 +369,33 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 
 	/* ghost died */
 	if (ghostmode > 1) {
-		if (etRed[etTowards[0]].IsEaten(character[towards], etRed[etTowards[0]])) {
+		if (etRed[etTowards[0]].IsEaten(character[towards], etRed[etTowards[0]]) && !showOrigin[0] && !isDied[0]) {
 			etRed[DIED].SetTopLeft(etRed[etTowards[0]].GetLeft(), etRed[etTowards[0]].GetTop());
-			etTowards[0] = DIED;
+			// etTowards[0] = DIED;
 			isDied[0] = true;
-			showOrigin[0] = false;
+			stuffEaten = 1;
+			score += int(pow(2, eatenGhostAmount++)) * 200;
 		}
-		if (etPink[etTowards[1]].IsEaten(character[towards], etPink[etTowards[1]])) {
+		if (etPink[etTowards[1]].IsEaten(character[towards], etPink[etTowards[1]]) && !showOrigin[1] && !isDied[1]) {
 			etPink[DIED].SetTopLeft(etPink[etTowards[1]].GetLeft(), etPink[etTowards[1]].GetTop());
-			etTowards[1] = DIED;
+			// etTowards[1] = DIED;
 			isDied[1] = true;
-			showOrigin[1] = false;
+			stuffEaten = 1;
+			score += int(pow(2, eatenGhostAmount++)) * 200;
 		}
-		if (etBlue[etTowards[2]].IsEaten(character[towards], etBlue[etTowards[2]])) {
+		if (etBlue[etTowards[2]].IsEaten(character[towards], etBlue[etTowards[2]]) && !showOrigin[2] && !isDied[2]) {
 			etBlue[DIED].SetTopLeft(etBlue[etTowards[2]].GetLeft(), etBlue[etTowards[2]].GetTop());
-			etTowards[2] = DIED;
+			// etTowards[2] = DIED;
 			isDied[2] = true;
-			showOrigin[2] = false;
+			stuffEaten = 1;
+			score += int(pow(2, eatenGhostAmount++)) * 200;
 		}
-		if (etYellow[etTowards[3]].IsEaten(character[towards], etYellow[etTowards[3]])) {
+		if (etYellow[etTowards[3]].IsEaten(character[towards], etYellow[etTowards[3]]) && !showOrigin[3] && !isDied[3]) {
 			etYellow[DIED].SetTopLeft(etYellow[etTowards[3]].GetLeft(), etYellow[etTowards[3]].GetTop());
-			etTowards[3] = DIED;
+			// etTowards[3] = DIED;
 			isDied[3] = true;
-			showOrigin[3] = false;
+			stuffEaten = 1;
+			score += int(pow(2, eatenGhostAmount++)) * 200;
 		}
 	}
 }
@@ -436,6 +440,14 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 			}, RGB(255, 255, 255));
 		scoreNum[i].SetTopLeft(168 - 18 * i, 15);
 	}
+
+	/* bonus points for eating ghost or props */
+	bonusPoints.LoadBitmapByString({
+		"resources/stuff/200.bmp",
+		"resources/stuff/400.bmp",
+		"resources/stuff/800.bmp",
+		"resources/stuff/1600.bmp",
+		}, RGB(255, 255, 255));
 
 	///////////////////////////////////////////
 	// GAME
@@ -856,35 +868,42 @@ void CGameStateRun::ShowByPhase() {
 		spCookie[i].ShowBitmap(1.5);
 	}
 
+	/* show points get if ghost is eaten */
+	ShowBonusPoint(stuffEaten);
+
 	/* show ghosts */
-	for (int i = 0; i < 4; i++) {
-		if (lastDiedMode[i] == true && isDied[i] == false) {
-			showOrigin[i] = true;
-		}
-		lastDiedMode[i] = isDied[i];
-	}
 	if (ghostmode < 2) {
-		etRed[etTowards[0]].ShowBitmap(1.25);
-		etPink[etTowards[1]].ShowBitmap(1.25);
-		etBlue[etTowards[2]].ShowBitmap(1.25);
-		etYellow[etTowards[3]].ShowBitmap(1.25);
+		for (int i = 0; i < 4; i++) {
+			showOrigin[i] = false;
+		}
+		if (!isDied[0]) etRed[etTowards[0]].ShowBitmap(1.25);
+		else etRed[DIED].ShowBitmap(1.25);
+
+		if (!isDied[1]) etPink[etTowards[1]].ShowBitmap(1.25);
+		else etPink[DIED].ShowBitmap(1.25);
+
+		if (!isDied[2]) etBlue[etTowards[2]].ShowBitmap(1.25);
+		else etBlue[DIED].ShowBitmap(1.25);
+
+		if (!isDied[3]) etYellow[etTowards[3]].ShowBitmap(1.25);
+		else etYellow[DIED].ShowBitmap(1.25);
 	}
-	else if (ghostmode == 2 && !showOrigin[0] && !showOrigin[1] && !showOrigin[2] && !showOrigin[3]) {
+	else if (ghostmode == 2) {
 		etRed[SCARED + isDied[0] * 2].ShowBitmap(1.25);
 		etPink[SCARED + isDied[1] * 2].ShowBitmap(1.25);
 		etBlue[SCARED + isDied[2] * 2].ShowBitmap(1.25);
 		etYellow[SCARED + isDied[3] * 2].ShowBitmap(1.25);
 	}
-	else if (ghostmode == 3 && !showOrigin[0] && !showOrigin[1] && !showOrigin[2] && !showOrigin[3]) {
+	else if (ghostmode == 3) {
 		etRed[TRANSIT + isDied[0]].ShowBitmap(1.25);
 		etPink[TRANSIT + isDied[1]].ShowBitmap(1.25);
 		etBlue[TRANSIT + isDied[2]].ShowBitmap(1.25);
 		etYellow[TRANSIT + isDied[3]].ShowBitmap(1.25);
 	}
 	if (showOrigin[0]) etRed[etTowards[0]].ShowBitmap(1.25);
-	if (showOrigin[0]) etPink[etTowards[1]].ShowBitmap(1.25);
-	if (showOrigin[0]) etBlue[etTowards[2]].ShowBitmap(1.25);
-	if (showOrigin[0]) etYellow[etTowards[3]].ShowBitmap(1.25);
+	if (showOrigin[1]) etPink[etTowards[1]].ShowBitmap(1.25);
+	if (showOrigin[2]) etBlue[etTowards[2]].ShowBitmap(1.25);
+	if (showOrigin[3]) etYellow[etTowards[3]].ShowBitmap(1.25);
 
 	/* testing */
 	// giraffe.ShowBitmap(0.5);
@@ -1089,6 +1108,7 @@ void CGameStateRun::DiedMode(char mode) {
 	case 'r':
 		if (GetPixelAttribute(etRed[etTowards[0]].GetLeft(), etRed[etTowards[0]].GetTop()) == -1) {
 			isDied[0] = false;
+			showOrigin[0] = true;
 			break;
 		}
 		target[0][0] = 216;
@@ -1098,7 +1118,8 @@ void CGameStateRun::DiedMode(char mode) {
 		break;
 	case 'p':
 		if (GetPixelAttribute(etPink[etTowards[1]].GetLeft(), etPink[etTowards[1]].GetTop()) == -1) {
-			isDied[1] = false;	
+			isDied[1] = false;
+			showOrigin[1] = true;
 			break;
 		}
 		target[1][0] = 216;
@@ -1109,6 +1130,7 @@ void CGameStateRun::DiedMode(char mode) {
 	case 'b':
 		if (GetPixelAttribute(etBlue[etTowards[2]].GetLeft(), etBlue[etTowards[2]].GetTop()) == -1) {
 			isDied[2] = false;
+			showOrigin[2] = true;
 			break;
 		}
 		target[2][0] = 216;
@@ -1119,6 +1141,7 @@ void CGameStateRun::DiedMode(char mode) {
 	case 'y':
 		if (GetPixelAttribute(etYellow[etTowards[3]].GetLeft(), etYellow[etTowards[3]].GetTop()) == -1) {
 			isDied[3] = false;
+			showOrigin[3] = true;
 			break;
 		}
 		target[3][0] = 216;
@@ -1311,43 +1334,51 @@ void CGameStateRun::NextDir(char mode) {
 
 void CGameStateRun::TurnAround(int dirR, int dirP, int dirB, int dirY) {
 	/* red ghost */
-	if (dirR == UP || dirR == LEFT) {
-		etRed[dirR + 2].SetTopLeft(etRed[dirR].GetLeft(), etRed[dirR].GetTop());
-		etTowards[0] = dirR + 2;
-	}
-	else if (dirR == DOWN || dirR == RIGHT) {
-		etRed[dirR - 2].SetTopLeft(etRed[dirR].GetLeft(), etRed[dirR].GetTop());
-		etTowards[0] = dirR - 2;
+	if (!isDied[0]) {
+		if (dirR == UP || dirR == LEFT) {
+			etRed[dirR + 2].SetTopLeft(etRed[dirR].GetLeft(), etRed[dirR].GetTop());
+			etTowards[0] = dirR + 2;
+		}
+		else if (dirR == DOWN || dirR == RIGHT) {
+			etRed[dirR - 2].SetTopLeft(etRed[dirR].GetLeft(), etRed[dirR].GetTop());
+			etTowards[0] = dirR - 2;
+		}
 	}
 
 	/* pink ghost */
-	if (dirP == UP || dirP == LEFT) {
-		etPink[dirP + 2].SetTopLeft(etPink[dirP].GetLeft(), etPink[dirP].GetTop());
-		etTowards[1] = dirP + 2;
-	}
-	else if (dirP == DOWN || dirP == RIGHT) {
-		etPink[dirP - 2].SetTopLeft(etPink[dirP].GetLeft(), etPink[dirP].GetTop());
-		etTowards[1] = dirP - 2;
+	if (!isDied[1]) {
+		if (dirP == UP || dirP == LEFT) {
+			etPink[dirP + 2].SetTopLeft(etPink[dirP].GetLeft(), etPink[dirP].GetTop());
+			etTowards[1] = dirP + 2;
+		}
+		else if (dirP == DOWN || dirP == RIGHT) {
+			etPink[dirP - 2].SetTopLeft(etPink[dirP].GetLeft(), etPink[dirP].GetTop());
+			etTowards[1] = dirP - 2;
+		}
 	}
 
 	/* blue ghost */
-	if (dirB == UP || dirB == LEFT) {
-		etBlue[dirB + 2].SetTopLeft(etBlue[dirB].GetLeft(), etBlue[dirB].GetTop());
-		etTowards[2] = dirB + 2;
-	}
-	else if (dirB == DOWN || dirB == RIGHT) {
-		etBlue[dirB - 2].SetTopLeft(etBlue[dirB].GetLeft(), etBlue[dirB].GetTop());
-		etTowards[2] = dirB - 2;
+	if (!isDied[2]) {
+		if (dirB == UP || dirB == LEFT) {
+			etBlue[dirB + 2].SetTopLeft(etBlue[dirB].GetLeft(), etBlue[dirB].GetTop());
+			etTowards[2] = dirB + 2;
+		}
+		else if (dirB == DOWN || dirB == RIGHT) {
+			etBlue[dirB - 2].SetTopLeft(etBlue[dirB].GetLeft(), etBlue[dirB].GetTop());
+			etTowards[2] = dirB - 2;
+		}
 	}
 
 	/* yellow ghost */
-	if (dirY == UP || dirY == LEFT) {
-		etYellow[dirY + 2].SetTopLeft(etYellow[dirY].GetLeft(), etYellow[dirY].GetTop());
-		etTowards[3] = dirY + 2;
-	}
-	else if (dirY == DOWN || dirY == RIGHT) {
-		etYellow[dirY - 2].SetTopLeft(etYellow[dirY].GetLeft(), etYellow[dirY].GetTop());
-		etTowards[3] = dirY - 2;
+	if (!isDied[3]) {
+		if (dirY == UP || dirY == LEFT) {
+			etYellow[dirY + 2].SetTopLeft(etYellow[dirY].GetLeft(), etYellow[dirY].GetTop());
+			etTowards[3] = dirY + 2;
+		}
+		else if (dirY == DOWN || dirY == RIGHT) {
+			etYellow[dirY - 2].SetTopLeft(etYellow[dirY].GetLeft(), etYellow[dirY].GetTop());
+			etTowards[3] = dirY - 2;
+		}
 	}
 }
 
@@ -1390,6 +1421,23 @@ bool CGameStateRun::FindElement(int *p, int len, int target) {
 	return false;
 }
 
+void CGameStateRun::ShowBonusPoint(int toShow) {
+	if (toShow == 1) {
+		/* show bonus for eating ghost */
+		bonusPoints.SetFrameIndexOfBitmap(eatenGhostAmount-1);
+		bonusPoints.SetTopLeft(character[towards].GetLeft(), character[towards].GetTop());
+		bonusPoints.ShowBitmap(1.5);
+	}
+	else if (toShow == 2) {
+		/* show bonus for eating props*/
+	}
+
+	/* show for 2 seconds */
+	if (Delay(2 * 1000)) {
+		stuffEaten = false;
+	}
+}
+
 void CGameStateRun::TimeController() {
 	lastGhostmode = ghostmode;
 	
@@ -1402,6 +1450,10 @@ void CGameStateRun::TimeController() {
 		}
 		else {
 			ghostmode = 0;
+			eatenGhostAmount = 0;
+			for (int i = 0; i < 4; i++) {
+				showOrigin[i] = false;
+			}
 		}
 	}
 	else if (phase < 5 && modePhase < 3) {
