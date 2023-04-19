@@ -887,15 +887,9 @@ void CGameStateRun::ShowByPhase() {
 	}
 
 	/* show points get if ghost is eaten */
-	/*
 	for (int i = 0; i < 4; i++) {
 		ShowBonusPoint(stuffEaten[i], i);
-	}*/
-
-	ShowBonusPoint(stuffEaten[0], 0);
-	ShowBonusPoint(stuffEaten[1], 1);
-	ShowBonusPoint(stuffEaten[2], 2);
-	ShowBonusPoint(stuffEaten[3], 3);
+	}
 
 	/* show ghosts */
 	if (ghostmode < 2) {
