@@ -141,7 +141,6 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 	}
 
 	// pink
-	//if(clock())
 	if ((etPink[etTowards[1]].GetLeft() % 16 <= 0 && etPink[etTowards[1]].GetTop() % 16 <= 0) || (etPink[etTowards[1]].GetLeft() % 16 >= 15 && etPink[etTowards[1]].GetTop() % 16 >= 15)) {
 		if (isDied[1]) DiedMode('p');
 		else if (roadGhostCanGo[1] == -1) InitMode('p');
@@ -210,7 +209,6 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 	}
 
 	// blue
-	//if(clock())
 	if ((etBlue[etTowards[2]].GetLeft() % 16 <= 0 && etBlue[etTowards[2]].GetTop() % 16 <= 0) || (etBlue[etTowards[2]].GetLeft() % 16 >= 15 && etBlue[etTowards[2]].GetTop() % 16 >= 15)) {
 		if (isDied[2]) DiedMode('b');
 		else if (roadGhostCanGo[2] == -1) InitMode('b');
@@ -279,7 +277,6 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 	}
 
 	// yellow
-	//if(clock())
 	if ((etYellow[etTowards[3]].GetLeft() % 16 <= 0 && etYellow[etTowards[3]].GetTop() % 16 <= 0) || (etYellow[etTowards[3]].GetLeft() % 16 >= 15 && etYellow[etTowards[3]].GetTop() % 16 >= 15)) {
 		if (isDied[3]) DiedMode('y');
 		else if (roadGhostCanGo[3] == -1) InitMode('y');
@@ -370,31 +367,43 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 	/* ghost died */
 	if (ghostmode > 1) {
 		if (etRed[etTowards[0]].IsEaten(character[towards], etRed[etTowards[0]]) && !showOrigin[0] && !isDied[0]) {
-			etRed[DIED].SetTopLeft(etRed[etTowards[0]].GetLeft(), etRed[etTowards[0]].GetTop());
+			eat_time = clock();
+			eatenLeft = etRed[etTowards[0]].GetLeft();
+			eatenTop = etRed[etTowards[0]].GetTop();
+			etRed[DIED].SetTopLeft(eatenLeft, eatenTop);
 			// etTowards[0] = DIED;
 			isDied[0] = true;
-			stuffEaten = 1;
+			stuffEaten[eatenGhostAmount] = 1;
 			score += int(pow(2, eatenGhostAmount++)) * 200;
 		}
 		if (etPink[etTowards[1]].IsEaten(character[towards], etPink[etTowards[1]]) && !showOrigin[1] && !isDied[1]) {
-			etPink[DIED].SetTopLeft(etPink[etTowards[1]].GetLeft(), etPink[etTowards[1]].GetTop());
+			eat_time = clock();
+			eatenLeft = etPink[etTowards[1]].GetLeft();
+			eatenTop = etPink[etTowards[1]].GetTop();
+			etPink[DIED].SetTopLeft(eatenLeft, eatenTop);
 			// etTowards[1] = DIED;
 			isDied[1] = true;
-			stuffEaten = 1;
+			stuffEaten[eatenGhostAmount] = 1;
 			score += int(pow(2, eatenGhostAmount++)) * 200;
 		}
 		if (etBlue[etTowards[2]].IsEaten(character[towards], etBlue[etTowards[2]]) && !showOrigin[2] && !isDied[2]) {
-			etBlue[DIED].SetTopLeft(etBlue[etTowards[2]].GetLeft(), etBlue[etTowards[2]].GetTop());
+			eat_time = clock();
+			eatenLeft = etBlue[etTowards[2]].GetLeft();
+			eatenTop = etBlue[etTowards[2]].GetTop();
+			etBlue[DIED].SetTopLeft(eatenLeft, eatenTop);
 			// etTowards[2] = DIED;
 			isDied[2] = true;
-			stuffEaten = 1;
+			stuffEaten[eatenGhostAmount] = 1;
 			score += int(pow(2, eatenGhostAmount++)) * 200;
 		}
 		if (etYellow[etTowards[3]].IsEaten(character[towards], etYellow[etTowards[3]]) && !showOrigin[3] && !isDied[3]) {
-			etYellow[DIED].SetTopLeft(etYellow[etTowards[3]].GetLeft(), etYellow[etTowards[3]].GetTop());
+			eat_time = clock();
+			eatenLeft = etYellow[etTowards[3]].GetLeft();
+			eatenTop = etYellow[etTowards[3]].GetTop();
+			etYellow[DIED].SetTopLeft(eatenLeft, eatenTop);
 			// etTowards[3] = DIED;
 			isDied[3] = true;
-			stuffEaten = 1;
+			stuffEaten[eatenGhostAmount] = 1;
 			score += int(pow(2, eatenGhostAmount++)) * 200;
 		}
 	}
@@ -442,10 +451,19 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 	}
 
 	/* bonus points for eating ghost or props */
-	bonusPoints.LoadBitmapByString({
+	bonusPoints[0].LoadBitmapByString({
 		"resources/stuff/200.bmp",
+		}, RGB(255, 255, 255));
+
+	bonusPoints[1].LoadBitmapByString({
 		"resources/stuff/400.bmp",
+		}, RGB(255, 255, 255));
+
+	bonusPoints[2].LoadBitmapByString({
 		"resources/stuff/800.bmp",
+		}, RGB(255, 255, 255));
+
+	bonusPoints[3].LoadBitmapByString({
 		"resources/stuff/1600.bmp",
 		}, RGB(255, 255, 255));
 
@@ -706,12 +724,12 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 		}, RGB(255, 255, 255));
 
 	/* testing */
-	/*
+	
 	giraffe.LoadBitmapByString({
 		"resources/giraffe.bmp",
 		"resources/ets/et_unshow.bmp"
 		}, RGB(255, 255, 255));
-	giraffe.SetTopLeft(0, 0);*/
+	giraffe.SetTopLeft(0, 0);
 }
 
 void CGameStateRun::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
@@ -869,7 +887,15 @@ void CGameStateRun::ShowByPhase() {
 	}
 
 	/* show points get if ghost is eaten */
-	ShowBonusPoint(stuffEaten);
+	/*
+	for (int i = 0; i < 4; i++) {
+		ShowBonusPoint(stuffEaten[i], i);
+	}*/
+
+	ShowBonusPoint(stuffEaten[0], 0);
+	ShowBonusPoint(stuffEaten[1], 1);
+	ShowBonusPoint(stuffEaten[2], 2);
+	ShowBonusPoint(stuffEaten[3], 3);
 
 	/* show ghosts */
 	if (ghostmode < 2) {
@@ -1414,6 +1440,13 @@ bool CGameStateRun::Delay(int delaytime) {
 	return false;
 }
 
+bool CGameStateRun::Delay(int delaytime, clock_t start) {
+	if (clock() - start >= delaytime) {
+		return true;
+	}
+	return false;
+}
+
 bool CGameStateRun::FindElement(int *p, int len, int target) {
 	for (int i = 0; i < len; i++) {
 		if (p[i] == target)	return true;
@@ -1421,20 +1454,21 @@ bool CGameStateRun::FindElement(int *p, int len, int target) {
 	return false;
 }
 
-void CGameStateRun::ShowBonusPoint(int toShow) {
+void CGameStateRun::ShowBonusPoint(int toShow, int i) {
 	if (toShow == 1) {
 		/* show bonus for eating ghost */
-		bonusPoints.SetFrameIndexOfBitmap(eatenGhostAmount-1);
-		bonusPoints.SetTopLeft(character[towards].GetLeft(), character[towards].GetTop());
-		bonusPoints.ShowBitmap(1.5);
+		bonusPoints[i].SetTopLeft(eatenLeft, eatenTop);
+		bonusPoints[i].ShowBitmap(1.5);
+		giraffe.ShowBitmap(0.5);
 	}
 	else if (toShow == 2) {
 		/* show bonus for eating props*/
 	}
 
 	/* show for 2 seconds */
-	if (Delay(2 * 1000)) {
-		stuffEaten = false;
+	if (Delay(2 * 1000, eat_time)) {
+		stuffEaten[i] = 0;
+		giraffe.ShowBitmap(0);
 	}
 }
 

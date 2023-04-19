@@ -115,12 +115,12 @@ namespace game_framework {
 		MyBitmap etYellow[8];
 		MyBitmap cookie[500];
 		MyBitmap spCookie[10];
-		// MyBitmap giraffe;
+		MyBitmap giraffe;
 		// ui
 		MyBitmap props[5];
 		MyBitmap oneP;
 		MyBitmap scoreNum[10];
-		MyBitmap bonusPoints;
+		MyBitmap bonusPoints[4];
 		
 
 		/* constants */
@@ -158,10 +158,13 @@ namespace game_framework {
 		int etTowards[4] = { LEFT,DOWN,UP,UP };	// ghost directions, 0 for red, 1 for pink, 2 for blue, 3 for yellow
 		int roadGhostCanGo[4] = { 0,-1,-1,-1 };
 		int dirCanGo[4][4];	// save all direction could go for each ghost
+		int eatenLeft = 0, eatenTop = 0;	// the place ghost is eaten
 		double target[4][2];	// save ghosts' target
-		clock_t start_time;
-		clock_t mode_time;
-		clock_t scared_start;
+
+		clock_t start_time;	// phase start time
+		clock_t mode_time;	// mode start time
+		clock_t scared_start;	// scared mode start time
+		clock_t eat_time;	// the time that pacman eats a ghost
 		clock_t last_time = clock();	// use in Delay function
 		bool isMapLoaded = false;	// check if the map is loaded 
 		bool isGameStartInit;
@@ -169,7 +172,7 @@ namespace game_framework {
 		bool showOrigin[4] = { false,false,false,false };	// had ghost get back to ghost house
 		// ui
 		int score = 0;
-		int stuffEaten = 0;	// there are stuff eaten or not
+		int stuffEaten[4] = { 0,0,0,0 };	// there are stuff eaten or not
 
 		/* functions */
 		// game
@@ -188,10 +191,11 @@ namespace game_framework {
 		double Distance(MyBitmap mb1, int mode, int nextdir);
 		double Distance(MyBitmap mb1, MyBitmap mb2);
 		bool Delay(int delaytime);
+		bool Delay(int delaytime, clock_t start);
 		bool FindElement(int *p, int len, int target);
 		// ui
 		void ShowUI();
-		void ShowBonusPoint(int toShow);
+		void ShowBonusPoint(int toShow, int i);
 
 		/* Game Controller */
 		void TimeController();
