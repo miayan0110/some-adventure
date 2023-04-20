@@ -9,6 +9,7 @@
 #include "myfunc.h"
 #include <stdlib.h>
 #include <string>
+#include <fstream>
 #include <time.h>
 
 using namespace game_framework;
@@ -480,6 +481,11 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 		"resources/map/phase_1.bmp",
 		"resources/map/phase_2.bmp",
 		"resources/map/phase_3.bmp",
+		"resources/map/phase_4.bmp",
+		"resources/map/phase_5.bmp",
+		"resources/map/phase_6.bmp",
+		"resources/map/phase_7.bmp",
+		"resources/map/phase_8.bmp",
 		}, RGB(255, 255, 255));
 	background.SetTopLeft(0, 0);
 
@@ -842,7 +848,7 @@ void CGameStateRun::ShowUI() {
 
 void CGameStateRun::ShowByPhase() {
 	/* check and change phase */
-	if (phase < 5) {
+	if (phase < 9) {
 		if (!isMapLoaded) {
 			start_time = clock();
 			mode_time = start_time;
@@ -929,7 +935,20 @@ void CGameStateRun::ShowByPhase() {
 	// giraffe.ShowBitmap(0.5);
 }
 
+void CGameStateRun::ReadMap(int phase, string filename) {
+	ifstream inputfile(filename);
+
+	for (int r = 0; r < MAPHEIGHT; r++) {
+		for (int c = 0; c < MAPWIDTH; c++) {
+			inputfile >> map[phase-1][r][c];
+		}
+	}
+}
+
 void CGameStateRun::InitMap() {
+	string filename = "resources/map2int/phase" + to_string(phase) + ".txt";
+	ReadMap(phase, filename);
+
 	for (int i = 0; i < MAPHEIGHT; i++) {
 		for (int j = 0; j < MAPWIDTH; j++) {
 			if (map[phase - 1][i][j] == 0) {
@@ -1453,7 +1472,6 @@ void CGameStateRun::ShowBonusPoint(int toShow, int i) {
 		/* show bonus for eating ghost */
 		bonusPoints[i].SetTopLeft(eatenLeft, eatenTop);
 		bonusPoints[i].ShowBitmap(1.5);
-		giraffe.ShowBitmap(0.5);
 	}
 	else if (toShow == 2) {
 		/* show bonus for eating props*/
@@ -1462,7 +1480,6 @@ void CGameStateRun::ShowBonusPoint(int toShow, int i) {
 	/* show for 2 seconds */
 	if (Delay(2 * 1000, eat_time)) {
 		stuffEaten[i] = 0;
-		giraffe.ShowBitmap(0);
 	}
 }
 
