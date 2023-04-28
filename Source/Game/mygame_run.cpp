@@ -484,6 +484,18 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 		"resources/map/phase_6.bmp",
 		"resources/map/phase_7.bmp",
 		"resources/map/phase_8.bmp",
+		"resources/map/phase_9.bmp",
+		"resources/map/phase_10.bmp",
+		"resources/map/phase_11.bmp",
+		"resources/map/phase_12.bmp",
+		"resources/map/phase_13.bmp",
+		"resources/map/phase_14.bmp",
+		"resources/map/phase_15.bmp",
+		"resources/map/phase_16.bmp",
+		"resources/map/phase_17.bmp",
+		"resources/map/phase_18.bmp",
+		"resources/map/phase_19.bmp",
+		"resources/map/phase_20.bmp",
 		}, RGB(255, 255, 255));
 	background.SetTopLeft(0, 0);
 
@@ -817,8 +829,8 @@ void CGameStateRun::OnRButtonUp(UINT nFlags, CPoint point)	// 處理滑鼠的動
 
 void CGameStateRun::OnShow()
 {
-	ShowUI();
 	ShowByPhase();
+	ShowUI();
 }
 
 void CGameStateRun::ShowUI() {
@@ -846,7 +858,7 @@ void CGameStateRun::ShowUI() {
 
 void CGameStateRun::ShowByPhase() {
 	/* check and change phase */
-	if (phase < 9) {
+	if (phase < 21) {
 		if (!isMapLoaded) {
 			start_time = clock();
 			mode_time = start_time;
