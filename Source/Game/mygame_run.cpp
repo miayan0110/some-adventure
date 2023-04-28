@@ -138,6 +138,72 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 			NextDir('r');
 		}
 
+		/* unshow cookies */
+		for (int i = 0; i < cookieAmount; i++) {
+			if (cookie[i].IsEaten(cookie[i], character[towards]) && eatenCookie[i]) {
+				cookie[i].SetFrameIndexOfBitmap(1);
+				eatenCookie[i] = 0;
+				score += 10;
+			}
+		}
+
+		for (int i = 0; i < spCookieAmount; i++) {
+			if (spCookie[i].IsEaten(character[towards], spCookie[i]) && eatenSP[i]) {
+				spCookie[i].UnshowBitmap();
+				spCookie[i].SetFrameIndexOfBitmap(1);
+				eatenSP[i] = 0;
+				ghostmode = 2;
+				scared_start = clock();
+				score += 50;
+			}
+		}
+
+		/* ghost died */
+		if (ghostmode > 1) {
+			if (etRed[etTowards[0]].IsEaten(character[towards], etRed[etTowards[0]]) && !showOrigin[0] && !isDied[0]) {
+				eat_time = clock();
+				eatenLeft = etRed[etTowards[0]].GetLeft();
+				eatenTop = etRed[etTowards[0]].GetTop();
+				etRed[DIED].SetTopLeft(eatenLeft, eatenTop);
+				// etTowards[0] = DIED;
+				isDied[0] = true;
+				stuffEaten[eatenGhostAmount] = 1;
+				score += int(pow(2, eatenGhostAmount++)) * 200;
+			}
+			if (etPink[etTowards[1]].IsEaten(character[towards], etPink[etTowards[1]]) && !showOrigin[1] && !isDied[1]) {
+				eat_time = clock();
+				eatenLeft = etPink[etTowards[1]].GetLeft();
+				eatenTop = etPink[etTowards[1]].GetTop();
+				etPink[DIED].SetTopLeft(eatenLeft, eatenTop);
+				// etTowards[1] = DIED;
+				isDied[1] = true;
+				stuffEaten[eatenGhostAmount] = 1;
+				score += int(pow(2, eatenGhostAmount++)) * 200;
+			}
+			if (etBlue[etTowards[2]].IsEaten(character[towards], etBlue[etTowards[2]]) && !showOrigin[2] && !isDied[2]) {
+				eat_time = clock();
+				eatenLeft = etBlue[etTowards[2]].GetLeft();
+				eatenTop = etBlue[etTowards[2]].GetTop();
+				etBlue[DIED].SetTopLeft(eatenLeft, eatenTop);
+				// etTowards[2] = DIED;
+				isDied[2] = true;
+				stuffEaten[eatenGhostAmount] = 1;
+				score += int(pow(2, eatenGhostAmount++)) * 200;
+			}
+			if (etYellow[etTowards[3]].IsEaten(character[towards], etYellow[etTowards[3]]) && !showOrigin[3] && !isDied[3]) {
+				eat_time = clock();
+				eatenLeft = etYellow[etTowards[3]].GetLeft();
+				eatenTop = etYellow[etTowards[3]].GetTop();
+				etYellow[DIED].SetTopLeft(eatenLeft, eatenTop);
+				// etTowards[3] = DIED;
+				isDied[3] = true;
+				stuffEaten[eatenGhostAmount] = 1;
+				score += int(pow(2, eatenGhostAmount++)) * 200;
+			}
+		}
+	}
+
+	if (Delay(5 * 1000, start_time)) {
 		// pink
 		if ((etPink[etTowards[1]].GetLeft() % 16 <= 0 && etPink[etTowards[1]].GetTop() % 16 <= 0) || (etPink[etTowards[1]].GetLeft() % 16 >= 15 && etPink[etTowards[1]].GetTop() % 16 >= 15)) {
 			if (isDied[1]) DiedMode('p');
@@ -205,7 +271,9 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 			else if (ghostmode >= 2) ScaredMode('p');
 			NextDir('p');
 		}
+	}
 
+	if (Delay(7 * 1000, start_time)) {
 		// blue
 		if ((etBlue[etTowards[2]].GetLeft() % 16 <= 0 && etBlue[etTowards[2]].GetTop() % 16 <= 0) || (etBlue[etTowards[2]].GetLeft() % 16 >= 15 && etBlue[etTowards[2]].GetTop() % 16 >= 15)) {
 			if (isDied[2]) DiedMode('b');
@@ -273,7 +341,9 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 			else if (ghostmode >= 2) ScaredMode('b');
 			NextDir('b');
 		}
+	}
 
+	if (Delay(9 * 1000, start_time)) {
 		// yellow
 		if ((etYellow[etTowards[3]].GetLeft() % 16 <= 0 && etYellow[etTowards[3]].GetTop() % 16 <= 0) || (etYellow[etTowards[3]].GetLeft() % 16 >= 15 && etYellow[etTowards[3]].GetTop() % 16 >= 15)) {
 			if (isDied[3]) DiedMode('y');
@@ -340,70 +410,6 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 			else if (Distance(etYellow[etTowards[3]], character[towards]) <= 8 || ghostmode == 1) ScatterMode('y');
 			else if (ghostmode >= 2) ScaredMode('y');
 			NextDir('y');
-		}
-
-		/* unshow cookies */
-		for (int i = 0; i < cookieAmount; i++) {
-			if (cookie[i].IsEaten(cookie[i], character[towards]) && eatenCookie[i]) {
-				cookie[i].SetFrameIndexOfBitmap(1);
-				eatenCookie[i] = 0;
-				score += 10;
-			}
-		}
-
-		for (int i = 0; i < spCookieAmount; i++) {
-			if (spCookie[i].IsEaten(character[towards], spCookie[i]) && eatenSP[i]) {
-				spCookie[i].UnshowBitmap();
-				spCookie[i].SetFrameIndexOfBitmap(1);
-				eatenSP[i] = 0;
-				ghostmode = 2;
-				scared_start = clock();
-				score += 20;
-			}
-		}
-
-		/* ghost died */
-		if (ghostmode > 1) {
-			if (etRed[etTowards[0]].IsEaten(character[towards], etRed[etTowards[0]]) && !showOrigin[0] && !isDied[0]) {
-				eat_time = clock();
-				eatenLeft = etRed[etTowards[0]].GetLeft();
-				eatenTop = etRed[etTowards[0]].GetTop();
-				etRed[DIED].SetTopLeft(eatenLeft, eatenTop);
-				// etTowards[0] = DIED;
-				isDied[0] = true;
-				stuffEaten[eatenGhostAmount] = 1;
-				score += int(pow(2, eatenGhostAmount++)) * 200;
-			}
-			if (etPink[etTowards[1]].IsEaten(character[towards], etPink[etTowards[1]]) && !showOrigin[1] && !isDied[1]) {
-				eat_time = clock();
-				eatenLeft = etPink[etTowards[1]].GetLeft();
-				eatenTop = etPink[etTowards[1]].GetTop();
-				etPink[DIED].SetTopLeft(eatenLeft, eatenTop);
-				// etTowards[1] = DIED;
-				isDied[1] = true;
-				stuffEaten[eatenGhostAmount] = 1;
-				score += int(pow(2, eatenGhostAmount++)) * 200;
-			}
-			if (etBlue[etTowards[2]].IsEaten(character[towards], etBlue[etTowards[2]]) && !showOrigin[2] && !isDied[2]) {
-				eat_time = clock();
-				eatenLeft = etBlue[etTowards[2]].GetLeft();
-				eatenTop = etBlue[etTowards[2]].GetTop();
-				etBlue[DIED].SetTopLeft(eatenLeft, eatenTop);
-				// etTowards[2] = DIED;
-				isDied[2] = true;
-				stuffEaten[eatenGhostAmount] = 1;
-				score += int(pow(2, eatenGhostAmount++)) * 200;
-			}
-			if (etYellow[etTowards[3]].IsEaten(character[towards], etYellow[etTowards[3]]) && !showOrigin[3] && !isDied[3]) {
-				eat_time = clock();
-				eatenLeft = etYellow[etTowards[3]].GetLeft();
-				eatenTop = etYellow[etTowards[3]].GetTop();
-				etYellow[DIED].SetTopLeft(eatenLeft, eatenTop);
-				// etTowards[3] = DIED;
-				isDied[3] = true;
-				stuffEaten[eatenGhostAmount] = 1;
-				score += int(pow(2, eatenGhostAmount++)) * 200;
-			}
 		}
 	}
 }
