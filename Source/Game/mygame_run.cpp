@@ -420,6 +420,15 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 	// UI 
 	///////////////////////////////////////////
 
+	/* player lives */
+	for (int i = 0; i < 3; i++) {
+		lives[i].LoadBitmapByString({
+			"resources/pacman/pacman_towardL_1.bmp",
+			"resources/pacman/pacman_unshow.bmp",
+			}, RGB(255, 255, 255));
+		lives[i].SetTopLeft(16 + 30 * i, 550);
+	}
+
 	/* extra point props */
 	props[0].LoadBitmapByString({
 		"resources/stuff/cherry.bmp"
@@ -842,6 +851,11 @@ void CGameStateRun::OnShow()
 void CGameStateRun::ShowUI() {
 	/* show player mode */
 	oneP.ShowBitmap(2);
+
+	/* show player lives */
+	for (int i = 0; i < 3; i++) {
+		lives[i].ShowBitmap(1.25);
+	}
 
 	/* show props */
 	for (int i = 0; i < 2; i++) {

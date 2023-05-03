@@ -118,6 +118,7 @@ namespace game_framework {
 		MyBitmap giraffe;
 		// ui
 		MyBitmap props[5];
+		MyBitmap lives[3];
 		MyBitmap oneP;
 		MyBitmap scoreNum[10];
 		MyBitmap bonusPoints[4];
