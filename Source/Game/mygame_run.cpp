@@ -32,7 +32,16 @@ void CGameStateRun::OnBeginState()
 
 void CGameStateRun::OnMove()							// 移動遊戲元素
 {	
-	if (Delay(3*1000, start_time)) {
+	if (isPacDied) {
+		if (Wait(1000, died_time, 300)) {
+			showPacDiedAni = true;
+			character[PACDIED].SetTopLeft(character[towards].GetLeft(), character[towards].GetTop());
+			towards = PACDIED;
+			character[towards].ToggleAnimation();
+		}
+	}
+
+	if (Delay(3*1000, start_time) && !isPacDied) {
 		/* pacman movement */
 		if (towards == RIGHT && GetPixelAttribute(character[towards].GetRight() + 1, character[towards].GetTop() + edge) >= 0 && GetPixelAttribute(character[towards].GetRight() + 1, character[towards].GetBottom() - edge) >= 0) {
 			character[towards].StopKeepAni(true);
@@ -158,6 +167,26 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 			}
 		}
 
+		/* pacman died */
+		if (life >= 0 && ghostmode < 2) {
+			if (etRed[etTowards[0]].IsEaten(etRed[etTowards[0]], character[towards])) {
+				died_time = clock();
+				isPacDied = true;
+			}
+			else if (etPink[etTowards[1]].IsEaten(etPink[etTowards[1]], character[towards])) {
+				died_time = clock();
+				isPacDied = true;
+			}
+			else if (etBlue[etTowards[2]].IsEaten(etBlue[etTowards[2]], character[towards])) {
+				died_time = clock();
+				isPacDied = true;
+			}
+			else if (etYellow[etTowards[3]].IsEaten(etYellow[etTowards[3]], character[towards])) {
+				died_time = clock();
+				isPacDied = true;
+			}
+		}
+
 		/* ghost died */
 		if (ghostmode > 1) {
 			if (etRed[etTowards[0]].IsEaten(character[towards], etRed[etTowards[0]]) && !showOrigin[0] && !isDied[0]) {
@@ -203,7 +232,7 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 		}
 	}
 
-	if (Delay(5 * 1000, start_time)) {
+	if (Delay(5 * 1000, start_time) && !isPacDied) {
 		// pink
 		if ((etPink[etTowards[1]].GetLeft() % 16 <= 0 && etPink[etTowards[1]].GetTop() % 16 <= 0) || (etPink[etTowards[1]].GetLeft() % 16 >= 15 && etPink[etTowards[1]].GetTop() % 16 >= 15)) {
 			if (isDied[1]) DiedMode('p');
@@ -273,7 +302,7 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 		}
 	}
 
-	if (Delay(7 * 1000, start_time)) {
+	if (Delay(7 * 1000, start_time) && !isPacDied) {
 		// blue
 		if ((etBlue[etTowards[2]].GetLeft() % 16 <= 0 && etBlue[etTowards[2]].GetTop() % 16 <= 0) || (etBlue[etTowards[2]].GetLeft() % 16 >= 15 && etBlue[etTowards[2]].GetTop() % 16 >= 15)) {
 			if (isDied[2]) DiedMode('b');
@@ -343,7 +372,7 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 		}
 	}
 
-	if (Delay(9 * 1000, start_time)) {
+	if (Delay(9 * 1000, start_time) && !isPacDied) {
 		// yellow
 		if ((etYellow[etTowards[3]].GetLeft() % 16 <= 0 && etYellow[etTowards[3]].GetTop() % 16 <= 0) || (etYellow[etTowards[3]].GetLeft() % 16 >= 15 && etYellow[etTowards[3]].GetTop() % 16 >= 15)) {
 			if (isDied[3]) DiedMode('y');
@@ -481,6 +510,12 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 		"resources/stuff/1600.bmp",
 		}, RGB(255, 255, 255));
 
+	/* gameover */
+	gameover.LoadBitmapByString({
+		"resources/stuff/gameover.bmp",
+		}, RGB(255, 255, 255));
+	gameover.SetTopLeft(176, 416);
+
 	///////////////////////////////////////////
 	// GAME
 	///////////////////////////////////////////
@@ -524,7 +559,7 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 		"resources/pacman/pacman_towardR_1.bmp",
 		"resources/pacman/pacman_towardR_2.bmp",
 		}, RGB(255, 255, 255));
-	character[RIGHT].SetTopLeft(16, 64);
+	character[RIGHT].SetTopLeft(216, 416);
 	character[RIGHT].SetAnimation(50, 0);
 
 	character[LEFT].LoadBitmapByString({
@@ -548,10 +583,27 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 		}, RGB(255, 255, 255));
 	character[DOWN].SetAnimation(50, 0);
 
-	character[4].LoadBitmapByString({
+	character[UNSHOW].LoadBitmapByString({
 		"resources/pacman/pacman_unshow.bmp",
 		"resources/pacman/pacman_unshow.bmp",
 		}, RGB(255, 255, 255));
+
+	character[PACDIED].LoadBitmapByString({
+		"resources/pacman/pacman_circle.bmp",
+		"resources/pacman/pacman_died_1.bmp",
+		"resources/pacman/pacman_died_2.bmp",
+		"resources/pacman/pacman_died_3.bmp",
+		"resources/pacman/pacman_died_4.bmp",
+		"resources/pacman/pacman_died_5.bmp",
+		"resources/pacman/pacman_died_6.bmp",
+		"resources/pacman/pacman_died_7.bmp",
+		"resources/pacman/pacman_died_8.bmp",
+		"resources/pacman/pacman_died_9.bmp",
+		"resources/pacman/pacman_died_10.bmp",
+		"resources/pacman/pacman_died_11.bmp",
+		"resources/pacman/pacman_unshow.bmp",
+		}, RGB(255, 255, 255));
+	character[PACDIED].SetAnimation(100, 1);
 
 	/* ghost */
 	// red
@@ -761,6 +813,7 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 		"resources/ets/et_unshow.bmp"
 		}, RGB(255, 255, 255));
 	giraffe.SetTopLeft(0, 0);
+
 }
 
 void CGameStateRun::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
@@ -853,7 +906,10 @@ void CGameStateRun::ShowUI() {
 	oneP.ShowBitmap(2);
 
 	/* show player lives */
-	for (int i = 0; i < 3; i++) {
+	if (life == 3 && Delay(3 * 1000, start_time)) {
+		life--;
+	}
+	for (int i = 0; i < life; i++) {
 		lives[i].ShowBitmap(1.25);
 	}
 
@@ -874,30 +930,19 @@ void CGameStateRun::ShowUI() {
 			scoreNum[i].ShowBitmap(2);
 		}
 	}
+
+	/* show gameover */
+	if (life < 0) gameover.ShowBitmap(2);
 }
 
 void CGameStateRun::ShowByPhase() {
 	/* check and change phase */
 	if (phase < 21) {
 		if (!isMapLoaded) {
-			start_time = clock();
-			mode_time = start_time;
+			InitStartTime();
 			InitMap();
-			ghostmode = 1;
-			modePhase = 1;
-			for (int i = 1; i < 4; i++) roadGhostCanGo[i] = -1;
-			towards = RIGHT;
-			etTowards[0] = LEFT;
-			etTowards[1] = DOWN;
-			etTowards[2] = UP;
-			etTowards[3] = UP;
-			character[towards].SetTopLeft(16, 64);
-			etRed[etTowards[0]].SetTopLeft(216, 224);
-			etPink[etTowards[1]].SetTopLeft(216, 272);
-			etBlue[etTowards[2]].SetTopLeft(186, 272);
-			etYellow[etTowards[3]].SetTopLeft(246, 272);
+			InitCharacter();
 		}
-
 		
 		if (ghostmode != lastGhostmode && lastGhostmode < 2) {
 			TurnAround(etTowards[0], etTowards[1], etTowards[2], etTowards[3]);
@@ -928,7 +973,7 @@ void CGameStateRun::ShowByPhase() {
 	}
 
 	/* show ghosts */
-	if (ghostmode < 2) {
+	if (ghostmode < 2 && !showPacDiedAni) {
 		for (int i = 0; i < 4; i++) {
 			showOrigin[i] = false;
 		}
@@ -944,25 +989,36 @@ void CGameStateRun::ShowByPhase() {
 		if (!isDied[3]) etYellow[etTowards[3]].ShowBitmap(1.25);
 		else etYellow[DIED].ShowBitmap(1.25);
 	}
-	else if (ghostmode == 2) {
+	else if (ghostmode == 2 && !showPacDiedAni) {
 		etRed[SCARED + isDied[0] * 2].ShowBitmap(1.25);
 		etPink[SCARED + isDied[1] * 2].ShowBitmap(1.25);
 		etBlue[SCARED + isDied[2] * 2].ShowBitmap(1.25);
 		etYellow[SCARED + isDied[3] * 2].ShowBitmap(1.25);
 	}
-	else if (ghostmode == 3) {
+	else if (ghostmode == 3 && !showPacDiedAni) {
 		etRed[TRANSIT + isDied[0]].ShowBitmap(1.25);
 		etPink[TRANSIT + isDied[1]].ShowBitmap(1.25);
 		etBlue[TRANSIT + isDied[2]].ShowBitmap(1.25);
 		etYellow[TRANSIT + isDied[3]].ShowBitmap(1.25);
 	}
-	if (showOrigin[0]) etRed[etTowards[0]].ShowBitmap(1.25);
-	if (showOrigin[1]) etPink[etTowards[1]].ShowBitmap(1.25);
-	if (showOrigin[2]) etBlue[etTowards[2]].ShowBitmap(1.25);
-	if (showOrigin[3]) etYellow[etTowards[3]].ShowBitmap(1.25);
+	if (showOrigin[0] && !showPacDiedAni) etRed[etTowards[0]].ShowBitmap(1.25);
+	if (showOrigin[1] && !showPacDiedAni) etPink[etTowards[1]].ShowBitmap(1.25);
+	if (showOrigin[2] && !showPacDiedAni) etBlue[etTowards[2]].ShowBitmap(1.25);
+	if (showOrigin[3] && !showPacDiedAni) etYellow[etTowards[3]].ShowBitmap(1.25);
+
+	if (character[towards].IsAnimationDone() && isPacDied && life > 0) {
+		if (Delay(4 * 1000, died_time)) {
+			InitStartTime();
+			InitCharacter();
+			life--;
+		}
+	}
+	else if (character[towards].IsAnimationDone() && isPacDied && life == 0) {
+		life--;
+	}
 
 	/* testing */
-	// giraffe.ShowBitmap(0.5);
+	//if (!character[towards].IsAnimationDone()) giraffe.ShowBitmap(0.5);
 }
 
 void CGameStateRun::ReadMap(int phase, string filename) {
@@ -1005,6 +1061,29 @@ void CGameStateRun::InitEaten(int *p, int len) {
 	for (int i = 0; i < len; i++) {
 		p[i] = 1;
 	}
+}
+
+void CGameStateRun::InitStartTime() {
+	start_time = clock();
+	mode_time = start_time;
+}
+
+void CGameStateRun::InitCharacter() {
+	isPacDied = false;
+	showPacDiedAni = false;
+	ghostmode = 1;
+	modePhase = 1;
+	for (int i = 1; i < 4; i++) roadGhostCanGo[i] = -1;
+	towards = RIGHT;
+	etTowards[0] = LEFT;
+	etTowards[1] = DOWN;
+	etTowards[2] = UP;
+	etTowards[3] = UP;
+	character[towards].SetTopLeft(216, 416);
+	etRed[etTowards[0]].SetTopLeft(216, 224);
+	etPink[etTowards[1]].SetTopLeft(216, 272);
+	etBlue[etTowards[2]].SetTopLeft(186, 272);
+	etYellow[etTowards[3]].SetTopLeft(246, 272);
 }
 
 void CGameStateRun::CheckPhaseClear() {
@@ -1485,6 +1564,13 @@ bool CGameStateRun::Delay(int delaytime) {
 
 bool CGameStateRun::Delay(int delaytime, clock_t start) {
 	if (clock() - start >= delaytime) {
+		return true;
+	}
+	return false;
+}
+
+bool CGameStateRun::Wait(int delaytime, clock_t start, int slot) {
+	if (clock() - start >= delaytime && clock() - start < delaytime + slot) {
 		return true;
 	}
 	return false;

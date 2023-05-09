@@ -108,7 +108,7 @@ namespace game_framework {
 		/* sprites */
 		// game
 		CMovingBitmap background;
-		MyBitmap character[5];
+		MyBitmap character[6];
 		MyBitmap etRed[8];
 		MyBitmap etPink[8];
 		MyBitmap etBlue[8];
@@ -122,6 +122,7 @@ namespace game_framework {
 		MyBitmap oneP;
 		MyBitmap scoreNum[10];
 		MyBitmap bonusPoints[4];
+		MyBitmap gameover;
 		
 
 		/* constants */
@@ -137,12 +138,15 @@ namespace game_framework {
 		const int SCARED = 5;
 		const int TRANSIT = 6;
 		const int DIED = 7;
+		const int PACDIED = 5;
 		
 		/* flags & parameters */
 		// game
 		int phase = 1;
 		int modePhase = 1;
 		int edge = 5;	// space for turning around
+		bool showPacDiedAni = false;
+		bool isPacDied = false;
 
 		int towards = RIGHT;	// pacman direction
 		int speed = 2;	// moving speed
@@ -166,6 +170,7 @@ namespace game_framework {
 		clock_t mode_time;	// mode start time
 		clock_t scared_start;	// scared mode start time
 		clock_t eat_time;	// the time that pacman eats a ghost
+		clock_t died_time;	// the time pacman died
 		clock_t last_time = clock();	// use in Delay function
 		bool isMapLoaded = false;	// check if the map is loaded 
 		bool isGameStartInit;
@@ -174,13 +179,16 @@ namespace game_framework {
 		// ui
 		int score = 0;
 		int stuffEaten[4] = { 0,0,0,0 };	// there are stuff eaten or not
+		int life = 3;
 
 		/* functions */
 		// game
 		void ShowByPhase();
 		void ReadMap(int phase, string filename);
+		void InitStartTime();
 		void InitMap();
 		void InitEaten(int *p, int len);
+		void InitCharacter();
 		void CheckPhaseClear();
 		void ChaseMode(char mode);
 		void ScatterMode(char mode);
@@ -194,6 +202,7 @@ namespace game_framework {
 		double Distance(MyBitmap mb1, MyBitmap mb2);
 		bool Delay(int delaytime);
 		bool Delay(int delaytime, clock_t start);
+		bool Wait(int delaytime, clock_t start, int slot);
 		bool FindElement(int *p, int len, int target);
 		// ui
 		void ShowUI();
