@@ -514,7 +514,7 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 	gameover.LoadBitmapByString({
 		"resources/stuff/gameover.bmp",
 		}, RGB(255, 255, 255));
-	gameover.SetTopLeft(176, 416);
+	gameover.SetTopLeft(168, 320);
 
 	///////////////////////////////////////////
 	// GAME
@@ -915,7 +915,7 @@ void CGameStateRun::ShowUI() {
 
 	/* show props */
 	for (int i = 0; i < 2; i++) {
-		props[i].ShowBitmap(1.5);
+		props[i].ShowBitmap(1.75);
 	}
 
 	/* show score board */
@@ -932,7 +932,7 @@ void CGameStateRun::ShowUI() {
 	}
 
 	/* show gameover */
-	if (life < 0) gameover.ShowBitmap(2);
+	if (life < 0) gameover.ShowBitmap(1.5);
 }
 
 void CGameStateRun::ShowByPhase() {
