@@ -514,7 +514,7 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 	gameover.LoadBitmapByString({
 		"resources/stuff/gameover.bmp",
 		}, RGB(255, 255, 255));
-	gameover.SetTopLeft(168, 320);
+	gameover.SetTopLeft(144, 320);
 
 	///////////////////////////////////////////
 	// GAME
@@ -932,7 +932,7 @@ void CGameStateRun::ShowUI() {
 	}
 
 	/* show gameover */
-	if (life < 0) gameover.ShowBitmap(1.5);
+	if (life < 0) gameover.ShowBitmap(2);
 }
 
 void CGameStateRun::ShowByPhase() {
