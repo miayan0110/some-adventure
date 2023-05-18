@@ -122,6 +122,7 @@ namespace game_framework {
 		MyBitmap oneP;
 		MyBitmap scoreNum[10];
 		MyBitmap bonusPoints[4];
+		MyBitmap ready;
 		MyBitmap gameover;
 		
 
@@ -149,6 +150,7 @@ namespace game_framework {
 		bool isPacDied = false;
 
 		int towards = RIGHT;	// pacman direction
+		int keyDir = RIGHT;	// direction player controlled
 		int speed = 2;	// moving speed
 		int eatenGhostAmount = 0;	// count of eaten ghost
 		
@@ -198,6 +200,7 @@ namespace game_framework {
 		void NextDir(char mode);
 		void TurnAround(int dirR, int dirP, int dirB, int dirY);
 		int GetPixelAttribute(int left, int top);
+		int DirCanGo(MyBitmap mb, int dir);
 		double Distance(MyBitmap mb1, int mode, int nextdir);
 		double Distance(MyBitmap mb1, MyBitmap mb2);
 		bool Delay(int delaytime);
