@@ -41,7 +41,7 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 		}
 	}
 
-	if (Delay(3*1000, start_time) && !isPacDied) {
+	if (Delay(3*1000, start_time) && !isPacDied && phaseClear) {
 		/* pacman direction */
 		PacmanDir();
 
@@ -235,7 +235,7 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 		}
 	}
 
-	if (Delay(5 * 1000, start_time) && !isPacDied) {
+	if (Delay(5 * 1000, start_time) && !isPacDied && phaseClear) {
 		// pink
 		if ((etPink[etTowards[1]].GetLeft() % 16 <= 0 && etPink[etTowards[1]].GetTop() % 16 <= 0) || (etPink[etTowards[1]].GetLeft() % 16 >= 15 && etPink[etTowards[1]].GetTop() % 16 >= 15)) {
 			if (isDied[1]) DiedMode('p');
@@ -305,7 +305,7 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 		}
 	}
 
-	if (Delay(7 * 1000, start_time) && !isPacDied) {
+	if (Delay(7 * 1000, start_time) && !isPacDied && phaseClear) {
 		// blue
 		if ((etBlue[etTowards[2]].GetLeft() % 16 <= 0 && etBlue[etTowards[2]].GetTop() % 16 <= 0) || (etBlue[etTowards[2]].GetLeft() % 16 >= 15 && etBlue[etTowards[2]].GetTop() % 16 >= 15)) {
 			if (isDied[2]) DiedMode('b');
@@ -375,7 +375,7 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 		}
 	}
 
-	if (Delay(9 * 1000, start_time) && !isPacDied) {
+	if (Delay(9 * 1000, start_time) && !isPacDied && phaseClear) {
 		// yellow
 		if ((etYellow[etTowards[3]].GetLeft() % 16 <= 0 && etYellow[etTowards[3]].GetTop() % 16 <= 0) || (etYellow[etTowards[3]].GetLeft() % 16 >= 15 && etYellow[etTowards[3]].GetTop() % 16 >= 15)) {
 			if (isDied[3]) DiedMode('y');
