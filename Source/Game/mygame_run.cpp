@@ -42,10 +42,8 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 	}
 
 	if (Delay(3*1000, start_time) && !isPacDied) {
-		/*
-		if (keyDir != towards) {
-			if (DirCanGo(character[towards], keyDir))towards = keyDir;
-		}*/
+		/* pacman direction */
+		PacmanDir();
 
 		/* pacman movement - go straight */
 		if (towards == RIGHT && GetPixelAttribute(character[towards].GetRight() + 1, character[towards].GetTop() + edge) >= 0 && GetPixelAttribute(character[towards].GetRight() + 1, character[towards].GetBottom() - edge) >= 0) {
@@ -172,7 +170,7 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 			}
 		}
 
-		/* pacman died */
+		/* pacman died 
 		if (life >= 0 && ghostmode < 2) {
 			if (etRed[etTowards[0]].IsEaten(etRed[etTowards[0]], character[towards])) {
 				died_time = clock();
@@ -190,7 +188,7 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 				died_time = clock();
 				isPacDied = true;
 			}
-		}
+		}*/
 
 		/* ghost died */
 		if (ghostmode > 1) {
@@ -521,6 +519,12 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 		}, RGB(255, 255, 255));
 	ready.SetTopLeft(182, 320);
 
+	/* transition */
+	trans.LoadBitmapByString({
+		"resources/stuff/black_circle.bmp"
+		}, RGB(255, 255, 255));
+	trans.SetTopLeft(0, 0);
+
 	/* gameover */
 	gameover.LoadBitmapByString({
 		"resources/stuff/gameover.bmp",
@@ -831,32 +835,16 @@ void CGameStateRun::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	/* pacman control */
 	if (nChar == VK_RIGHT) {	// going right
-		if (GetPixelAttribute(character[towards].GetRight() + 16, character[towards].GetTop() + edge) >= 0 && GetPixelAttribute(character[towards].GetRight() + 16, character[towards].GetBottom() - edge) >= 0) {
-			//keyDir = RIGHT;
-			character[RIGHT].SetTopLeft(character[towards].GetLeft(), character[towards].GetTop());
-			towards = RIGHT;
-		}
+		keyDir = RIGHT;
 	}
 	else if (nChar == VK_LEFT) {	// going left
-		if (GetPixelAttribute(character[towards].GetLeft() - 16, character[towards].GetTop() + edge) >= 0 && GetPixelAttribute(character[towards].GetLeft() - 16, character[towards].GetBottom() - edge) >= 0) {
-			//keyDir = LEFT;
-			character[LEFT].SetTopLeft(character[towards].GetLeft(), character[towards].GetTop());
-			towards = LEFT;
-		}
+		keyDir = LEFT;
 	}
 	else if (nChar == VK_UP) {	// going up
-		if (GetPixelAttribute(character[towards].GetLeft() + edge, character[towards].GetTop() - 16) >= 0 && GetPixelAttribute(character[towards].GetRight() - edge, character[towards].GetTop() - 16) >= 0) {
-			//keyDir = UP;
-			character[UP].SetTopLeft(character[towards].GetLeft(), character[towards].GetTop());
-			towards = UP;
-		}
+		keyDir = UP;
 	}
 	else if (nChar == VK_DOWN) {	// going down
-		if (GetPixelAttribute(character[towards].GetLeft() + edge, character[towards].GetBottom() + 16) >= 0 && GetPixelAttribute(character[towards].GetRight() - edge, character[towards].GetBottom() + 16) >= 0) {
-			//keyDir = DOWN;
-			character[DOWN].SetTopLeft(character[towards].GetLeft(), character[towards].GetTop());
-			towards = DOWN;
-		}
+		keyDir = DOWN;
 	}
 	else if (nChar == VK_SPACE) {
 		/* change phase by hand */
@@ -935,6 +923,15 @@ void CGameStateRun::ShowUI() {
 
 	/* show gameover */
 	if (life < 0 && Delay(35 * 100, died_time)) gameover.ShowBitmap(2);
+
+	/**/
+	if (nextPhaseTrans) {
+		for (int i = 0; i < 100; i++) {
+			if (Delay(5 * 10 * i + 1500, end_time)) {
+				trans.ShowBitmap(1 * i);
+			}
+		}
+	}
 }
 
 void CGameStateRun::ShowByPhase() {
@@ -1090,13 +1087,49 @@ void CGameStateRun::InitCharacter() {
 
 void CGameStateRun::CheckPhaseClear() {
 	if (!FindElement(eatenCookie, cookieAmount, 1) && !FindElement(eatenSP, spCookieAmount, 1)) {
-		phase++;
-		InitEaten(eatenCookie, cookieAmount);
-		InitEaten(eatenSP, spCookieAmount);
-		cookieAmount = 0;
-		spCookieAmount = 0;
-		isMapLoaded = false;
+		if (phaseClear) {
+			end_time = clock();
+			phaseClear--;
+			nextPhaseTrans = 1;
+		}
+		if (Delay(35 * 100, end_time)) {
+			phase++;
+			InitEaten(eatenCookie, cookieAmount);
+			InitEaten(eatenSP, spCookieAmount);
+			cookieAmount = 0;
+			spCookieAmount = 0;
+			isMapLoaded = false;
+			nextPhaseTrans = 0;
+			phaseClear = 1;
+		}
 	}
+}
+
+void CGameStateRun::PacmanDir() {
+	int nextdir = towards;
+	int pacDirCanGo[4] = { -1,-1,-1,-1 };
+
+	if (GetPixelAttribute(character[towards].GetRight() + 1, character[towards].GetTop() + edge) >= 0 && GetPixelAttribute(character[towards].GetRight() + 1, character[towards].GetBottom() - edge) >= 0) {
+		pacDirCanGo[RIGHT] = RIGHT;
+	}
+	if (GetPixelAttribute(character[towards].GetLeft() - 1, character[towards].GetTop() + edge) >= 0 && GetPixelAttribute(character[towards].GetLeft() - 1, character[towards].GetBottom() - edge) >= 0) {
+		pacDirCanGo[LEFT] = LEFT;
+	}
+	if (GetPixelAttribute(character[towards].GetLeft() + edge, character[towards].GetTop() - 1) >= 0 && GetPixelAttribute(character[towards].GetRight() - edge, character[towards].GetTop() - 1) >= 0) {
+		pacDirCanGo[UP] = UP;
+	}
+	if (GetPixelAttribute(character[towards].GetLeft() + edge, character[towards].GetBottom() + 1) >= 0 && GetPixelAttribute(character[towards].GetRight() - edge, character[towards].GetBottom() + 1) >= 0) {
+		pacDirCanGo[DOWN] = DOWN;
+	}
+
+	for (int i = 0; i < 4; i++) {
+		if (pacDirCanGo[i] == i && keyDir == i) {
+			nextdir = i;
+		}
+	}
+
+	character[nextdir].SetTopLeft(character[towards].GetLeft(), character[towards].GetTop());
+	towards = nextdir;
 }
 
 void CGameStateRun::ChaseMode(char mode) {
@@ -1306,7 +1339,7 @@ void CGameStateRun::DiedMode(char mode) {
 
 void CGameStateRun::NextDir(char mode) {
 	double mindis[4] = { 2000000000,2000000000,2000000000,2000000000 };
-	int nextdir[4] = { -1,-1,-1,-1 };
+	int nextdir[4] = { etTowards[0],etTowards[1],etTowards[2],etTowards[3] };
 
 	/* clear dirCanGo for each ghost */
 	for (int i = 0; i < 4; i++) {
@@ -1534,15 +1567,6 @@ void CGameStateRun::TurnAround(int dirR, int dirP, int dirB, int dirY) {
 
 int CGameStateRun::GetPixelAttribute(int left, int top) {
 	return map[phase - 1][top / PIXHEIGHT][left / PIXWIDTH];
-}
-
-/* check pacman's dir*/
-int CGameStateRun::DirCanGo(MyBitmap mb, int dir) {
-	int left = 0, up = 0;
-	if (GetPixelAttribute(mb.GetLeft(), mb.GetTop())) {
-		return 1;
-	}
-	return 0;
 }
 
 double CGameStateRun::Distance(MyBitmap mb1, int mode, int nextdir) {

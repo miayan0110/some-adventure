@@ -124,6 +124,7 @@ namespace game_framework {
 		MyBitmap bonusPoints[4];
 		MyBitmap ready;
 		MyBitmap gameover;
+		MyBitmap trans;
 		
 
 		/* constants */
@@ -145,6 +146,8 @@ namespace game_framework {
 		// game
 		int phase = 1;
 		int modePhase = 1;
+		int phaseClear = 1;
+		int nextPhaseTrans = 0;
 		int edge = 5;	// space for turning around
 		bool showPacDiedAni = false;
 		bool isPacDied = false;
@@ -169,6 +172,7 @@ namespace game_framework {
 		double target[4][2];	// save ghosts' target
 
 		clock_t start_time;	// phase start time
+		clock_t end_time;	// phase end time
 		clock_t mode_time;	// mode start time
 		clock_t scared_start;	// scared mode start time
 		clock_t eat_time;	// the time that pacman eats a ghost
@@ -192,6 +196,7 @@ namespace game_framework {
 		void InitEaten(int *p, int len);
 		void InitCharacter();
 		void CheckPhaseClear();
+		void PacmanDir();
 		void ChaseMode(char mode);
 		void ScatterMode(char mode);
 		void ScaredMode(char mode);
@@ -200,7 +205,6 @@ namespace game_framework {
 		void NextDir(char mode);
 		void TurnAround(int dirR, int dirP, int dirB, int dirY);
 		int GetPixelAttribute(int left, int top);
-		int DirCanGo(MyBitmap mb, int dir);
 		double Distance(MyBitmap mb1, int mode, int nextdir);
 		double Distance(MyBitmap mb1, MyBitmap mb2);
 		bool Delay(int delaytime);
