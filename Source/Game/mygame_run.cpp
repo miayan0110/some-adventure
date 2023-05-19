@@ -170,7 +170,7 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 			}
 		}
 
-		/* pacman died 
+		/* pacman died */
 		if (life >= 0 && ghostmode < 2) {
 			if (etRed[etTowards[0]].IsEaten(etRed[etTowards[0]], character[towards])) {
 				died_time = clock();
@@ -188,7 +188,7 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 				died_time = clock();
 				isPacDied = true;
 			}
-		}*/
+		}
 
 		/* ghost died */
 		if (ghostmode > 1) {
