@@ -973,9 +973,14 @@ void CGameStateRun::OnRButtonUp(UINT nFlags, CPoint point)	// 處理滑鼠的動
 
 void CGameStateRun::OnShow()
 {
-	ShowByPhase();
-	ShowUI();
-	BgmPlayer();
+	if (phase < 21) {
+		ShowByPhase();
+		ShowUI();
+		BgmPlayer();
+	}
+	else {
+		GotoGameState(GAME_STATE_OVER);
+	}
 }
 
 void CGameStateRun::ShowUI() {
