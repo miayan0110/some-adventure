@@ -67,6 +67,9 @@ namespace game_framework {
 	private:
 		CMovingBitmap logo;								// csie的logo
 		
+		// sound effect
+		//CAudio *initBGM;
+
 		// sprites
 		CMovingBitmap character;
 		CMovingBitmap etRed;
@@ -81,6 +84,9 @@ namespace game_framework {
 
 		// functions
 		int MovingAnimation(CMovingBitmap character, int mode);
+
+		// bgm
+		//CAudio bgm;
 	};
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -186,6 +192,9 @@ namespace game_framework {
 		int score = 0;
 		int stuffEaten[4] = { 0,0,0,0 };	// there are stuff eaten or not
 		int life = 3;
+		// bgm controller
+		int cookieEaten = 0;
+		int restartBgm = 0;
 
 		/* functions */
 		// game
@@ -204,6 +213,7 @@ namespace game_framework {
 		void DiedMode(char mode);
 		void NextDir(char mode);
 		void TurnAround(int dirR, int dirP, int dirB, int dirY);
+		void BgmPlayer();
 		int GetPixelAttribute(int left, int top);
 		double Distance(MyBitmap mb1, int mode, int nextdir);
 		double Distance(MyBitmap mb1, MyBitmap mb2);

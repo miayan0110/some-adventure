@@ -18,6 +18,28 @@ using namespace game_framework;
 // 這個class為遊戲的遊戲執行物件，主要的遊戲程式都在這裡
 /////////////////////////////////////////////////////////////////////////////
 
+///////////////////////////////////////////
+// Sound Effect Pointer Init
+///////////////////////////////////////////
+
+/* start music */
+CAudio *readyBGM = CAudio::Instance();
+
+/* game background music */
+CAudio *bgm = CAudio::Instance();
+
+/* sound effect when pacman died */
+CAudio *pacDiedSE = CAudio::Instance();
+
+/* scared mode background music */
+CAudio *scaredModeBgm = CAudio::Instance();
+
+/* sound effect when ghost is eaten */
+CAudio *ghostDiedSE = CAudio::Instance();
+
+/* sound effect while ghost going back to ghost house*/
+CAudio *ghostReturnToHouseSE = CAudio::Instance();
+
 CGameStateRun::CGameStateRun(CGame *g) : CGameState(g)
 {
 }
@@ -41,7 +63,7 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 		}
 	}
 
-	if (Delay(3*1000, start_time) && !isPacDied && phaseClear) {
+	if (Delay(5*1000, start_time) && !isPacDied && phaseClear) {
 		/* pacman direction */
 		PacmanDir();
 
@@ -156,6 +178,7 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 				cookie[i].SetFrameIndexOfBitmap(1);
 				eatenCookie[i] = 0;
 				score += 10;
+				cookieEaten = 1;
 			}
 		}
 
@@ -167,6 +190,10 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 				ghostmode = 2;
 				scared_start = clock();
 				score += 50;
+				cookieEaten = 1;
+				scaredModeBgm->Play(5, true);
+				bgm->Stop(1);
+				restartBgm = 1;
 			}
 		}
 
@@ -174,19 +201,35 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 		if (life >= 0 && ghostmode < 2) {
 			if (etRed[etTowards[0]].IsEaten(etRed[etTowards[0]], character[towards])) {
 				died_time = clock();
+				bgm->Stop(1);
+				ghostReturnToHouseSE->Stop(7);
+				scaredModeBgm->Stop(5);
 				isPacDied = true;
+				pacDiedSE->Play(4);	/* pacman died sound effect */
 			}
 			else if (etPink[etTowards[1]].IsEaten(etPink[etTowards[1]], character[towards])) {
 				died_time = clock();
+				bgm->Stop(1);
+				ghostReturnToHouseSE->Stop(7);
+				scaredModeBgm->Stop(5);
 				isPacDied = true;
+				pacDiedSE->Play(4);	/* pacman died sound effect */
 			}
 			else if (etBlue[etTowards[2]].IsEaten(etBlue[etTowards[2]], character[towards])) {
 				died_time = clock();
-				isPacDied = true;
+				bgm->Stop(1);
+				ghostReturnToHouseSE->Stop(7);
+				scaredModeBgm->Stop(5);
+				isPacDied = true;	/* pacman died sound effect */
+				pacDiedSE->Play(4);
 			}
 			else if (etYellow[etTowards[3]].IsEaten(etYellow[etTowards[3]], character[towards])) {
 				died_time = clock();
+				bgm->Stop(1);
+				ghostReturnToHouseSE->Stop(7);
+				scaredModeBgm->Stop(5);
 				isPacDied = true;
+				pacDiedSE->Play(4);	/* pacman died sound effect */
 			}
 		}
 
@@ -201,6 +244,9 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 				isDied[0] = true;
 				stuffEaten[eatenGhostAmount] = 1;
 				score += int(pow(2, eatenGhostAmount++)) * 200;
+				scaredModeBgm->Stop(5);
+				ghostDiedSE->Play(6);
+				ghostReturnToHouseSE->Play(7);
 			}
 			if (etPink[etTowards[1]].IsEaten(character[towards], etPink[etTowards[1]]) && !showOrigin[1] && !isDied[1]) {
 				eat_time = clock();
@@ -211,6 +257,9 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 				isDied[1] = true;
 				stuffEaten[eatenGhostAmount] = 1;
 				score += int(pow(2, eatenGhostAmount++)) * 200;
+				scaredModeBgm->Stop(5);
+				ghostDiedSE->Play(6);
+				ghostReturnToHouseSE->Play(7);
 			}
 			if (etBlue[etTowards[2]].IsEaten(character[towards], etBlue[etTowards[2]]) && !showOrigin[2] && !isDied[2]) {
 				eat_time = clock();
@@ -221,6 +270,9 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 				isDied[2] = true;
 				stuffEaten[eatenGhostAmount] = 1;
 				score += int(pow(2, eatenGhostAmount++)) * 200;
+				scaredModeBgm->Stop(5);
+				ghostDiedSE->Play(6);
+				ghostReturnToHouseSE->Play(7);
 			}
 			if (etYellow[etTowards[3]].IsEaten(character[towards], etYellow[etTowards[3]]) && !showOrigin[3] && !isDied[3]) {
 				eat_time = clock();
@@ -231,11 +283,14 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 				isDied[3] = true;
 				stuffEaten[eatenGhostAmount] = 1;
 				score += int(pow(2, eatenGhostAmount++)) * 200;
+				scaredModeBgm->Stop(5);
+				ghostDiedSE->Play(6);
+				ghostReturnToHouseSE->Play(7);
 			}
 		}
 	}
 
-	if (Delay(5 * 1000, start_time) && !isPacDied && phaseClear) {
+	if (Delay(7 * 1000, start_time) && !isPacDied && phaseClear) {
 		// pink
 		if ((etPink[etTowards[1]].GetLeft() % 16 <= 0 && etPink[etTowards[1]].GetTop() % 16 <= 0) || (etPink[etTowards[1]].GetLeft() % 16 >= 15 && etPink[etTowards[1]].GetTop() % 16 >= 15)) {
 			if (isDied[1]) DiedMode('p');
@@ -305,7 +360,7 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 		}
 	}
 
-	if (Delay(7 * 1000, start_time) && !isPacDied && phaseClear) {
+	if (Delay(8 * 1000, start_time) && !isPacDied && phaseClear) {
 		// blue
 		if ((etBlue[etTowards[2]].GetLeft() % 16 <= 0 && etBlue[etTowards[2]].GetTop() % 16 <= 0) || (etBlue[etTowards[2]].GetLeft() % 16 >= 15 && etBlue[etTowards[2]].GetTop() % 16 >= 15)) {
 			if (isDied[2]) DiedMode('b');
@@ -375,7 +430,7 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 		}
 	}
 
-	if (Delay(9 * 1000, start_time) && !isPacDied && phaseClear) {
+	if (Delay(11 * 1000, start_time) && !isPacDied && phaseClear) {
 		// yellow
 		if ((etYellow[etTowards[3]].GetLeft() % 16 <= 0 && etYellow[etTowards[3]].GetTop() % 16 <= 0) || (etYellow[etTowards[3]].GetLeft() % 16 >= 15 && etYellow[etTowards[3]].GetTop() % 16 >= 15)) {
 			if (isDied[3]) DiedMode('y');
@@ -448,6 +503,28 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 
 void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 {
+	///////////////////////////////////////////
+	// Sound Effect Pointer Init
+	///////////////////////////////////////////
+
+	/* start music */
+	readyBGM->Load(3, "resources/sound/ready.wav");
+
+	/* game background music */
+	bgm->Load(1, "resources/sound/bgm_2.wav");
+
+	/* sound effect for pacman died */
+	pacDiedSE->Load(4, "resources/sound/pacman_died.wav");
+
+	/* scared mode background music */
+	scaredModeBgm->Load(5, "resources/sound/ghost_scaredMode.wav");
+
+	/* sound effect when ghost is eaten */
+	ghostDiedSE->Load(6, "resources/sound/ghost_died.mp3");
+
+	/* sound effect while ghost going back to ghost house*/
+	ghostReturnToHouseSE->Load(7, "resources/sound/ghost_return_to_house.mp3");
+
 	///////////////////////////////////////////
 	// UI 
 	///////////////////////////////////////////
@@ -886,6 +963,7 @@ void CGameStateRun::OnShow()
 {
 	ShowByPhase();
 	ShowUI();
+	BgmPlayer();
 }
 
 void CGameStateRun::ShowUI() {
@@ -893,10 +971,10 @@ void CGameStateRun::ShowUI() {
 	oneP.ShowBitmap(2);
 
 	/* show ready */
-	if (!Delay(3 * 1000, start_time)) ready.ShowBitmap(2);
+	if (!Delay(5 * 1000, start_time)) ready.ShowBitmap(2);
 
 	/* show player lives */
-	if (life == 3 && Delay(3 * 1000, start_time)) {
+	if (life == 3 && Delay(5 * 1000, start_time)) {
 		life--;
 	}
 	for (int i = 0; i < life; i++) {
@@ -924,7 +1002,7 @@ void CGameStateRun::ShowUI() {
 	/* show gameover */
 	if (life < 0 && Delay(35 * 100, died_time)) gameover.ShowBitmap(2);
 
-	/**/
+	/* transit to next phase */
 	if (nextPhaseTrans) {
 		for (int i = 0; i < 100; i++) {
 			if (Delay(5 * 10 * i + 1500, end_time)) {
@@ -1065,6 +1143,8 @@ void CGameStateRun::InitEaten(int *p, int len) {
 void CGameStateRun::InitStartTime() {
 	start_time = clock();
 	mode_time = start_time;
+	readyBGM->Play(3);
+	bgm->Stop(1);
 }
 
 void CGameStateRun::InitCharacter() {
@@ -1214,7 +1294,6 @@ void CGameStateRun::ScatterMode(char mode) {
 
 void CGameStateRun::ScaredMode(char mode) {
 	srand(clock());
-	// ghostspeed = 1;
 	/* set target for scared mode */
 	switch (mode)
 	{
@@ -1237,6 +1316,8 @@ void CGameStateRun::ScaredMode(char mode) {
 }
 
 void CGameStateRun::InitMode(char mode) {
+	ghostReturnToHouseSE->Stop(7);
+	scaredModeBgm->Play(5, true);
 	for (int i = 0; i < 4; i++) {
 		ghostspeed[i] = 2;
 	}
@@ -1727,5 +1808,23 @@ void CGameStateRun::TimeController() {
 		else {
 			ghostmode = 0;
 		}
+	}
+}
+
+void CGameStateRun::BgmPlayer() {
+	/* play start music */
+	if (Wait(5 * 1000, start_time, 300)) {
+		readyBGM->Stop(3);
+	}
+
+	/* play background music */
+	if (Wait(4 * 1000, start_time, 300) || (ghostmode < 2 && restartBgm)) {
+		bgm->Play(1, true);
+		restartBgm = 0;
+	}
+
+	/* play scared mode backgruond music */
+	if (ghostmode < 2) {
+		scaredModeBgm->Stop(5);
 	}
 }

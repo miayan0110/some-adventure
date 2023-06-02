@@ -12,6 +12,13 @@ using namespace game_framework;
 // 這個class為遊戲的遊戲開頭畫面物件
 /////////////////////////////////////////////////////////////////////////////
 
+///////////////////////////////////////////
+// Sound Effect Pointer Init
+///////////////////////////////////////////
+
+/* start frame background music */
+CAudio *initBGM = CAudio::Instance();
+
 CGameStateInit::CGameStateInit(CGame *g) : CGameState(g)
 {
 }
@@ -31,7 +38,7 @@ void CGameStateInit::OnInit()
 	// 此OnInit動作會接到CGameStaterRun::OnInit()，所以進度還沒到100%
 	//
 
-	// load sprites
+	/* load sprites */
 	character.LoadBitmapByString({
 		"resources/pacman/pacman_circle.bmp",
 		"resources/pacman/pacman_towardR_2.bmp",
@@ -73,6 +80,10 @@ void CGameStateInit::OnInit()
 		}, RGB(255, 255, 255));
 	frame.SetAnimation(100, 0);
 	frame.SetTopLeft(0, 10);
+
+	/* load bgm */
+	initBGM->Load(0, "resources/sound/init_bgm.mp3");
+	initBGM->Play(0, true);
 }
 
 void CGameStateInit::OnBeginState()
@@ -81,6 +92,7 @@ void CGameStateInit::OnBeginState()
 
 void CGameStateInit::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
+	initBGM->Stop(0);
 	GotoGameState(GAME_STATE_RUN);		// 切換至GAME_STATE_RUN
 }
 
