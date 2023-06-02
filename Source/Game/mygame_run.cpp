@@ -198,38 +198,40 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 		}
 
 		/* pacman died */
-		if (life >= 0 && ghostmode < 2) {
-			if (etRed[etTowards[0]].IsEaten(etRed[etTowards[0]], character[towards])) {
-				died_time = clock();
-				bgm->Stop(1);
-				ghostReturnToHouseSE->Stop(7);
-				scaredModeBgm->Stop(5);
-				isPacDied = true;
-				pacDiedSE->Play(4);	/* pacman died sound effect */
-			}
-			else if (etPink[etTowards[1]].IsEaten(etPink[etTowards[1]], character[towards])) {
-				died_time = clock();
-				bgm->Stop(1);
-				ghostReturnToHouseSE->Stop(7);
-				scaredModeBgm->Stop(5);
-				isPacDied = true;
-				pacDiedSE->Play(4);	/* pacman died sound effect */
-			}
-			else if (etBlue[etTowards[2]].IsEaten(etBlue[etTowards[2]], character[towards])) {
-				died_time = clock();
-				bgm->Stop(1);
-				ghostReturnToHouseSE->Stop(7);
-				scaredModeBgm->Stop(5);
-				isPacDied = true;	/* pacman died sound effect */
-				pacDiedSE->Play(4);
-			}
-			else if (etYellow[etTowards[3]].IsEaten(etYellow[etTowards[3]], character[towards])) {
-				died_time = clock();
-				bgm->Stop(1);
-				ghostReturnToHouseSE->Stop(7);
-				scaredModeBgm->Stop(5);
-				isPacDied = true;
-				pacDiedSE->Play(4);	/* pacman died sound effect */
+		if (!superPlayer) {
+			if (life >= 0 && ghostmode < 2) {
+				if (etRed[etTowards[0]].IsEaten(etRed[etTowards[0]], character[towards])) {
+					died_time = clock();
+					bgm->Stop(1);
+					ghostReturnToHouseSE->Stop(7);
+					scaredModeBgm->Stop(5);
+					isPacDied = true;
+					pacDiedSE->Play(4);	/* pacman died sound effect */
+				}
+				else if (etPink[etTowards[1]].IsEaten(etPink[etTowards[1]], character[towards])) {
+					died_time = clock();
+					bgm->Stop(1);
+					ghostReturnToHouseSE->Stop(7);
+					scaredModeBgm->Stop(5);
+					isPacDied = true;
+					pacDiedSE->Play(4);	/* pacman died sound effect */
+				}
+				else if (etBlue[etTowards[2]].IsEaten(etBlue[etTowards[2]], character[towards])) {
+					died_time = clock();
+					bgm->Stop(1);
+					ghostReturnToHouseSE->Stop(7);
+					scaredModeBgm->Stop(5);
+					isPacDied = true;	/* pacman died sound effect */
+					pacDiedSE->Play(4);
+				}
+				else if (etYellow[etTowards[3]].IsEaten(etYellow[etTowards[3]], character[towards])) {
+					died_time = clock();
+					bgm->Stop(1);
+					ghostReturnToHouseSE->Stop(7);
+					scaredModeBgm->Stop(5);
+					isPacDied = true;
+					pacDiedSE->Play(4);	/* pacman died sound effect */
+				}
 			}
 		}
 
@@ -601,6 +603,12 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 		"resources/stuff/black_circle.bmp"
 		}, RGB(255, 255, 255));
 	trans.SetTopLeft(0, 0);
+	
+	/* super player icon */
+	superIcon.LoadBitmapByString({
+		"resources/stuff/super_player_icon.bmp"
+		}, RGB(255, 255, 255));
+	superIcon.SetTopLeft(410, 15);
 
 	/* gameover */
 	gameover.LoadBitmapByString({
@@ -932,6 +940,10 @@ void CGameStateRun::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		spCookieAmount = 0;
 		isMapLoaded = false;
 	}
+	else if (nChar == 0x32) {
+		/* super player */
+		superPlayer = !superPlayer;
+	}
 }
 
 void CGameStateRun::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
@@ -969,6 +981,9 @@ void CGameStateRun::OnShow()
 void CGameStateRun::ShowUI() {
 	/* show player mode */
 	oneP.ShowBitmap(2);
+
+	/* show if is super player */
+	if (superPlayer) superIcon.ShowBitmap(2);
 
 	/* show ready */
 	if (!Delay(5 * 1000, start_time)) ready.ShowBitmap(2);
@@ -1167,6 +1182,7 @@ void CGameStateRun::InitCharacter() {
 
 void CGameStateRun::CheckPhaseClear() {
 	if (!FindElement(eatenCookie, cookieAmount, 1) && !FindElement(eatenSP, spCookieAmount, 1)) {
+		bgm->Stop(1);
 		if (phaseClear) {
 			end_time = clock();
 			phaseClear--;

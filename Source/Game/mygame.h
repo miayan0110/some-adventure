@@ -131,6 +131,7 @@ namespace game_framework {
 		MyBitmap ready;
 		MyBitmap gameover;
 		MyBitmap trans;
+		MyBitmap superIcon;
 		
 
 		/* constants */
@@ -188,6 +189,7 @@ namespace game_framework {
 		bool isGameStartInit;
 		bool isDied[4] = { false, false, false, false };	// is ghost eaten
 		bool showOrigin[4] = { false,false,false,false };	// had ghost get back to ghost house
+		bool superPlayer = false;
 		// ui
 		int score = 0;
 		int stuffEaten[4] = { 0,0,0,0 };	// there are stuff eaten or not
