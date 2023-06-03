@@ -159,15 +159,20 @@ END
 // Dialog
 //
 
-IDD_ABOUTBOX DIALOGEX 0, 0, 340, 60
+IDD_ABOUTBOX DIALOGEX 0, 0, 340, 110
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About game"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC,11,17,20,20
     LTEXT           "-- Pacman manual --",IDC_STATIC,39,10,300,8,SS_NOPREFIX
-	LTEXT           "[ Tool key ] : @ -- super player, Space -- change level", IDC_STATIC, 39, 23, 300, 8
-    LTEXT           "Copyright (C) 2022-2023",IDC_STATIC,39,36,119,8
+	LTEXT           "[ Tool key ]", IDC_STATIC, 39, 23, 300, 8
+	LTEXT           "[ 1 ]  press @ --switch to/off super player mode", IDC_STATIC, 39, 36, 300, 8
+	LTEXT           "[ 2 ]  press Space -- jump to next stage", IDC_STATIC, 39, 45, 300, 8
+	LTEXT           "[ ATTENTION ]", IDC_STATIC, 39, 60, 300, 8
+	LTEXT           "There are 20 stages in this game, when you complete all stages,", IDC_STATIC, 39, 73, 300, 8
+	LTEXT           "the game will bring you to the initial scene.", IDC_STATIC, 39, 81, 300, 8
+    LTEXT           "Copyright (C) 2022-2023",IDC_STATIC,39,95,119,8
 END
 
 

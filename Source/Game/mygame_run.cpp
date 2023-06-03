@@ -242,7 +242,6 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 				eatenLeft = etRed[etTowards[0]].GetLeft();
 				eatenTop = etRed[etTowards[0]].GetTop();
 				etRed[DIED].SetTopLeft(eatenLeft, eatenTop);
-				// etTowards[0] = DIED;
 				isDied[0] = true;
 				stuffEaten[eatenGhostAmount] = 1;
 				score += int(pow(2, eatenGhostAmount++)) * 200;
@@ -255,7 +254,6 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 				eatenLeft = etPink[etTowards[1]].GetLeft();
 				eatenTop = etPink[etTowards[1]].GetTop();
 				etPink[DIED].SetTopLeft(eatenLeft, eatenTop);
-				// etTowards[1] = DIED;
 				isDied[1] = true;
 				stuffEaten[eatenGhostAmount] = 1;
 				score += int(pow(2, eatenGhostAmount++)) * 200;
@@ -268,7 +266,6 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 				eatenLeft = etBlue[etTowards[2]].GetLeft();
 				eatenTop = etBlue[etTowards[2]].GetTop();
 				etBlue[DIED].SetTopLeft(eatenLeft, eatenTop);
-				// etTowards[2] = DIED;
 				isDied[2] = true;
 				stuffEaten[eatenGhostAmount] = 1;
 				score += int(pow(2, eatenGhostAmount++)) * 200;
@@ -281,7 +278,6 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 				eatenLeft = etYellow[etTowards[3]].GetLeft();
 				eatenTop = etYellow[etTowards[3]].GetTop();
 				etYellow[DIED].SetTopLeft(eatenLeft, eatenTop);
-				// etTowards[3] = DIED;
 				isDied[3] = true;
 				stuffEaten[eatenGhostAmount] = 1;
 				score += int(pow(2, eatenGhostAmount++)) * 200;
@@ -550,6 +546,31 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 		"resources/stuff/strawberry.bmp"
 		}, RGB(255, 255, 255));
 	props[1].SetTopLeft(425, 550);
+
+	props[2].LoadBitmapByString({
+		"resources/stuff/pear.bmp"
+		}, RGB(255, 255, 255));
+	props[2].SetTopLeft(425, 550);
+
+	props[3].LoadBitmapByString({
+		"resources/stuff/apple.bmp"
+		}, RGB(255, 255, 255));
+	props[3].SetTopLeft(425, 550);
+
+	props[4].LoadBitmapByString({
+		"resources/stuff/melon.bmp"
+		}, RGB(255, 255, 255));
+	props[4].SetTopLeft(425, 550);
+
+	props[5].LoadBitmapByString({
+		"resources/stuff/bell.bmp"
+		}, RGB(255, 255, 255));
+	props[5].SetTopLeft(425, 550);
+
+	props[6].LoadBitmapByString({
+		"resources/stuff/key.bmp"
+		}, RGB(255, 255, 255));
+	props[6].SetTopLeft(425, 550);
 
 	/* player amount */
 	oneP.LoadBitmapByString({
@@ -906,14 +927,6 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 		"resources/ets/et_diedR.bmp",
 		}, RGB(255, 255, 255));
 
-	/* testing */
-	
-	giraffe.LoadBitmapByString({
-		"resources/giraffe.bmp",
-		"resources/ets/et_unshow.bmp"
-		}, RGB(255, 255, 255));
-	giraffe.SetTopLeft(0, 0);
-
 }
 
 void CGameStateRun::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
@@ -1040,7 +1053,7 @@ void CGameStateRun::ShowByPhase() {
 			InitMap();
 			InitCharacter();
 		}
-		
+
 		if (ghostmode != lastGhostmode && lastGhostmode < 2) {
 			TurnAround(etTowards[0], etTowards[1], etTowards[2], etTowards[3]);
 		}
@@ -1049,73 +1062,72 @@ void CGameStateRun::ShowByPhase() {
 		CheckPhaseClear();
 	}
 
-	/* show phase background */
-	background.SetFrameIndexOfBitmap(phase - 1);
-	background.ShowBitmap();
+	if (phase < 21) {
+		/* show phase background */
+		background.SetFrameIndexOfBitmap(phase - 1);
+		background.ShowBitmap();
 
-	/* show character */
-	character[towards].ShowBitmap(1.25);
+		/* show character */
+		character[towards].ShowBitmap(1.25);
 
-	/* show cookies */
-	for (int i = 0; i < cookieAmount; i++) {
-		cookie[i].ShowBitmap(0.5);
-	}
-	for (int i = 0; i < spCookieAmount; i++) {
-		spCookie[i].ShowBitmap(1.5);
-	}
-
-	/* show points get if ghost is eaten */
-	for (int i = 0; i < 4; i++) {
-		ShowBonusPoint(stuffEaten[i], i);
-	}
-
-	/* show ghosts */
-	if (ghostmode < 2 && !showPacDiedAni) {
-		for (int i = 0; i < 4; i++) {
-			showOrigin[i] = false;
+		/* show cookies */
+		for (int i = 0; i < cookieAmount; i++) {
+			cookie[i].ShowBitmap(0.5);
 		}
-		if (!isDied[0]) etRed[etTowards[0]].ShowBitmap(1.25);
-		else etRed[DIED].ShowBitmap(1.25);
+		for (int i = 0; i < spCookieAmount; i++) {
+			spCookie[i].ShowBitmap(1.5);
+		}
 
-		if (!isDied[1]) etPink[etTowards[1]].ShowBitmap(1.25);
-		else etPink[DIED].ShowBitmap(1.25);
+		/* show points get if ghost is eaten */
+		for (int i = 0; i < 4; i++) {
+			ShowBonusPoint(stuffEaten[i], i);
+		}
 
-		if (!isDied[2]) etBlue[etTowards[2]].ShowBitmap(1.25);
-		else etBlue[DIED].ShowBitmap(1.25);
+		/* show ghosts */
+		if (ghostmode < 2 && !showPacDiedAni) {
+			for (int i = 0; i < 4; i++) {
+				showOrigin[i] = false;
+			}
+			if (!isDied[0]) etRed[etTowards[0]].ShowBitmap(1.25);
+			else etRed[DIED].ShowBitmap(1.25);
 
-		if (!isDied[3]) etYellow[etTowards[3]].ShowBitmap(1.25);
-		else etYellow[DIED].ShowBitmap(1.25);
-	}
-	else if (ghostmode == 2 && !showPacDiedAni) {
-		etRed[SCARED + isDied[0] * 2].ShowBitmap(1.25);
-		etPink[SCARED + isDied[1] * 2].ShowBitmap(1.25);
-		etBlue[SCARED + isDied[2] * 2].ShowBitmap(1.25);
-		etYellow[SCARED + isDied[3] * 2].ShowBitmap(1.25);
-	}
-	else if (ghostmode == 3 && !showPacDiedAni) {
-		etRed[TRANSIT + isDied[0]].ShowBitmap(1.25);
-		etPink[TRANSIT + isDied[1]].ShowBitmap(1.25);
-		etBlue[TRANSIT + isDied[2]].ShowBitmap(1.25);
-		etYellow[TRANSIT + isDied[3]].ShowBitmap(1.25);
-	}
-	if (showOrigin[0] && !showPacDiedAni) etRed[etTowards[0]].ShowBitmap(1.25);
-	if (showOrigin[1] && !showPacDiedAni) etPink[etTowards[1]].ShowBitmap(1.25);
-	if (showOrigin[2] && !showPacDiedAni) etBlue[etTowards[2]].ShowBitmap(1.25);
-	if (showOrigin[3] && !showPacDiedAni) etYellow[etTowards[3]].ShowBitmap(1.25);
+			if (!isDied[1]) etPink[etTowards[1]].ShowBitmap(1.25);
+			else etPink[DIED].ShowBitmap(1.25);
 
-	if (character[towards].IsAnimationDone() && isPacDied && life > 0) {
-		if (Delay(4 * 1000, died_time)) {
-			InitStartTime();
-			InitCharacter();
+			if (!isDied[2]) etBlue[etTowards[2]].ShowBitmap(1.25);
+			else etBlue[DIED].ShowBitmap(1.25);
+
+			if (!isDied[3]) etYellow[etTowards[3]].ShowBitmap(1.25);
+			else etYellow[DIED].ShowBitmap(1.25);
+		}
+		else if (ghostmode == 2 && !showPacDiedAni) {
+			etRed[SCARED + isDied[0] * 2].ShowBitmap(1.25);
+			etPink[SCARED + isDied[1] * 2].ShowBitmap(1.25);
+			etBlue[SCARED + isDied[2] * 2].ShowBitmap(1.25);
+			etYellow[SCARED + isDied[3] * 2].ShowBitmap(1.25);
+		}
+		else if (ghostmode == 3 && !showPacDiedAni) {
+			etRed[TRANSIT + isDied[0]].ShowBitmap(1.25);
+			etPink[TRANSIT + isDied[1]].ShowBitmap(1.25);
+			etBlue[TRANSIT + isDied[2]].ShowBitmap(1.25);
+			etYellow[TRANSIT + isDied[3]].ShowBitmap(1.25);
+		}
+		if (showOrigin[0] && !showPacDiedAni) etRed[etTowards[0]].ShowBitmap(1.25);
+		if (showOrigin[1] && !showPacDiedAni) etPink[etTowards[1]].ShowBitmap(1.25);
+		if (showOrigin[2] && !showPacDiedAni) etBlue[etTowards[2]].ShowBitmap(1.25);
+		if (showOrigin[3] && !showPacDiedAni) etYellow[etTowards[3]].ShowBitmap(1.25);
+
+		if (character[towards].IsAnimationDone() && isPacDied && life > 0) {
+			if (Delay(4 * 1000, died_time)) {
+				InitStartTime();
+				InitCharacter();
+				life--;
+			}
+		}
+		else if (character[towards].IsAnimationDone() && isPacDied && life == 0) {
 			life--;
 		}
 	}
-	else if (character[towards].IsAnimationDone() && isPacDied && life == 0) {
-		life--;
-	}
-
-	/* testing */
-	//if (!character[towards].IsAnimationDone()) giraffe.ShowBitmap(0.5);
 }
 
 void CGameStateRun::ReadMap(int phase, string filename) {
