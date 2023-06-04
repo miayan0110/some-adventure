@@ -536,42 +536,6 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 		lives[i].SetTopLeft(16 + 30 * i, 550);
 	}
 
-	/* extra point props */
-	props[0].LoadBitmapByString({
-		"resources/stuff/cherry.bmp"
-		}, RGB(255, 255, 255));
-	props[0].SetTopLeft(395, 550);
-
-	props[1].LoadBitmapByString({
-		"resources/stuff/strawberry.bmp"
-		}, RGB(255, 255, 255));
-	props[1].SetTopLeft(425, 550);
-
-	props[2].LoadBitmapByString({
-		"resources/stuff/pear.bmp"
-		}, RGB(255, 255, 255));
-	props[2].SetTopLeft(425, 550);
-
-	props[3].LoadBitmapByString({
-		"resources/stuff/apple.bmp"
-		}, RGB(255, 255, 255));
-	props[3].SetTopLeft(425, 550);
-
-	props[4].LoadBitmapByString({
-		"resources/stuff/melon.bmp"
-		}, RGB(255, 255, 255));
-	props[4].SetTopLeft(425, 550);
-
-	props[5].LoadBitmapByString({
-		"resources/stuff/bell.bmp"
-		}, RGB(255, 255, 255));
-	props[5].SetTopLeft(425, 550);
-
-	props[6].LoadBitmapByString({
-		"resources/stuff/key.bmp"
-		}, RGB(255, 255, 255));
-	props[6].SetTopLeft(425, 550);
-
 	/* player amount */
 	oneP.LoadBitmapByString({
 		"resources/stuff/1up.bmp"
@@ -596,7 +560,7 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 		scoreNum[i].SetTopLeft(168 - 18 * i, 15);
 	}
 
-	/* bonus points for eating ghost or props */
+	/* bonus points for eating ghost */
 	bonusPoints[0].LoadBitmapByString({
 		"resources/stuff/200.bmp",
 		}, RGB(255, 255, 255));
@@ -629,7 +593,7 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 	superIcon.LoadBitmapByString({
 		"resources/stuff/super_player_icon.bmp"
 		}, RGB(255, 255, 255));
-	superIcon.SetTopLeft(410, 15);
+	superIcon.SetTopLeft(410, 550);
 
 	/* gameover */
 	gameover.LoadBitmapByString({
@@ -1012,11 +976,6 @@ void CGameStateRun::ShowUI() {
 	}
 	for (int i = 0; i < life; i++) {
 		lives[i].ShowBitmap(1.25);
-	}
-
-	/* show props */
-	for (int i = 0; i < 2; i++) {
-		props[i].ShowBitmap(1.75);
 	}
 
 	/* show score board */
@@ -1737,9 +1696,6 @@ void CGameStateRun::ShowBonusPoint(int toShow, int i) {
 		/* show bonus for eating ghost */
 		bonusPoints[i].SetTopLeft(eatenLeft, eatenTop);
 		bonusPoints[i].ShowBitmap(1.5);
-	}
-	else if (toShow == 2) {
-		/* show bonus for eating props*/
 	}
 
 	/* show for 2 seconds */
