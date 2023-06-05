@@ -509,7 +509,7 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 	readyBGM->Load(3, "resources/sound/ready.wav");
 
 	/* game background music */
-	bgm->Load(1, "resources/sound/bgm_2.wav");
+	bgm->Load(1, "resources/sound/bgm.wav");
 
 	/* sound effect for pacman died */
 	pacDiedSE->Load(4, "resources/sound/pacman_died.wav");
